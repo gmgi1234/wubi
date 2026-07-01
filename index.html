@@ -10421,7 +10421,7 @@ const WUBI = {
 
 // 全局常量：需要非连续笔画分配的字（万、母、那）
 // 注：含'匚'字根的字（区、欧、沤等）由 roots.includes('匚') 自动检测，无需列入
-const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','舞','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必']);
+const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','舞','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁']);
 
 // ==================== 计算五笔识别码 ====================
 // 根据末笔和字型计算识别码
@@ -11243,6 +11243,31 @@ function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset
     const hasNCRoot = roots.some(r => NON_CONTINUOUS_CHARS.has(r));
     if (currentChar === '戎') console.log('[DEBUG戎 NC] roots=' + JSON.stringify(roots) + ' n=' + n + ' r=' + r + ' sha=' + hasShaDianPie + ' ncRoot=' + hasNCRoot);
     if (!NON_CONTINUOUS_CHARS.has(currentChar) && !hasKuang && !hasFei && !hasNCRoot && !hasShaDianPie && !hasShiGeOrig) return null;
+
+    // ===== 婁字特殊处理 =====
+    // 婁：第一个字根(口)占笔画0,1,3，第二个字根(一)占笔画2
+    // 后续字根按笔画顺序连续分配
+    // 适用于婁本身和包含婁作为部件的复合字（數、僂、嘍等）
+    if (roots[0] === '口' && roots[1] === '一' && roots.length >= 5) {
+        const result = new Array(n);
+        let pos = 0;
+        result[pos++] = strokeOffset + 0;  // 笔画0 → 口
+        result[pos++] = strokeOffset + 0;  // 笔画1 → 口
+        result[pos++] = strokeOffset + 1;  // 笔画2 → 一
+        result[pos++] = strokeOffset + 0;  // 笔画3 → 口
+        for (let ri = 2; ri < r; ri++) {
+            let sc = RADICAL_STROKES[roots[ri]];
+            if (sc === undefined) {
+                const entry = WUBI[roots[ri]];
+                if (entry && entry.r && entry.r.length > 0) {
+                    const parts = (entry.r.length > 1 && entry.r[0] === roots[ri]) ? entry.r.slice(1) : entry.r;
+                    sc = parts.reduce((sum, sub) => sum + (RADICAL_STROKES[sub] || 1), 0);
+                } else sc = 1;
+            }
+            for (let j = 0; j < sc && pos < n; j++) result[pos++] = strokeOffset + ri;
+        }
+        if (pos === n) return result;
+    }
 
     // 查找第一个字根的笔画数（从 RADICAL_STROKES，含 OVERRIDE）
     // 注意：roots 是局部字根列表，strokeOffset 是全局起始索引，
@@ -14951,7 +14976,7 @@ function togglePracticeMode(on) {
             toggle.style.top = (12 * ratio) + 'px';
         }
         
-        wrapper.offsetHeight; // force reflow        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排        wrapper.offsetHeight; // 强制重排
+        wrapper.offsetHeight; // force reflow
     }
 
     // 页面加载时执行
