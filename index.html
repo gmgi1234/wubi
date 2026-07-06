@@ -3386,7 +3386,7 @@ const WUBI = {
     '徯': {c:'TEXD', r:['彳', '奚']},
     '徴': {c:'TMGT', r:['彳', '㞷', '攵']},
     '徵': {c:'TMGT', r:['彳', '山', '一', '王', '攵']},
-    '德': {c:'TFLN', r:['彳', '𢛳']},
+    '德': {c:'TFLN', r:['彳', '十', '罒', '一', '心']},
     '徹': {c:'TYCT', r:['彳', '育', '攵']},
     '徼': {c:'TRYT', r:['彳', '敫']},
     '徽': {c:'TMGT', r:['彳', '山', '一', '糸', '攵']},
@@ -12734,8 +12734,8 @@ async function loadAndRender(ch) {
             '𠦝': { parent: '朝', offset: 0, count: 8 },  // 朝=12笔，取索引0-7共8笔（十+早）
             '': { parent: '朝', offset: 0, count: 8 },  // 朝=12笔，取索引0-7共8笔（十+早）
             // 多段拼接：从多个父字提取笔画段
-            '晞': { parts: [{ parent: '晒', offset: 0, count: 4 }, { parent: '唏', offset: 3, count: 7 }] },  // 日(4笔)+希(7笔)=11笔
-            '焜': { parts: [{ parent: '烤', offset: 0, count: 4 }, { parent: '混', offset: 3, count: 8, yOffset: -50 }] },  // 火(4笔)+昆(8笔)=12笔
+            '晞': { parts: [{ parent: '晒', offset: 0, count: 4 }, { parent: '稀', offset: 5, count: 7 }] },  // 日(4笔)+希(7笔)=11笔
+            '焜': { parts: [{ parent: '烤', offset: 0, count: 4, yOffset: -30 }, { parent: '馄', offset: 3, count: 8, yOffset: 30 }] },  // 火(下移)+昆(上移)
         };
         
         let fallbackData = null;
