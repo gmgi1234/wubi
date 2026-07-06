@@ -528,8 +528,8 @@ body {
     /* main-display 单列堆叠，文章面板排最后 */
     .main-display { flex-direction: column; align-items: center; gap: 8px; }
 
-    /* 文章面板全宽，移到 main-display 最后 */
-    #article-panel { width: 100%; flex-shrink: 0; order: -2; }
+    /* 文章面板全宽，移到五笔编码区下面 */
+    #article-panel { width: 100%; flex-shrink: 0; order: 2; }
 
     /* SVG 缩小 */
     .svg-wrap { padding: 6px; }
@@ -792,7 +792,7 @@ const RADICAL_CHARS = new Set([
     '𰀁',
     '止','夕','𱼀',
     // 特殊字根
-    '⺀','丆','𠚤','巛','𠄐','龴','卄','龰','𠧒','𠘧','龵',
+    '⺀','丆','𠚤','巛','𠄐','龴','卄','龰','𠧒','𠘧','龵','𰀪',
     '𣥂','立头','爫','豕','豸头','豸底','冎','彳','彐','𦥑','䒑','〢','龷','癶','凸头','夂','厶','孑','𭕄',
     // 报户口缺少的字根
      '丁','上','丨','乃','之','九','彡','弓','馬','𠃜','镸','鱼头','𠤎','𬼖框'
@@ -2028,13 +2028,13 @@ const WUBI = {
     '卧': {c:'AHNH', r:['臣', '卜']},
     '卩': {c:'BNH', r:['卩', '𠃌', '丨']},
     '卫': {c:'BGD', r:['卩','一']},
-    '卮': {c:'RGBV', r:['𠂋', '㔾']},
+    '卮': {c:'RGBV', r:['𠂆','一','㔾']},
     '卯': {c:'QTBH', r:['乐头','丿','卩']},
     '印': {c:'QGBH', r:['乐头', '一', '卩']},
     '危': {c:'QDBB', r:['厃', '㔾']},
     '却': {c:'FCBH', r:['去', '卩']},
     '卵': {c:'QYTY', r:['乐头','丶','丿','卩','丶']},
-    '卸': {c:'RHBH', r:['𦈢', '卩']},
+    '卸': {c:'RHBH', r:['牛前','止','卩']},
     '卹': {c:'TLBH', r:['血', '卩']},
     '卺': {c:'BIGB', r:['丞', '㔾']},
     '卻': {c:'WWKB', r:['谷', '卩']},
@@ -2492,7 +2492,7 @@ const WUBI = {
     '四': {c:'LHNG', r:['四','丨','𠃍','丿','㇟','一']},
     '囟': {c:'TLQI', r:['丿','囗','㐅']},
     '囤': {c:'LGBN', r:['囗', '屯']},
-    '囪': {c:'TLRY', r:['丿', '⿱']},
+    '囪': {c:'TLRY', r:['丿','囗','𰀪','丶']},
     '圃': {c:'LGEY', r:['囗', '甫']},
     '國': {c:'LAKG', r:['囗', '或']},
     '圍': {c:'LNHH', r:['囗', '韋']},
@@ -2734,7 +2734,7 @@ const WUBI = {
     '奠': {c:'USGD', r:['酋', '大']},
     '奢': {c:'DFTJ', r:['大', '者']},
     '奥': {c:'TMOD', r:['丿', '冂', '米', '大']},
-    '奧': {c:'TMTD', r:['⿱', '大']},
+    '奧': {c:'TMTD', r:['丿','冂','丿','米','大']},
     '奩': {c:'DAKK', r:['大', '區']},
     '奪': {c:'DWYF', r:['大','隹','寸']},
     '奭': {c:'DDJJ', r:['大', '皕']},
@@ -3169,7 +3169,7 @@ const WUBI = {
     '㐬': {c:'YCQB', r:['亠', '厶', '𫶧']},
     '巳': {c:'NNGN', r:['巳','𠃍','一','乚']},
     '巴': {c:'CNHN', r:['巴','𠃍','丨','一','㇟']},
-    '巵': {c:'RGCV', r:['𠂋', '巴']},
+    '巵': {c:'RGCV', r:['𠂆','一','巴']},
     '巷': {c:'AWNB', r:['共', '巳']},
     '巸': {c:'AHKN', r:['匚','丨','口','丨','巳']},
     '巹': {c:'BIGN', r:['丞', '己']},
@@ -3722,7 +3722,7 @@ const WUBI = {
     '抗': {c:'RYMN', r:['扌', '亢']},
     '折': {c:'RRH', r:['扌', '斤']},
     '抚': {c:'RFQN', r:['扌', '无']},
-    '抛': {c:'RVLN', r:['扌', '𠠵']},
+    '抛': {c:'RVLN', r:['扌','九','力']},
     '抟': {c:'RFNY', r:['扌', '专']},
     '抠': {c:'RAQY', r:['扌', '区']},
     '抡': {c:'RWXN', r:['扌', '仑']},
@@ -3747,7 +3747,7 @@ const WUBI = {
     '拈': {c:'RHKG', r:['扌', '占']},
     '拉': {c:'RUG', r:['扌', '立']},
     '拊': {c:'RWFY', r:['扌', '付']},
-    '拋': {c:'RDNL', r:['扌', '𡯄']},
+    '拋': {c:'RDNL', r:['扌','𠂇','乚','力']},
     '拌': {c:'RUFH', r:['扌', '半']},
     '拍': {c:'RRG', r:['扌', '白']},
     '拎': {c:'RWYC', r:['扌', '令']},
@@ -3762,7 +3762,7 @@ const WUBI = {
     '拙': {c:'RBMH', r:['扌', '出']},
     '拚': {c:'RCAH', r:['扌', '弁']},
     '招': {c:'RVKG', r:['扌', '召']},
-    '拜': {c:'RDFH', r:['龵', '一']},
+    '拜': {c:'RDFH', r:['手','三','十']},
     '拟': {c:'RNYW', r:['扌', '以']},
     '拢': {c:'RDXN', r:['扌', '龙']},
     '拣': {c:'RANW', r:['扌','七','𠃌','八']},
@@ -3778,7 +3778,7 @@ const WUBI = {
     '拱': {c:'RAWY', r:['扌', '共']},
     '拳': {c:'UDRJ', r:['龹', '手']},
     '拴': {c:'RWGG', r:['扌', '全']},
-    '拶': {c:'RVQY', r:['扌', '𡿪']},
+    '拶': {c:'RVQY', r:['扌','巛','夕']},
     '拷': {c:'RFTN', r:['扌', '考']},
     '拼': {c:'RUAH', r:['扌', '并']},
     '拽': {c:'RJXT', r:['扌', '曳']},
@@ -4067,7 +4067,7 @@ const WUBI = {
     '散': {c:'AETY', r:['龷', '月', '攵']},
     '敦': {c:'YBTY', r:['享', '攵']},
     '敪': {c:'CCCT', r:['叕', '攵']},
-    '敫': {c:'RYTY', r:['白', '攵']},
+    '敫': {c:'RYTY', r:['白','方','攵']},
     '敬': {c:'AQKT', r:['苟', '攵']},
     '数': {c:'OVTY', r:['娄', '攵']},
     '敲': {c:'YMKC', r:['高', '攴']},
@@ -4412,7 +4412,7 @@ const WUBI = {
     '桴': {c:'SEBG', r:['木', '孚']},
     '桶': {c:'SCEH', r:['木', '甬']},
     '桷': {c:'SQEH', r:['木', '角']},
-    '桼': {c:'SWIU', r:['木', '人']},
+    '桼': {c:'SWIU', r:['木','𠆢','氺']},
     '桿': {c:'SJFH', r:['木', '旱']},
     '梁': {c:'IVWS', r:['氵', '刀', '八', '木']},
     '梃': {c:'STFP', r:['木', '廷']},
@@ -5316,7 +5316,7 @@ const WUBI = {
     '焘': {c:'DTFO', r:['寿', '灬']},
     '焙': {c:'OUKG', r:['火', '咅']},
     '焚': {c:'SSOU', r:['林', '火']},
-    '無': {c:'RLGO', r:['𠂉', '灬']},
+    '無': {c:'RLGO', r:['𠂉','四竖','一','一','灬']},
     '焢': {c:'OPWA', r:['火', '空']},
     '焦': {c:'WYOU', r:['隹', '灬']},
     '焯': {c:'OHJH', r:['火', '卓']},
@@ -6203,7 +6203,7 @@ const WUBI = {
     '私': {c:'TCY', r:['禾', '厶']},
     '秃': {c:'TMB', r:['禾', '几']},
     '秆': {c:'TFH', r:['禾', '干']},
-    '秉': {c:'TGVI', r:['禾', 'コ']},
+    '秉': {c:'TGVI', r:['丿','一','彐','𡭔']},
     '秋': {c:'TOY', r:['禾', '火']},
     '科': {c:'TUFH', r:['禾', '斗']},
     '秒': {c:'TITT', r:['禾', '少']},
@@ -6252,7 +6252,7 @@ const WUBI = {
     '稽': {c:'TDNJ', r:['禾', '尤']},
     '稿': {c:'TYMK', r:['禾', '高']},
     '穀': {c:'FPGC', r:['𥞤', '殳']},
-    '穆': {c:'TRIE', r:['禾', '㣎']},
+    '穆': {c:'TRIE', r:['禾','白','小','彡']},
     '穌': {c:'QOTY', r:['魚', '禾']},
     '積': {c:'TGMY', r:['禾', '責']},
     '穎': {c:'XTDM', r:['匕','禾','頁']},
@@ -6388,7 +6388,7 @@ const WUBI = {
     '简': {c:'TUJF', r:['⺮', '间']},
     '箅': {c:'TLGJ', r:['⺮', '畀']},
     '箋': {c:'TAAR', r:['⺮', '戔']},
-    '箍': {c:'TRAH', r:['⺮', '㧜']},
+    '箍': {c:'TRAH', r:['⺮','扌','匚','巾']},
     '箏': {c:'TEVH', r:['⺮', '爭']},
     '箐': {c:'TGEF', r:['⺮', '青']},
     '箓': {c:'TVIU', r:['⺮', '录']},
@@ -6400,7 +6400,7 @@ const WUBI = {
     '管': {c:'TPNN', r:['⺮', '官']},
     '箢': {c:'TPQB', r:['⺮', '宛']},
     '箦': {c:'TGMU', r:['⺮', '责']},
-    '箧': {c:'TAGW', r:['⺮', '匚']},
+    '箧': {c:'TAGW', r:['⺮','匚','夹']},
     '箨': {c:'TRCH', r:['⺮', '择']},
     '箩': {c:'TLQU', r:['⺮', '罗']},
     '箪': {c:'TUJF', r:['⺮', '单']},
@@ -6412,7 +6412,7 @@ const WUBI = {
     '箸': {c:'TFTJ', r:['⺮', '者']},
     '節': {c:'TVCB', r:['⺮', '即']},
     '篁': {c:'TRGF', r:['⺮', '皇']},
-    '範': {c:'TLBB', r:['⺮', '𨊠']},
+    '範': {c:'TLBB', r:['⺮','車','㔾']},
     '篆': {c:'TXEU', r:['⺮', '彖']},
     '篇': {c:'TYNA', r:['⺮', '扁']},
     '築': {c:'TAMS', r:['筑', '木']},
@@ -6434,7 +6434,8 @@ const WUBI = {
     '篱': {c:'TYBC', r:['⺮', '离']},
     '篳': {c:'TJAF', r:['⺮', '畢']},
     '篷': {c:'TTDP', r:['⺮', '逢']},
-    '篹': {c:'THDB', r:['𮅕', '㔾']},
+    '𮅕': {c:'THD', r:['⺮','目','大']},
+    '篹': {c:'THDB', r:['⺮','目','大','㔾']},
     '篼': {c:'TQRQ', r:['⺮', '兜']},
     '篾': {c:'TLDT', r:['⺮', '罒', '戍']},
     '簇': {c:'TYTD', r:['⺮', '族']},
@@ -6452,12 +6453,12 @@ const WUBI = {
     '簪': {c:'TAQJ', r:['⺮', '朁']},
     '簫': {c:'TVHH', r:['⺮', '肅']},
     '簷': {c:'TQDY', r:['⺮', '詹']},
-    '簸': {c:'TADC', r:['⺮', '𤿺']},
+    '簸': {c:'TADC', r:['⺮','其','皮']},
     '簹': {c:'TIPL', r:['⺮', '當']},
     '簽': {c:'TWGW', r:['⺮', '僉']},
     '簾': {c:'TYUO', r:['⺮', '廉']},
     '簿': {c:'TIGF', r:['⺮', '溥']},
-    '籀': {c:'TRQL', r:['⺮', '㨨']},
+    '籀': {c:'TRQL', r:['⺮','扌','留']},
     '籁': {c:'TGKM', r:['⺮', '赖']},
     '籃': {c:'TAHL', r:['⺮', '監']},
     '籌': {c:'TFNF', r:['⺮', '壽']},
@@ -10493,7 +10494,7 @@ const WUBI = {
 
 // 全局常量：需要非连续笔画分配的字（万、母、那）
 // 注：含'匚'字根的字（区、欧、沤等）由 roots.includes('匚') 自动检测，无需列入
-const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','舞','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁','垂','喪','噩','爾','畿','帶','齊','樂','盥']);
+const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','舞','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁','垂','喪','噩','爾','畿','帶','齊','樂','盥','無']);
 
 // ==================== 计算五笔识别码 ====================
 // 根据末笔和字型计算识别码
@@ -11497,6 +11498,27 @@ function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset
         result[13] = strokeOffset + 4;  // 第14笔 → 皿
         result[14] = strokeOffset + 4;  // 第15笔 → 皿
         result[15] = strokeOffset + 4;  // 第16笔 → 皿
+        return result;
+    }
+
+    // ===== 無字特殊处理 =====
+    // 無：r=['𠂉','四竖','一','一','灬']，12笔
+    // 第1-2→𠂉(0)，第3→一(2)，第4-7→四竖(1)
+    // 请设置第8笔(第二一)和第9-12笔的映射
+    if (currentChar === '無' && n === 12) {
+        const result = new Array(12);
+        result[0] = strokeOffset + 0;   // 第1笔 → 𠂉
+        result[1] = strokeOffset + 0;   // 第2笔 → 𠂉
+        result[2] = strokeOffset + 2;   // 第3笔 → 一
+        result[3] = strokeOffset + 1;   // 第4笔 → 四竖
+        result[4] = strokeOffset + 1;   // 第5笔 → 四竖
+        result[5] = strokeOffset + 1;   // 第6笔 → 四竖
+        result[6] = strokeOffset + 1;   // 第7笔 → 四竖
+        result[7] = strokeOffset + 3;   // 第8笔 → 一(第二)
+        result[8] = strokeOffset + 4;   // 第9笔 → 灬
+        result[9] = strokeOffset + 4;   // 第10笔 → 灬
+        result[10] = strokeOffset + 4;  // 第11笔 → 灬
+        result[11] = strokeOffset + 4;  // 第12笔 → 灬
         return result;
     }
 
@@ -14035,7 +14057,15 @@ function renderInfo() {
             rootToCodeIndex.push(colorIdxMap[colorIdxMap.length - 1]);
         }
     } else {
-        for (let i = 0; i < roots.length; i++) rootToCodeIndex.push(colorIdxMap[i]);
+        // roots.length <= 4：字根数等于或少于编码数
+        // 当字根数少于编码数时（如歌=可+可+欠，3字根4键SKSW），
+        // 最后一个字根对应末位编码（识别码），前面的字根按序对应
+        if (roots.length < codeLen) {
+            for (let i = 0; i < roots.length - 1; i++) rootToCodeIndex.push(colorIdxMap[i]);
+            rootToCodeIndex.push(colorIdxMap[codeLen - 1]);
+        } else {
+            for (let i = 0; i < roots.length; i++) rootToCodeIndex.push(colorIdxMap[i]);
+        }
     }
 
     // 展开 rootToCodeIndex，与 strokeRootMapForDisplay 的展开字根对齐
@@ -14062,6 +14092,11 @@ function renderInfo() {
                 for (const _sub of WUBI[r].r) {
                     expandedRootToCodeIndex.push(extraCodeIdx++);
                 }
+            } else if (WUBI[r].r.every(sub => RADICAL_CHARS.has(sub))) {
+                // 子字根全是基本字根：各自独立着色
+                for (const _sub of WUBI[r].r) {
+                    expandedRootToCodeIndex.push(extraCodeIdx++);
+                }
             } else {
                 // 普通复合字根：所有子字根用父字根的codeIdx，确保同色
                 for (let j = 0; j < WUBI[r].r.length; j++) {
@@ -14084,15 +14119,24 @@ function renderInfo() {
     }
 
     // 构建笔画→颜色映射（供大框SVG使用）
+    // 建立 strokeRootMapForDisplay 值到 roots 数组索引的映射
+    // （buildEmbeddedMap 可能使用与展开后 roots 不同的内部索引）
+    const uniqueRiValues = [...new Set(strokeRootMapForDisplay.filter(v => v >= 0))].sort((a, b) => a - b);
+    const riRemap = {};
+    let _rootArrayIdx = 0;
+    for (const _ri of uniqueRiValues) {
+        riRemap[_ri] = _rootArrayIdx++;
+    }
     strokeColorMap = strokes.map((_, strokeIdx) => {
         const ri = strokeRootMapForDisplay[strokeIdx];
         if (ri === undefined || ri < 0) return '#555'; // 非编码笔画灰色
-        const codeIdx = expandedRootToCodeIndex[ri];
+        const mappedRi = riRemap[ri] !== undefined ? riRemap[ri] : ri;
+        const codeIdx = expandedRootToCodeIndex[mappedRi];
         if (codeIdx === undefined || codeIdx < 0) return '#555'; // 跳过的字根灰色
         // 直接从rootColorMap取颜色字符串，避免存索引导致0值falsy问题
         return rootColorMap[codeIdx] || ROOT_COLORS[codeIdx % ROOT_COLORS.length];
     });
-    if (currentChar === '哥' || currentChar === '奇' || currentChar === '孚' || currentChar === '酉' || currentChar === '戊' || currentChar === '戳' || currentChar === '靠' || currentChar === '摁' || currentChar === '鹵' || currentChar === '県') {
+    if (currentChar === '哥' || currentChar === '奇' || currentChar === '孚' || currentChar === '酉' || currentChar === '戊' || currentChar === '戳' || currentChar === '靠' || currentChar === '摁' || currentChar === '鹵' || currentChar === '県' || currentChar === '歌') {
         console.log('[DEBUG' + currentChar + '] strokeRootMapForDisplay=' + JSON.stringify(strokeRootMapForDisplay));
         console.log('[DEBUG' + currentChar + '] expandedRootToCodeIndex=' + JSON.stringify(expandedRootToCodeIndex));
         console.log('[DEBUG' + currentChar + '] strokeColorMap=' + JSON.stringify(strokeColorMap));
@@ -14479,8 +14523,14 @@ function renderAssignment() {
     const leftCount = Math.ceil(totalStrokes / 2);
     
     // 构建所有笔画项
+    // 使用与 renderInfo 相同的 riRemap，确保索引一致
+    const _uniqueRi = [...new Set(strokeRootMap.filter(v => v >= 0))].sort((a, b) => a - b);
+    const _riRemap = {};
+    let _rai = 0;
+    for (const _ri of _uniqueRi) { _riRemap[_ri] = _rai++; }
     const items = strokes.map((_, i) => {
-        const idx = strokeRootMap[i];
+        const rawIdx = strokeRootMap[i];
+        const idx = _riRemap[rawIdx] !== undefined ? _riRemap[rawIdx] : rawIdx;
         const isGray = idx < 0;
         const color = isGray ? '#555' : ROOT_COLORS[idx % ROOT_COLORS.length];
         return `<div class="assign-item">
@@ -14490,7 +14540,7 @@ function renderAssignment() {
                     const isSup = supIndices.includes(r);
                     const rawLabel = roots.length > 0 ? roots[r] : '组'+(r+1);
                     const label = rawLabel === '' ? '补码' : rawLabel;
-                    return '<option value="' + r + '" ' + (r === strokeRootMap[i] ? 'selected' : '') + '>' + label + '</option>';
+                    return '<option value="' + r + '" ' + (r === idx ? 'selected' : '') + '>' + label + '</option>';
                 }).join('')}
                 <option value="-1" ${isGray ? 'selected' : ''}>灰色</option>
             </select>
@@ -14558,6 +14608,15 @@ let pendingChar = ''; // 当前需要用户输入的汉字
 let appReady = false; // 页面加载完成后才启用输入验证
 
 const charInput = document.getElementById('char-input');
+
+// 点击页面任意位置自动聚焦输入框
+document.addEventListener('click', (e) => {
+    // 排除：点击输入框本身、选择器、按钮等交互元素
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'OPTION' || tag === 'BUTTON') return;
+    if (e.target.closest('button, select, input, .assign-item, .lib-item, .keyboard-key')) return;
+    if (charInput) charInput.focus();
+});
 // ==================== 状态变量（V1.2） ====================
 let practiceMode = false;
 let skipInputOnce = false;
