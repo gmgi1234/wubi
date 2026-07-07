@@ -10581,6 +10581,38 @@ function _getStrokeTypeFromRootName(rootName) {
     return 5; // 默认折
 }
 
+// 通过SVG路径数据判断笔画类型（用于戈/戋末两笔区分丿和丶）
+// 返回 3=撇, 4=捺/点, null=不确定
+function _getStrokeTypeFromPath(pathStr) {
+    if (typeof pathStr !== 'string') return null;
+    // 丶（点）通常是闭合形状（以Z结尾），丿（撇）是开放路径
+    const endsWithZ = /\s*Z\s*$/i.test(pathStr.trim());
+    if (endsWithZ) return 4; // 丶/点
+    // 开放路径：检查方向判断是否为撇
+    const parts = pathStr.split(/(?=[MLQCZmlqcz])/);
+    if (parts.length < 2) return null;
+    const mNums = parts[0].match(/-?\d+\.?\d*/g);
+    if (!mNums || mNums.length < 2) return null;
+    const startX = parseFloat(mNums[0]);
+    const startY = parseFloat(mNums[1]);
+    // 找最后一个带坐标的命令
+    let lastNums = null;
+    for (let i = parts.length - 1; i >= 1; i--) {
+        const nums = parts[i].match(/-?\d+\.?\d*/g);
+        if (nums && nums.length >= 2) { lastNums = nums; break; }
+    }
+    if (!lastNums) return null;
+    const endX = parseFloat(lastNums[lastNums.length - 2]);
+    const endY = parseFloat(lastNums[lastNums.length - 1]);
+    const dx = endX - startX;
+    const dy = endY - startY;
+    // 撇：向左下方（dx<0, dy>0）
+    if (dx < -20 && dy > 20) return 3;
+    // 其他开放路径默认为撇（戈/戋的开放路径只有撇）
+    if (Math.abs(dx) > 50 || Math.abs(dy) > 50) return 3;
+    return null;
+}
+
 function getStrokeType(stroke) {
     // 若stroke是对象（hanzi-writer笔画路径数据），通过五笔分解推断末笔类型
     if (typeof stroke !== 'string') {
@@ -13828,23 +13860,31 @@ function renderSVG() {
             const hasGeHouPattern = checkWubi && checkWubi.r && checkWubi.r.length >= 3
                 && (checkWubi.r.includes('㇂') || checkWubi.r.includes('乚'))
                 && checkWubi.r[checkWubi.r.length - 2] === '丶'
-                && checkWubi.r[checkWubi.r.length - 1] === '丿';
+                && checkWubi.r[checkWubi.r.length - 1] === '丿'
+                && currentChar !== '线';
             
             if (hasGeHouPattern) {
-                // 戈类字根末两笔交换：末两笔是丶和丿，补码取丿的那一笔
-                // 从 strokeRootMap 判断 Step③ 是否触发（即根级交换是否发生过）：
-                //   Step③触发(线/戋小框)→1次交换→丿在最后一笔
-                //   未触发(践/战等)→0次交换→丿在倒数第二笔
+                // 戈/戋类字根：通过实际SVG路径判断哪一笔是丿
+                // 检查末两笔的SVG路径，找出丿（撇）的位置
                 if (lastRootStrokes.length >= 2) {
-                    const origRi = originalRoots.indexOf(lastOriginalRoot);
-                    const i1 = lastRootStrokes[lastRootStrokes.length - 2];
-                    const i2 = lastRootStrokes[lastRootStrokes.length - 1];
-                    const step3Fired = origRi >= 0 && strokeRootMap[i1] === origRi && strokeRootMap[i2] === origRi;
-                    actualEndStroke = step3Fired ? i2 : i1;
+                    const i1 = lastRootStrokes[lastRootStrokes.length - 2]; // 倒数第二笔
+                    const i2 = lastRootStrokes[lastRootStrokes.length - 1]; // 最后一笔
+                    const type1 = _getStrokeTypeFromPath(strokes[i1]);
+                    const type2 = _getStrokeTypeFromPath(strokes[i2]);
+                    console.log(`[补码DEBUG戈 ${currentChar}] i1=${i1} type1=${type1}, i2=${i2} type2=${type2}`);
+                    if (type1 === 3) {
+                        actualEndStroke = i1; // 倒数第二笔是丿
+                    } else if (type2 === 3) {
+                        actualEndStroke = i2; // 最后一笔是丿
+                    } else {
+                        // 无法确定时默认取倒数第二笔
+                        actualEndStroke = i1;
+                    }
                 } else {
                     actualEndStroke = strokes.length >= 2 ? strokes.length - 2 : strokes.length - 1;
                 }
                 console.log(`[补码DEBUG ${currentChar}] hasGeHouPattern=true, lastOriginalRoot=${lastOriginalRoot}, actualEndStroke=${actualEndStroke}, lastRootStrokes=${JSON.stringify(lastRootStrokes)}`);
+                console.log(`[补码DEBUG2 ${currentChar}] roots=${JSON.stringify(roots)}, lastRootIdx=${lastRootIdx}, lastRootChar=${lastRootChar}, strokeRootMap=${JSON.stringify(strokeRootMap)}`);
             } else if (lastRootStrokes.length >= 2) {
                 // 其他末字根取最后一笔
                 actualEndStroke = lastRootStrokes[lastRootStrokes.length - 1];
