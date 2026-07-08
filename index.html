@@ -15770,16 +15770,16 @@ function togglePracticeMode(on) {
     // 页面加载时执行
     applyScale();
 
-    // 手机端：把多字拆分卡片移到文章面板前面
+    // 手机端：把多字拆分卡片移到字根着色区下面、文章模式上面
     function adjustMobileLayout() {
         const isPortrait = window.innerWidth <= 800 && window.innerHeight > window.innerWidth;
         const multiCards = document.getElementById('multi-char-cards');
-        const articlePanel = document.getElementById('article-panel');
-        if (!multiCards || !articlePanel) return;
+        const infoPanel = document.querySelector('.info-panel');
+        if (!multiCards || !infoPanel) return;
         if (isPortrait) {
-            // 插入到文章面板前面
-            if (multiCards.nextElementSibling !== articlePanel) {
-                articlePanel.parentNode.insertBefore(multiCards, articlePanel);
+            // 插入到信息面板后面（字根着色区下方）、文章模式上方
+            if (infoPanel.nextElementSibling !== multiCards) {
+                infoPanel.parentNode.insertBefore(multiCards, infoPanel.nextSibling);
             }
         } else {
             // 横屏：移回键盘上方（原始位置）
