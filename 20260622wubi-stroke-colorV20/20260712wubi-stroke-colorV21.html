@@ -515,7 +515,7 @@ body {
 }
 
 /* ========== 手机竖屏独立布局（不用 transform scale，原生流式布局） ========== */
-@media (max-width: 800px) and (orientation: portrait) {
+@media (max-width: 800px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
     body { padding: 6px 8px 8px 8px; }
 
     /* 标题改为 static，不固定定位 */
@@ -584,7 +584,7 @@ body {
 }
 
 /* ==================== 手机横屏布局 ==================== */
-@media (max-width: 800px) and (orientation: landscape) {
+@media (max-width: 800px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
     body { padding: 4px 8px 6px 8px; }
 
     /* 标题缩小 */
@@ -873,6 +873,16 @@ body {
 <button class="lib-toggle" id="lib-toggle" onclick="toggleLibPanels()" title="收起字库">✕</button>
 
 <script>
+// ==================== 设备检测 ====================
+// 区分真手机与桌面窄窗口：电脑窄窗口走 scale 缩放，仅真手机用手机布局
+var IS_MOBILE = (function(){
+    var ua = navigator.userAgent || '';
+    var isMobile = /Android|iPhone|iPad|iPod|Mobile|Windows Phone|Silk|Kindle|BlackBerry|Opera Mini/i.test(ua);
+    if (isMobile) document.documentElement.classList.add('is-mobile');
+    else document.documentElement.classList.add('is-desktop');
+    return isMobile;
+})();
+
 // ==================== 五笔字根颜色 ====================
 const ROOT_COLORS = ['#E74C3C','#FF9800','#27AE60','#3498DB'];
 
@@ -15707,7 +15717,7 @@ function renderCharLibrary() {
     document.getElementById('lib-grid-right').innerHTML = rightChars.map(makeCell).join('');
 
     // 自动滚动到当前选中的字（手机竖屏禁用，scale 缩放容器内 scrollIntoView 会导致页面跳动）
-    const _isPhone = window.innerWidth <= 800 && window.innerHeight > window.innerWidth;
+    const _isPhone = IS_MOBILE && window.innerWidth <= 800 && window.innerHeight > window.innerWidth;
     if (!_isPhone) {
         requestAnimationFrame(() => {
             const activeCell = document.querySelector('.char-cell.active');
@@ -15807,7 +15817,7 @@ function showStrokeSelector(strokeIdx, event) {
     const assigns = document.querySelectorAll('.assign-row');
     if (assigns[strokeIdx]) {
         assigns[strokeIdx].style.background = 'rgba(100,100,200,0.3)';
-        if (!(window.innerWidth <= 800 && window.innerHeight > window.innerWidth)) {
+        if (!(IS_MOBILE && window.innerWidth <= 800 && window.innerHeight > window.innerWidth)) {
             assigns[strokeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         const select = assigns[strokeIdx].querySelector('.assign-select');
@@ -16341,7 +16351,7 @@ function updateArticleChipsHighlight() {
     });
     // 滚动到当前chip（手机竖屏禁用，避免 scale 容器内跳动）
     const activeChip = document.querySelector('.article-char-chip.active');
-    if (activeChip && !(window.innerWidth <= 800 && window.innerHeight > window.innerWidth)) {
+    if (activeChip && !(IS_MOBILE && window.innerWidth <= 800 && window.innerHeight > window.innerWidth)) {
         activeChip.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
 }
@@ -16579,7 +16589,7 @@ function togglePracticeMode(on) {
         // 手机端判断：同时用 innerWidth 和 visualViewport（iOS Safari 内置浏览器更可靠）
         const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
         const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-        const isPhoneLayout = vw <= 800;
+        const isPhoneLayout = IS_MOBILE && vw <= 800;
 
         // ===== 手机端（竖屏/横屏）：不用 transform scale，由 CSS 媒体查询处理布局 =====
         if (isPhoneLayout) {
@@ -16673,7 +16683,7 @@ function togglePracticeMode(on) {
     }
 
     // 手机端默认收起字库侧边栏（仅初始化一次，用户可手动展开）
-    const _isMobileInit = window.innerWidth <= 800;
+    const _isMobileInit = IS_MOBILE && window.innerWidth <= 800;
     if (_isMobileInit && typeof libExpanded !== 'undefined' && libExpanded) {
         libExpanded = false;
         const _lp = document.getElementById('lib-panel-left');
