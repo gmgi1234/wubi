@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <title>汉字五笔字根·笔画着色 V2.2</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Times New Roman', 'KaiTi', '楷体', 'STKaiti', '华文楷体', serif; }
@@ -514,140 +514,6 @@ body {
     100% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(1.1); }
 }
 
-/* ========== 手机竖屏独立布局（不用 transform scale，原生流式布局） ========== */
-@media (max-width: 800px) and (orientation: portrait) {
-    body { padding: 6px 8px 8px 8px; }
-
-    /* 标题改为 static，不固定定位 */
-    .title-container { position: static; left: auto; top: auto; padding: 4px 0 6px 0; }
-    h1 { font-size: 1.05rem; }
-    .subtitle { font-size: 0.7rem; }
-
-    /* container 不限宽，flex 布局控制 main-display 和 keyboard 顺序 */
-    .container { max-width: 100%; display: flex; flex-direction: column; }
-
-    /* main-display 单列堆叠，文章面板排最后 */
-    .main-display { flex-direction: column; align-items: center; gap: 8px; }
-
-    /* 文章面板全宽，移到五笔编码区下面 */
-    #article-panel { width: 100%; flex-shrink: 0; order: 2; }
-
-    /* 多字拆分卡片移到文章模式前面（通过JS在手机端移动元素位置） */
-
-    /* SVG 缩小 */
-    .svg-wrap { padding: 6px; }
-    #char-svg { width: 180px; height: 180px; }
-    /* 补码框缩小，避免压到汉字 */
-    #sup-mini-box { top: 4px !important; right: 4px !important; padding: 2px !important; border-radius: 4px !important; }
-    #sup-mini-box > div { font-size: 7px !important; margin-bottom: 1px !important; }
-    #sup-mini-svg { width: 32px !important; height: 32px !important; }
-
-    /* 笔画导航缩小 */
-    .stroke-nav { gap: 4px; }
-    .stroke-nav button { padding: 3px 10px; font-size: 12px; }
-    .stroke-nav span { font-size: 12px; }
-
-    /* 输入区全宽，font-size≥16px 防止 iOS 自动缩放 */
-    .input-section { width: 100%; }
-    #char-input { font-size: 16px; width: 6rem; padding: 0.25rem 0.5rem; }
-    #prev-btn, #next-btn { font-size: 0.85rem; padding: 0.35rem 0.8rem; }
-
-    /* 信息面板全宽；五笔编码和字根着色交换位置 */
-    .info-panel { max-width: 100%; min-width: 0; width: 100%; display: flex; flex-direction: column; }
-    .info-panel .info-card:nth-child(2) { order: -1; }  /* 字根着色提到五笔编码前面 */
-
-    /* 键盘缩小 */
-    .wubi-keyboard { padding: 5px; margin-top: 8px; }
-    .keyboard-row { gap: 2px; margin-bottom: 2px; }
-    .key { min-width: 28px; max-width: 38px; height: 42px; border-width: 1px; }
-    .key.active { border-width: 2px; }
-    .key-top { margin-bottom: 1px; gap: 2px; }
-    .key-letter { font-size: 0.9rem; }
-    .key-jianma { font-size: 0.625rem; }
-    .key-hint { font-size: 0.5rem; line-height: 1.1; }
-
-    /* 字库切换按钮缩小 */
-    .lib-toggle { width: 32px; height: 32px; font-size: 14px; top: 6px; right: 6px; }
-
-    /* 字库侧边栏手机端窄一些 */
-    .side-panel { width: 140px; }
-
-    /* 字根着色区缩小字号和间距 */
-    .root-legend li { font-size: 13px; padding: 3px 6px; gap: 6px; }
-    .root-name { font-size: 16px; min-width: 20px; }
-    .root-color-dot { width: 12px; height: 12px; }
-    .root-code { font-size: 11px; }
-    .root-kouju { font-size: 11px !important; margin-left: 4px !important; }
-    .root-stroke-count { font-size: 10px; }
-    /* 补码标签缩小 */
-    .sup-badge { font-size: 8px !important; padding: 0 2px !important; margin-left: 2px !important; }
-}
-
-/* ==================== 手机横屏布局 ==================== */
-@media (max-width: 900px) and (orientation: landscape) {
-    body { padding: 4px 8px 6px 8px; }
-
-    /* 标题缩小 */
-    .title-container { position: static; left: auto; top: auto; padding: 2px 0 4px 0; }
-    h1 { font-size: 0.95rem; }
-    .subtitle { font-size: 0.65rem; }
-
-    /* container flex 布局 */
-    .container { max-width: 100%; display: flex; flex-direction: column; }
-
-    /* main-display 横向排列，左右分栏 */
-    .main-display { flex-direction: row; align-items: flex-start; gap: 8px; }
-
-    /* SVG 区左侧 */
-    .svg-wrap { padding: 4px; flex-shrink: 0; }
-    #char-svg { width: 160px; height: 160px; }
-    #sup-mini-box { top: 2px !important; right: 2px !important; padding: 2px !important; border-radius: 4px !important; }
-    #sup-mini-box > div { font-size: 7px !important; margin-bottom: 1px !important; }
-    #sup-mini-svg { width: 28px !important; height: 28px !important; }
-
-    /* 笔画导航缩小 */
-    .stroke-nav { gap: 3px; }
-    .stroke-nav button { padding: 2px 8px; font-size: 11px; }
-    .stroke-nav span { font-size: 11px; }
-
-    /* 输入区 */
-    .input-section { width: 100%; }
-    #char-input { font-size: 16px; width: 6rem; padding: 0.2rem 0.4rem; }
-    #prev-btn, #next-btn { font-size: 0.8rem; padding: 0.3rem 0.6rem; }
-
-    /* 信息面板右侧 */
-    .info-panel { flex: 1; min-width: 0; max-width: 50%; }
-    .info-panel .info-card:nth-child(2) { order: -1; }
-
-    /* 文章面板全宽放底部 */
-    #article-panel { width: 100%; flex-shrink: 0; order: 2; }
-
-    /* 键盘缩小 */
-    .wubi-keyboard { padding: 4px; margin-top: 6px; }
-    .keyboard-row { gap: 2px; margin-bottom: 2px; }
-    .key { min-width: 26px; max-width: 36px; height: 38px; border-width: 1px; }
-    .key.active { border-width: 2px; }
-    .key-top { margin-bottom: 1px; gap: 2px; }
-    .key-letter { font-size: 0.85rem; }
-    .key-jianma { font-size: 0.6rem; }
-    .key-hint { font-size: 0.5rem; line-height: 1.1; }
-
-    /* 字库切换按钮 */
-    .lib-toggle { width: 30px; height: 30px; font-size: 13px; top: 4px; right: 4px; }
-
-    /* 字库侧边栏 */
-    .side-panel { width: 130px; }
-
-    /* 字根着色区 */
-    .root-legend li { font-size: 12px; padding: 2px 5px; gap: 5px; }
-    .root-name { font-size: 15px; min-width: 18px; }
-    .root-color-dot { width: 11px; height: 11px; }
-    .root-code { font-size: 10px; }
-    .root-kouju { font-size: 10px !important; margin-left: 4px !important; }
-    .root-stroke-count { font-size: 9px; }
-    .sup-badge { font-size: 7px !important; padding: 0 2px !important; margin-left: 2px !important; }
-}
-
 /* ==================== 多汉字拆分卡片 ==================== */
 #multi-char-cards {
     display: none;
@@ -741,6 +607,101 @@ body {
     border-radius: 4px;
     background: rgba(255,255,255,0.05);
     line-height: 1.3;
+}
+
+/* ==================== 手机端布局（方案B：纯 CSS 响应式，无 transform scale） ==================== */
+
+/* 手机竖屏：单列堆叠 */
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+    body { padding: 4px 8px 8px 8px; }
+    .title-container { position: static; padding: 4px 0 4px 0; }
+    .title-container h1 { font-size: 1rem; }
+    .title-container .subtitle { font-size: 0.65rem; }
+    #scale-wrapper { width: 100% !important; height: auto !important; transform: none !important; }
+    .container { max-width: 100%; }
+    .main-display { flex-direction: column; align-items: center; gap: 6px; }
+    .svg-wrap { padding: 6px; }
+    #char-svg { width: 180px; height: 180px; }
+    #sup-mini-box { top: 2px !important; right: 2px !important; padding: 2px !important; border-radius: 4px !important; }
+    #sup-mini-box > div { font-size: 7px !important; margin-bottom: 1px !important; }
+    #sup-mini-svg { width: 30px !important; height: 30px !important; }
+    .stroke-nav { gap: 4px; flex-wrap: wrap; justify-content: center; }
+    .stroke-nav button { padding: 3px 10px; font-size: 12px; }
+    .stroke-nav span { font-size: 12px; }
+    .input-section { width: 100%; }
+    #char-input { font-size: 16px; width: 6rem; padding: 0.25rem 0.5rem; }
+    #prev-btn, #next-btn { font-size: 0.85rem; padding: 0.35rem 0.8rem; }
+    .info-panel { max-width: 100%; min-width: 0; width: 100%; display: flex; flex-direction: column; }
+    .info-panel .info-card:nth-child(2) { order: -1; }
+    #article-panel { width: 100%; flex-shrink: 0; order: -2; }
+    .wubi-keyboard { padding: 4px; margin-top: 8px; }
+    .keyboard-row { gap: 2px; margin-bottom: 2px; }
+    .key { min-width: 28px; max-width: 38px; height: 42px; border-width: 1px; }
+    .key.active { border-width: 2px; }
+    .key-top { gap: 2px; margin-bottom: 2px; }
+    .key-letter { font-size: 1rem; }
+    .key-jianma { font-size: 0.625rem; }
+    .key-hint { font-size: 0.5rem; line-height: 1.1; }
+    .key-name { font-size: 0.65rem; }
+    .lib-toggle { width: 32px; height: 32px; font-size: 14px; top: 6px; right: 6px; }
+    .side-panel { width: 160px; }
+    .root-legend li { font-size: 13px; padding: 3px 6px; gap: 6px; }
+    .root-name { font-size: 15px; min-width: 20px; }
+    .root-color-dot { width: 12px; height: 12px; }
+    .root-code { font-size: 11px; }
+    .root-kouju { font-size: 11px !important; margin-left: 4px !important; }
+    .root-stroke-count { font-size: 10px; }
+    .sup-badge { font-size: 8px !important; padding: 0 2px !important; margin-left: 2px !important; }
+    #multi-char-cards { margin-top: 8px; padding: 10px; }
+    .multi-card { width: 110px; padding: 8px; }
+    .multi-card-svg-wrap { width: 80px; height: 80px; }
+    .multi-card-svg { width: 80px; height: 80px; }
+    .multi-card-code { font-size: 15px; }
+}
+
+/* 手机横屏：左右分栏 */
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+    body { padding: 2px 8px 6px 8px; }
+    .title-container { position: static; padding: 2px 0 4px 0; }
+    .title-container h1 { font-size: 0.9rem; }
+    .title-container .subtitle { display: none; }
+    #scale-wrapper { width: 100% !important; height: auto !important; transform: none !important; }
+    .container { max-width: 100%; }
+    .main-display { flex-direction: row; align-items: flex-start; gap: 8px; flex-wrap: nowrap; }
+    .char-display { flex-shrink: 0; }
+    .svg-wrap { padding: 4px; }
+    #char-svg { width: 140px; height: 140px; }
+    #sup-mini-box { top: 2px !important; right: 2px !important; padding: 2px !important; border-radius: 4px !important; }
+    #sup-mini-box > div { font-size: 7px !important; margin-bottom: 1px !important; }
+    #sup-mini-svg { width: 26px !important; height: 26px !important; }
+    .stroke-nav { gap: 3px; flex-wrap: wrap; justify-content: center; }
+    .stroke-nav button { padding: 2px 8px; font-size: 11px; }
+    .stroke-nav span { font-size: 11px; }
+    .input-section { width: auto; }
+    #char-input { font-size: 16px; width: 5rem; padding: 0.2rem 0.4rem; }
+    #prev-btn, #next-btn { font-size: 0.75rem; padding: 0.25rem 0.6rem; }
+    .info-panel { flex: 1; min-width: 0; max-width: 55%; display: flex; flex-direction: column; }
+    .info-panel .info-card:nth-child(2) { order: -1; }
+    #article-panel { width: 100%; flex-shrink: 0; order: 2; }
+    .wubi-keyboard { padding: 3px; margin-top: 6px; }
+    .keyboard-row { gap: 2px; margin-bottom: 2px; }
+    .key { min-width: 24px; max-width: 34px; height: 36px; border-width: 1px; }
+    .key.active { border-width: 2px; }
+    .key-top { gap: 2px; margin-bottom: 1px; }
+    .key-letter { font-size: 0.85rem; }
+    .key-jianma { font-size: 0.55rem; }
+    .key-hint { font-size: 0.45rem; line-height: 1.1; }
+    .key-name { font-size: 0.6rem; }
+    .lib-toggle { width: 28px; height: 28px; font-size: 12px; top: 4px; right: 4px; }
+    .side-panel { width: 140px; }
+    .root-legend li { font-size: 11px; padding: 2px 5px; gap: 5px; }
+    .root-name { font-size: 13px; min-width: 18px; }
+    .root-color-dot { width: 10px; height: 10px; }
+    .root-code { font-size: 9px; }
+    .root-kouju { font-size: 9px !important; margin-left: 3px !important; }
+    .root-stroke-count { font-size: 9px; }
+    .sup-badge { font-size: 7px !important; padding: 0 2px !important; margin-left: 2px !important; }
+    #multi-char-cards { margin-top: 6px; padding: 8px; }
 }
 
 </style>
@@ -873,6 +834,12 @@ body {
 <button class="lib-toggle" id="lib-toggle" onclick="toggleLibPanels()" title="收起字库">✕</button>
 
 <script>
+// ==================== 设备检测 ====================
+// 用 CSS 媒体查询检测触摸设备（hover:none + pointer:coarse），避免 UA 字符串判断
+function isTouchDevice() {
+    return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+
 // ==================== 五笔字根颜色 ====================
 const ROOT_COLORS = ['#E74C3C','#FF9800','#27AE60','#3498DB'];
 
@@ -899,11 +866,11 @@ const RADICAL_STROKES = {
      '皮前':3,'兴头':4,'⺌':3,'㇀':1,'㇆':1,'㇔':1,'㇇':1,'𠃌':1,'𠄌':1,'㇟':1,'⺄':1,'力':2,'䒑':3,
     '𠂆':2,'𠂇':2,'艮下':3,'コ':2,'氺侧':4,'⺀':2,'〢':2,'𠚤':3,'㇄':2,'㔾':2,'氺':5,
     '古':5,'𰀪':2,'𠄎':1,'𠆢':2,'龶':4,'貝':7,'ス':2,'𧘇':4,'龴':2,'卄':3,
-     '𧰨':6,'豕':7,'豸头':3,'豸底':4,'冎':5,'冎右':6,'冃':4,'⺮':6,'川':3,'甲':5,'上':3,'𤣩':4,'弋':3,'由':5,
+     '𧰨':6,'豕':7,'豸头':3,'豸底':4,'骨头':5,'咼头':6,'冃':4,'⺮':6,'川':3,'甲':5,'上':3,'𤣩':4,'弋':3,'由':5,
      '𫩏':4,'具头':6,'𡭔':3,'長头':5,'艮底':3,'尤前':3,'龰':4,'戋':5,'立头':4,'蒐中':6,
       '龷':4,'巳':3,'羽':6,'虎头':4,'𦥑':7,    '𠃍':1,'㇂':1,'𠃊':1,'舟底':5,'匸':2,'𠘨':2,'亻':2,'㐅':2,'朩':4,'爫':4,'𰀁':3,'乃':2,'馬':10,'𠃜':4,'镸':7,'了':2,'鱼头':7,'㣺':4,'':2,
        '囟':6,'比':4,'丙':5,'𡆧':6,'𠘧':2,'𠂊':2,'彡':3,'龵':4,'𫶧':3,'𭕄':3,'𠤎':2,'𬼖框':3,'巟':6,'禸内':3,'㦮':6,'丅':2,'祭头':6,'辛':7,'県头':6,'艹':4,'巜':2,'㠯':5,'𩵋':10,
-     '龜头':2, '婁头':8, '虛底头':5,
+      '龜头':2, '婁头':8, '虛底头':5, '眾中':2,
     '釒':8
 };
 // 成字字根：报户口规则，无识别码（常见部分）
@@ -961,7 +928,7 @@ const RADICAL_CHARS = new Set([
     '止','夕','丬','𱼀',
     // 特殊字根
     '⺀','丆','𠚤','巛','巜','𠄐','龴','卄','龰','𠧒','𠘧','龵','𰀪',
-      '𣥂','立头','蒐中','爫','豕','豸头','豸底','冎','冎右','彳','彐','𦥑','䒑','〢','龷','癶','凸头','夂','厶','孑','𭕄','巟','禸内','㦮','祭头','⺄','㣺','県头','','艹','虛底头',
+      '𣥂','立头','蒐中','爫','豕','豸头','豸底','骨头','咼头','彳','彐','𦥑','䒑','〢','龷','癶','凸头','夂','厶','孑','𭕄','巟','禸内','㦮','祭头','⺄','㣺','県头','','艹','虛底头','眾中',
     // 报户口缺少的字根
      '丁','上','丨','乃','之','九','彡','弓','馬','𠃜','镸','鱼头','𠤎','𬼖框','丅','龜头'
 ]);
@@ -1442,7 +1409,7 @@ const WUBI = {
     '靠':{c:'TFKD',r:['告','非']},
     '沤':{c:'IAQY',r:['氵','区']},
     '淮':{c:'IWYG',r:['氵','隹']},
-    '分':{c:'WVR',r:['八','刀']},
+    '分':{c:'WVB',r:['八','刀']},
     '还': {c:'GIPI', r:['不','辶']},
     // ========== 🆕 高频字补充（2026-04-30，前200常用字） ==========
     '于':{c:'GFK',r:['一','十']},
@@ -2022,7 +1989,7 @@ const WUBI = {
     '冋': {c:'MKD', r:['冂', '口']},
     '册': {c:'MMGD', r:['冂', '冂', '一']},
     '再': {c:'GMFD', r:['一', '冉']},
-     '冎': {c:'MNMB', r:['冎', '冂', '𠃍', '冂']},
+     '冎': {c:'MNMB', r:['冂', '𠃍', '冂']},
     '冏': {c:'MWKD', r:['冂', '八', '口']},
     '冑': {c:'MEF', r:['由', '冃']},
     '冓': {c:'FJGF', r:['井','一','冂','土']},
@@ -2078,13 +2045,13 @@ const WUBI = {
     '凶': {c:'QBK', r:['凵', '㐅']},
     '凸': {c:'HGMG', r:['丨', '一', '凸头', '一']},
     '凹': {c:'MMGD', r:['几', '几', '一']},
-    '击': {c:'FMK', r:['𰀁','凵']},
+    '击': {c:'FMK', r:['二','山']},
     '凼': {c:'IBK', r:['水','凵']},
     '函': {c:'BIBK', r:['了', '氺侧', '凵']},
-    '凿': {c:'OGUB', r:['凵', '丵']},
+    '凿': {c:'OGUB', r:['业','䒑','十','凵']},
     '刁': {c:'NGD', r:['𠃌', '㇀']},
     '刂': {c:'JHH', r:['刂', '丨', '亅']},
-    '刅': {c:'VWI', r:['刃', '丶']},
+    '刅': {c:'VWI', r:['刀', '八']},
     '切': {c:'AVN', r:['七', '刀']},
     '刈': {c:'QJH', r:['㐅', '刂']},
     '刊': {c:'FJH', r:['干', '刂']},
@@ -2381,7 +2348,7 @@ const WUBI = {
     '咴': {c:'KDOY', r:['口', '灰']},
     '咸': {c:'DGKT', r:['厂', '一', '口', '㇂', '丶', '丿']},
     '咻': {c:'KWSY', r:['口', '休']},
-    '咼': {c:'MNMK', r:['冎右','口']},
+    '咼': {c:'MNMK', r:['冂', '丅', '冂', '口']},
     '咽': {c:'KLDY', r:['口', '因']},
     '咾': {c:'KFTX', r:['口', '老']},
     '咿': {c:'KWVT', r:['口', '伊']},
@@ -6125,7 +6092,7 @@ const WUBI = {
     '眺': {c:'HIQN', r:['目', '兆']},
     '眼': {c:'HVEY', r:['目', '艮']},
     '眽': {c:'HREY', r:['目', '𠂆', '𧘇']},
-    '眾': {c:'LWWY', r:['罒', '乑']},
+    '眾': {c:'LWWY', r:['罒','人','人','眾中']},
     '睁': {c:'HQVH', r:['目', '争']},
     '睃': {c:'HCWT', r:['目', '夋']},
     '睇': {c:'HUXT', r:['目', '弟']},
@@ -10179,8 +10146,8 @@ const WUBI = {
     '骥': {c:'CUXW', r:['马', '冀']},
     '骦': {c:'CFSH', r:['马', '霜']},
     '骧': {c:'CYKE', r:['马', '襄']},
-    '骨': {c:'MEF', r:['冎','冃']},
-     '骯': {c:'MEYM', r:['冎右', '月', '亠', '几']},
+    '骨': {c:'MEF', r:['骨头','冃']},
+     '骯': {c:'MEYM', r:['咼头', '月', '亠', '几']},
     '骰': {c:'MEMC', r:['骨', '殳']},
     '骱': {c:'MEWJ', r:['骨', '介']},
     '骶': {c:'MEQY', r:['骨', '氐']},
@@ -10195,11 +10162,11 @@ const WUBI = {
     '髋': {c:'MEPQ', r:['骨', '宽']},
     '髌': {c:'MEPW', r:['骨', '宾']},
     '髑': {c:'MELJ', r:['骨', '蜀']},
-     '髒': {c:'MEAA', r:['冎右', '月', '艹', '死', '廾']},
+     '髒': {c:'MEAA', r:['咼头', '月', '艹', '死', '廾']},
     '髓': {c:'MEDP', r:['骨', '遀']},
-     '體': {c:'MEMU', r:['冎右', '月', '豊']},
-     '髕': {c:'MEPM', r:['冎右', '月', '賓']},
-     '髖': {c:'MEPY', r:['冎右', '月', '寬']},
+     '體': {c:'MEMU', r:['咼头', '月', '豊']},
+     '髕': {c:'MEPM', r:['咼头', '月', '賓']},
+     '髖': {c:'MEPY', r:['咼头', '月', '寬']},
     '髟': {c:'DET', r:['镸', '彡']},
     '髡': {c:'DEGQ', r:['髟', '兀']},
     '髦': {c:'DETN', r:['髟', '毛']},
@@ -10441,7 +10408,7 @@ const WUBI = {
     '鶴': {c:'PWYO', r:['隺', '鳥']},
     '鶹': {c:'QYVO', r:['留', '鳥']},
     '鶺': {c:'IWEO', r:['脊', '鳥']},
-     '鶻': {c:'MEWO', r:['冎右', '月', '鳥']},
+     '鶻': {c:'MEWO', r:['咼头', '月', '鳥']},
     '鶼': {c:'UVOO', r:['兼', '鳥']},
     '鷀': {c:'UXXO', r:['兹', '鳥']},
     '鷂': {c:'ERMO', r:['䍃', '鳥']},
@@ -10668,7 +10635,7 @@ const WUBI = {
 
 // 全局常量：需要非连续笔画分配的字（万、母、那）
 // 注：含'匚'字根的字（区、欧、沤等）由 roots.includes('匚') 自动检测，无需列入
-const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','嗇','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','舞','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁','垂','喪','噩','爾','畿','帶','齊','樂','盥','無','韋','甴','㠯','燕','翰','犮','巫','豐','彧','豳','齑','櫱']);
+const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','嗇','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','舞','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁','垂','喪','噩','爾','畿','帶','齊','樂','盥','無','韋','甴','㠯','燕','翰','犮','巫','豐','彧','豳','齑','櫱','眾','冢']);
 
 // ==================== 计算五笔识别码 ====================
 // 根据末笔和字型计算识别码
@@ -11314,8 +11281,9 @@ function detectWeiStructureSimple(char, wubiData, totalStrokes, expandedRoots) {
         const miKaoInWei =
             miIdxForWei !== -1 && miIdxForWei < radicals.length - 1;
         // 回结构：囗+口+后续字根（禀=亠+回+示），囗只包围口，示在框外
+        // weiIdx>0：囗前有字根时才触发（圆/圆=囗+口+貝/贝，囗是首字根，貝/贝在框内）
         const huiContentInWei =
-            radicals[weiIdx + 1] === '口' && weiIdx + 2 < radicals.length;
+            weiIdx > 0 && radicals[weiIdx + 1] === '口' && weiIdx + 2 < radicals.length;
         if (crossOnlyInWei || renMinInWei || daXinInWei || miKaoInWei) {
             // 米+丂结构：囗只包围米，丂在框外，weiInnerEnd 到米的下一个位置
             if (miKaoInWei) {
@@ -12192,6 +12160,45 @@ function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset
         result[8] = strokeOffset + 4;   // 第9笔 → コ(4)
         for (let i = 9; i < 16; i++) result[i] = strokeOffset + 5;  // 第10-16笔 → 辛(5)
         for (let i = 16; i < 20; i++) result[i] = strokeOffset + 6; // 第17-20笔 → 木(6)
+        return result;
+    }
+
+    // ===== 眾字特殊处理 =====
+    // 眾：r=['罒','人','人','眾中']，11笔
+    // 前5笔→罒(0)，第8-9笔→人(1)，第10-11笔→人(2)，第6-7笔→眾中(3)
+    if (currentChar === '眾' && roots.length === 4
+        && roots[0] === '罒' && roots[1] === '人' && roots[2] === '人' && roots[3] === '眾中' && n === 11) {
+        const result = new Array(11);
+        result[0] = strokeOffset + 0;   // 第1笔 → 罒(0)
+        result[1] = strokeOffset + 0;   // 第2笔 → 罒(0)
+        result[2] = strokeOffset + 0;   // 第3笔 → 罒(0)
+        result[3] = strokeOffset + 0;   // 第4笔 → 罒(0)
+        result[4] = strokeOffset + 0;   // 第5笔 → 罒(0)
+        result[5] = strokeOffset + 3;   // 第6笔 → 眾中(3)
+        result[6] = strokeOffset + 3;   // 第7笔 → 眾中(3)
+        result[7] = strokeOffset + 1;   // 第8笔 → 人(1)
+        result[8] = strokeOffset + 1;   // 第9笔 → 人(1)
+        result[9] = strokeOffset + 2;   // 第10笔 → 人(2)
+        result[10] = strokeOffset + 2;  // 第11笔 → 人(2)
+        return result;
+    }
+
+    // ===== 冢字特殊处理 =====
+    // 冢：r=['冖','豕','丶']，10笔
+    // 第8笔(索引7)属于丶(2)，其余按笔顺
+    if (currentChar === '冢' && roots.length === 3
+        && roots[0] === '冖' && roots[1] === '豕' && roots[2] === '丶' && n === 10) {
+        const result = new Array(10);
+        result[0] = strokeOffset + 0;   // 第1笔 → 冖(0)
+        result[1] = strokeOffset + 0;   // 第2笔 → 冖(0)
+        result[2] = strokeOffset + 1;   // 第3笔 → 豕(1)
+        result[3] = strokeOffset + 1;   // 第4笔 → 豕(1)
+        result[4] = strokeOffset + 1;   // 第5笔 → 豕(1)
+        result[5] = strokeOffset + 1;   // 第6笔 → 豕(1)
+        result[6] = strokeOffset + 1;   // 第7笔 → 豕(1)
+        result[7] = strokeOffset + 2;   // 第8笔 → 丶(2)
+        result[8] = strokeOffset + 1;   // 第9笔 → 豕(1)
+        result[9] = strokeOffset + 1;   // 第10笔 → 豕(1)
         return result;
     }
 
@@ -13251,6 +13258,15 @@ const CUSTOM_STROKE_ORDER = {
         swapLast: true,
         swapScope: 'roots'  // 只交换力字根部分的末两笔，不交换整体字的末两笔
     },
+    '刀': {
+        // 刀：与力同理，报户口(刀)+第1笔(㇆)+第2笔(丿)，交换最后两笔
+        condition: (wubi, currentChar) => {
+            const r = wubi.r;
+            return r.length >= 2 && r[r.length-2] === '㇆' && r[r.length-1] === '丿';
+        },
+        swapLast: true,
+        swapScope: 'roots'  // 只交换刀字根部分的末两笔
+    },
     '乃': {
         // 乃：标准笔顺 𠄎(横折折折钩)→丿(撇)，五笔拆分 报户口(乃)+丿(T)+𠄎(N识别码)，交换最后两笔
         condition: (wubi, currentChar) => {
@@ -13365,7 +13381,7 @@ function scalePath(pathStr, scale, offsetX, offsetY) {
     });
 }
 
-const dataSource = {}; // 'bundle' 或 'cdn'
+const dataSource = {}; // 'bundle' 'local' 或 'cdn'
 async function fetchCharData(char) {
     if (cachedData[char]) return cachedData[char];
     // 1. 优先从bundle（内联数据，file://也可用）
@@ -13374,7 +13390,18 @@ async function fetchCharData(char) {
         dataSource[char] = 'bundle';
         return cachedData[char];
     }
-    // 2. 回退到CDN
+    // 2. 尝试本地 data/ 目录（解决微信浏览器CDN被拦截问题）
+    try {
+        const localUrl = `data/${encodeURIComponent(char)}.json`;
+        const localResp = await fetch(localUrl);
+        if (localResp.ok) {
+            const localData = await localResp.json();
+            cachedData[char] = localData;
+            dataSource[char] = 'local';
+            return localData;
+        }
+    } catch (_) {}
+    // 3. 回退到CDN
     const url = `https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${encodeURIComponent(char)}.json`;
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`未找到"${char}"的笔画数据`);
@@ -13705,7 +13732,7 @@ async function loadAndRender(ch) {
         // 此分支处理报户口字符（力、乃等），报户口字根覆盖全部笔画，
         // 物理交换笔画顺序使显示与标准笔顺一致
         // 非连续字根已通过 autoDetectNonContinuous 统一处理，不走此路径
-        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2) {
+        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2 && currentChar !== '刀') {
             const n = strokes.length;
             // 只交换物理笔画顺序（strokes），不交换 strokeRootMap
             // strokeRootMap 按字根顺序对应笔画索引，交换 strokes 后映射关系自动正确
@@ -14091,10 +14118,13 @@ function initStrokeRootMap() {
         }
     }
     
-    if (NON_CONTINUOUS_CHARS.has(currentChar) ||
+    // ========== 囗结构排除：NC预检应该跳过囗结构字，由后面的囗检测统一处理 ==========
+    const _hasWeiInOriginal = wubiData?.r?.includes('囗');
+    
+    if (!_hasWeiInOriginal && (NON_CONTINUOUS_CHARS.has(currentChar) ||
         roots.some((_, i) => i <= 1 && i + 1 < roots.length && roots[i] === '十' && roots[i+1] === '戈') ||
         (roots.includes('戈') && roots.indexOf('戈') >= 1 && roots.indexOf('戈') < roots.length - 1 &&
-         !roots.some((_, i) => i <= 1 && roots[i] === '十' && roots[i+1] === '戈'))) {
+         !roots.some((_, i) => i <= 1 && roots[i] === '十' && roots[i+1] === '戈')))) {
         const _expandedRootsNC = recursivelyExpandRoots(roots);
         const supIndices = WUBI[currentChar]?.sup || [];
         const nonConMap = autoDetectNonContinuous(currentChar, _expandedRootsNC, n, supIndices, 0);
@@ -14177,8 +14207,9 @@ function initStrokeRootMap() {
                     const congXinInWei =
                         expanded[weiIdx + 1] === '𠚤' && expanded[weiIdx + 2] === '心';
                     // 回结构：囗+口+其他父字根内容（禀=亠+回+示），囗只包围口，示/禾在框外
+                    // weiIdx>0：囗前有字根时才触发（圆/圆=囗+口+貝/贝，囗是首字根，貝/贝在框内）
                     const huiContentInWei =
-                        expanded[weiIdx + 1] === '口' && weiIdx + 2 < expanded.length;
+                        weiIdx > 0 && expanded[weiIdx + 1] === '口' && weiIdx + 2 < expanded.length;
                     if (crossOnlyInWei || renMinInWei || daXinInWei || congXinInWei || huiContentInWei) {
                         weiInnerEnd = weiIdx + 2;
                     }
@@ -15304,7 +15335,7 @@ function renderInfo() {
         // 直接从rootColorMap取颜色字符串，避免存索引导致0值falsy问题
         return rootColorMap[codeIdx] || '#555';
     });
-    if (currentChar === '哥' || currentChar === '奇' || currentChar === '孚' || currentChar === '酉' || currentChar === '戊' || currentChar === '戳' || currentChar === '靠' || currentChar === '摁' || currentChar === '鹵' || currentChar === '県' || currentChar === '歌' || currentChar === '战' || currentChar === '麥' || currentChar === '蘩' || currentChar === '繁' || currentChar === '海' || currentChar === '每' || currentChar === '嗨' || currentChar === '酶' || currentChar === '鳘' || currentChar === '毓' || currentChar === '敏' || currentChar === '蔬' || currentChar === '疏' || currentChar === '止' || currentChar === '嗇' || currentChar === '牆' || currentChar === '薔' || currentChar === '穡' || currentChar === '闈' || currentChar === '偉' || currentChar === '圍' || currentChar === '韓') {
+    if (currentChar === '哥' || currentChar === '奇' || currentChar === '孚' || currentChar === '酉' || currentChar === '戊' || currentChar === '戳' || currentChar === '靠' || currentChar === '摁' || currentChar === '鹵' || currentChar === '県' || currentChar === '歌' || currentChar === '战' || currentChar === '麥' || currentChar === '蘩' || currentChar === '繁' || currentChar === '海' || currentChar === '每' || currentChar === '嗨' || currentChar === '酶' || currentChar === '鳘' || currentChar === '毓' || currentChar === '敏' || currentChar === '蔬' || currentChar === '疏' || currentChar === '止' || currentChar === '嗇' || currentChar === '牆' || currentChar === '薔' || currentChar === '穡' || currentChar === '闈' || currentChar === '偉' || currentChar === '圍' || currentChar === '韓' ) {
         console.log('[DEBUG' + currentChar + '] strokeRootMapForDisplay=' + JSON.stringify(strokeRootMapForDisplay));
         console.log('[DEBUG' + currentChar + '] expandedRootToCodeIndex=' + JSON.stringify(expandedRootToCodeIndex));
         console.log('[DEBUG' + currentChar + '] strokeColorMap=' + JSON.stringify(strokeColorMap));
@@ -15395,7 +15426,7 @@ function renderInfo() {
         // 乃字例外：笔画需要交换，但字根着色区的字根列表不交换
         const rootCustom = CUSTOM_STROKE_ORDER[currentChar];
         let displayRoots = [...roots];
-        if (rootCustom && rootCustom.swapLast && currentChar !== '乃' && wubiData && rootCustom.condition(wubiData, currentChar) && displayRoots.length > 2) {
+        if (rootCustom && rootCustom.swapLast && currentChar !== '乃' && currentChar !== '刀' && wubiData && rootCustom.condition(wubiData, currentChar) && displayRoots.length > 2) {
             const n = displayRoots.length;
             [displayRoots[n-2], displayRoots[n-1]] = [displayRoots[n-1], displayRoots[n-2]];
             [rootToCodeIndex[n-2], rootToCodeIndex[n-1]] = [rootToCodeIndex[n-1], rootToCodeIndex[n-2]];
@@ -15585,7 +15616,14 @@ function renderKeyboard() {
 }
 
 // ==================== 字库渲染（左右两栏） ====================
-let libExpanded = true;
+let libExpanded = !isTouchDevice();
+// 手机端默认收起字库栏：同步 DOM 状态
+if (!libExpanded) {
+    document.getElementById('lib-panel-left')?.classList.add('collapsed');
+    document.getElementById('lib-panel-right')?.classList.add('collapsed');
+    const btn = document.getElementById('lib-toggle');
+    if (btn) { btn.textContent = '📚'; btn.title = '展开字库'; }
+}
 
 function toggleLibPanels() {
     libExpanded = !libExpanded;
@@ -15656,14 +15694,10 @@ function renderCharLibrary() {
     document.getElementById('lib-grid-left').innerHTML = leftChars.map(makeCell).join('');
     document.getElementById('lib-grid-right').innerHTML = rightChars.map(makeCell).join('');
 
-    // 自动滚动到当前选中的字（手机竖屏禁用，scale 缩放容器内 scrollIntoView 会导致页面跳动）
-    const _isPhone = window.innerWidth <= 800 && window.innerHeight > window.innerWidth;
-    if (!_isPhone) {
-        requestAnimationFrame(() => {
-            const activeCell = document.querySelector('.char-cell.active');
-            if (activeCell) activeCell.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-        });
-    }
+    requestAnimationFrame(() => {
+        const activeCell = document.querySelector('.char-cell.active');
+        if (activeCell) activeCell.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    });
 }
 
 function selectChar(ch) {
@@ -15757,9 +15791,7 @@ function showStrokeSelector(strokeIdx, event) {
     const assigns = document.querySelectorAll('.assign-row');
     if (assigns[strokeIdx]) {
         assigns[strokeIdx].style.background = 'rgba(100,100,200,0.3)';
-        if (!(window.innerWidth <= 800 && window.innerHeight > window.innerWidth)) {
-            assigns[strokeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+        assigns[strokeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         const select = assigns[strokeIdx].querySelector('.assign-select');
         if (select) select.focus();
         setTimeout(() => { assigns[strokeIdx].style.background = ''; }, 2000);
@@ -16289,9 +16321,8 @@ function updateArticleChipsHighlight() {
         const idx = parseInt(chip.dataset.idx);
         chip.classList.toggle('active', idx === articleIndex);
     });
-    // 滚动到当前chip（手机竖屏禁用，避免 scale 容器内跳动）
     const activeChip = document.querySelector('.article-char-chip.active');
-    if (activeChip && !(window.innerWidth <= 800 && window.innerHeight > window.innerWidth)) {
+    if (activeChip) {
         activeChip.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
 }
@@ -16526,45 +16557,21 @@ function togglePracticeMode(on) {
     const BODY_PAD_H = 30;  // 上下 padding 之和
 
     function applyScale() {
-        const isPortraitPhone = window.innerWidth <= 800 && window.innerHeight > window.innerWidth;
-
-        // ===== 手机竖屏：不用 transform scale，由 CSS 媒体查询处理布局 =====
-        if (isPortraitPhone) {
-            // 清空所有桌面端设置的 inline style，让 CSS 媒体查询接管
+        // ===== 触摸设备：跳过 transform scale，由 CSS 媒体查询接管 =====
+        if (isTouchDevice()) {
             wrapper.style.transform = '';
             wrapper.style.transformOrigin = '';
             wrapper.style.width = '';
             wrapper.style.height = '';
             wrapper.style.marginTop = '';
-
             const container = document.querySelector('.container');
-            container.style.minHeight = '';
-            container.style.display = '';
-            container.style.flexDirection = '';
-            container.style.justifyContent = '';
-
-            const keyboard = document.getElementById('wubi-keyboard');
-            if (keyboard) keyboard.style.marginTop = '';
-
-            // 标题：CSS 媒体查询已改为 static，清空 inline style
+            if (container) { container.style.minHeight = ''; container.style.display = ''; }
             const tc = document.querySelector('.title-container');
             if (tc) { tc.style.transform = ''; tc.style.left = ''; tc.style.top = ''; }
-
-            // toggle：清空 inline scale，由 CSS 媒体查询处理
             const toggle = document.getElementById('lib-toggle');
             if (toggle) { toggle.style.transform = ''; toggle.style.right = ''; toggle.style.top = ''; }
-
-            // input：CSS 已设 font-size:16px，清空 inline style
-            const ci = document.getElementById('char-input');
-            if (ci) { ci.style.fontSize = ''; }
-
-            // 面板：清空 inline style
-            const leftPanel = document.getElementById('lib-panel-left');
-            const rightPanel = document.getElementById('lib-panel-right');
-            if (leftPanel) { leftPanel.style.top = ''; leftPanel.style.maxHeight = ''; leftPanel.style.height = ''; }
-            if (rightPanel) { rightPanel.style.top = ''; rightPanel.style.maxHeight = ''; rightPanel.style.height = ''; }
-
-            return; // 不执行任何 scale
+            wrapper.offsetHeight;
+            return;
         }
 
         // ===== 桌面端：用 transform scale 缩放 =====
@@ -16586,7 +16593,7 @@ function togglePracticeMode(on) {
         container.style.justifyContent = '';
         if (keyboard) keyboard.style.marginTop = '';
 
-        // 面板：清空手机端 inline style
+        // 面板
         const leftPanel = document.getElementById('lib-panel-left');
         const rightPanel = document.getElementById('lib-panel-right');
         if (leftPanel) { leftPanel.style.top = ''; leftPanel.style.maxHeight = ''; leftPanel.style.height = ''; }
@@ -16610,30 +16617,17 @@ function togglePracticeMode(on) {
             toggle.style.top = (12 * ratio) + 'px';
         }
 
-        // input：清空手机端 inline style
         const ci = document.getElementById('char-input');
         if (ci) ci.style.fontSize = '';
 
-        wrapper.offsetHeight; // force reflow
-    }
-
-    // 手机竖屏默认收起字库侧边栏（仅初始化一次，用户可手动展开）
-    const _isPortraitInit = window.innerWidth <= 800 && window.innerHeight > window.innerWidth;
-    if (_isPortraitInit && typeof libExpanded !== 'undefined' && libExpanded) {
-        libExpanded = false;
-        const _lp = document.getElementById('lib-panel-left');
-        const _rp = document.getElementById('lib-panel-right');
-        const _btn = document.getElementById('lib-toggle');
-        if (_lp) _lp.classList.add('collapsed');
-        if (_rp) _rp.classList.add('collapsed');
-        if (_btn) { _btn.textContent = '📚'; _btn.title = '展开字库'; }
+        wrapper.offsetHeight;
     }
 
     // 页面加载时执行
     applyScale();
 
-    // 手机端/桌面端：多字拆分卡片定位
-    function adjustMobileLayout() {
+    // 多字拆分卡片定位
+    function adjustCardsLayout() {
         const multiCards = document.getElementById('multi-char-cards');
         const keyboard = document.getElementById('wubi-keyboard');
         if (!multiCards || !keyboard) return;
@@ -16642,30 +16636,49 @@ function togglePracticeMode(on) {
             keyboard.parentNode.insertBefore(multiCards, keyboard);
         }
     }
-    adjustMobileLayout();
-    window.addEventListener('load', function() { adjustMobileLayout(); });
+    adjustCardsLayout();
+    window.addEventListener('load', function() { adjustCardsLayout(); });
 
     // 页面完全加载后兜底重算一次
     window.addEventListener('load', function() {
         setTimeout(applyScale, 100);
     });
 
-    // 窗口大小变化时自适应缩放
-    let lastIsPortrait = (window.innerWidth <= 800 && window.innerHeight > window.innerWidth);
+    // 窗口大小变化时自适应缩放（含手机横竖屏旋转）
+    // 使用 requestAnimationFrame 延迟读取尺寸，避开 iOS 旋转瞬间 resize 返回旧值的 bug
     window.addEventListener('resize', function() {
-        const isPortrait = window.innerWidth <= 800 && window.innerHeight > window.innerWidth;
-        if (isPortrait !== lastIsPortrait) {
-            lastIsPortrait = isPortrait;
-            adjustMobileLayout();
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(applyScale, 100);
-        } else if (!isPortrait) {
-            // 桌面端：窗口尺寸变化时重算缩放
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(applyScale, 100);
-        }
-        // 手机端竖屏内（键盘弹收）：不触发
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            requestAnimationFrame(applyScale);
+        }, 150);
     });
+    // 旋转事件：优先使用现代 screen.orientation API，回退到废弃的 orientationchange
+    if (window.screen && screen.orientation && typeof screen.orientation.addEventListener === 'function') {
+        screen.orientation.addEventListener('change', function() {
+            clearTimeout(resizeTimer);
+            // 旋转后等待布局稳定再重算，300ms 避开 iOS 尺寸更新延迟
+            resizeTimer = setTimeout(function() {
+                requestAnimationFrame(applyScale);
+            }, 300);
+        });
+    } else {
+        // 旧浏览器回退
+        window.addEventListener('orientationchange', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                requestAnimationFrame(applyScale);
+            }, 300);
+        });
+    }
+    // visualViewport API：iOS Safari 自带浏览器最可靠的旋转检测
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                requestAnimationFrame(applyScale);
+            }, 150);
+        });
+    }
 })();
 
 // ==================== 改进的输入处理 (declared above) ====================
@@ -17031,8 +17044,8 @@ function computeMultiCardColors(ch, strokeList) {
             applyShaDianPieSwap();
         }
 
-        // swapScope:'roots' 交换（力、方、戋等）
-        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2) {
+        // swapScope:'roots' 交换（力、方、戋等；刀单独时不交换）
+        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2 && currentChar !== '刀') {
             const n = strokes.length;
             [strokes[n - 2], strokes[n - 1]] = [strokes[n - 1], strokes[n - 2]];
             if (NON_CONTINUOUS_CHARS.has(currentChar)) {
