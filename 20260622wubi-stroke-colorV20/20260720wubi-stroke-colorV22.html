@@ -12284,6 +12284,21 @@ function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset
         return result;
     }
 
+    // ===== 厉字特殊处理 =====
+    // 厉：r=['厂','万']，展开后['厂','丆','㇆']，5笔
+    // 万∈NC导致hasNCInOrigRoots误触通用首字根包裹分支
+    // 万为NC字符，应保留首尾包裹（丆首尾、㇆中间），与standalone厉一致
+    // 映射：厂(2笔) → 丆(首尾) → ㇆(中间) → [0,0,1,2,1]
+    if (currentChar === '厉' && n === 5) {
+        console.log('[DEBUG厉] autoDetectNonContinuous HIT! currentChar=', currentChar, 'roots=', JSON.stringify(roots), 'n=', n, 'strokeOffset=', strokeOffset, 'isEmbedded=', isEmbedded);
+        const result = new Array(5);
+        for (let i = 0; i < 2; i++) result[i] = strokeOffset + 0;
+        result[2] = strokeOffset + 1;
+        result[3] = strokeOffset + 2;
+        result[4] = strokeOffset + 1;
+        return result;
+    }
+
     // 查找第一个字根的笔画数（从 RADICAL_STROKES，含 OVERRIDE）
     // 注意：roots 是局部字根列表，strokeOffset 是全局起始索引，
     // 所以应取 roots[0] 而非 roots[strokeOffset]
@@ -13911,6 +13926,14 @@ async function loadAndRender(ch) {
                 }
                 strokeOffset += rootStrokeCount;
             }
+        }
+
+        // DEBUG 励
+        if (currentChar === '励') {
+            console.log('[DEBUG励] strokeRootMap=' + JSON.stringify(strokeRootMap));
+            console.log('[DEBUG励] strokeRootMapForDisplay=' + JSON.stringify(strokeRootMapForDisplay));
+            console.log('[DEBUG励] roots=' + JSON.stringify(roots));
+            console.log('[DEBUG励] strokes.length=' + strokes.length);
         }
 
         // 渲染
