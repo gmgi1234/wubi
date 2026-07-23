@@ -514,6 +514,140 @@ body {
     100% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(1.1); }
 }
 
+/* ========== 手机竖屏独立布局（不用 transform scale，原生流式布局） ========== */
+@media (max-width: 800px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
+    body { padding: 6px 8px 8px 8px; }
+
+    /* 标题改为 static，不固定定位 */
+    .title-container { position: static; left: auto; top: auto; padding: 4px 0 6px 0; }
+    h1 { font-size: 1.05rem; }
+    .subtitle { font-size: 0.7rem; }
+
+    /* container 不限宽，flex 布局控制 main-display 和 keyboard 顺序 */
+    .container { max-width: 100%; display: flex; flex-direction: column; }
+
+    /* main-display 单列堆叠，文章面板排最后 */
+    .main-display { flex-direction: column; align-items: center; gap: 8px; }
+
+    /* 文章面板全宽，移到五笔编码区下面 */
+    #article-panel { width: 100%; flex-shrink: 0; order: 2; }
+
+    /* 多字拆分卡片移到文章模式前面（通过JS在手机端移动元素位置） */
+
+    /* SVG 缩小 */
+    .svg-wrap { padding: 6px; }
+    #char-svg { width: 180px; height: 180px; }
+    /* 补码框缩小，避免压到汉字 */
+    #sup-mini-box { top: 4px !important; right: 4px !important; padding: 2px !important; border-radius: 4px !important; }
+    #sup-mini-box > div { font-size: 7px !important; margin-bottom: 1px !important; }
+    #sup-mini-svg { width: 32px !important; height: 32px !important; }
+
+    /* 笔画导航缩小 */
+    .stroke-nav { gap: 4px; }
+    .stroke-nav button { padding: 3px 10px; font-size: 12px; }
+    .stroke-nav span { font-size: 12px; }
+
+    /* 输入区全宽，font-size≥16px 防止 iOS 自动缩放 */
+    .input-section { width: 100%; }
+    #char-input { font-size: 16px; width: 6rem; padding: 0.25rem 0.5rem; }
+    #prev-btn, #next-btn { font-size: 0.85rem; padding: 0.35rem 0.8rem; }
+
+    /* 信息面板全宽；五笔编码和字根着色交换位置 */
+    .info-panel { max-width: 100%; min-width: 0; width: 100%; display: flex; flex-direction: column; }
+    .info-panel .info-card:nth-child(2) { order: -1; }  /* 字根着色提到五笔编码前面 */
+
+    /* 键盘缩小 */
+    .wubi-keyboard { padding: 5px; margin-top: 8px; }
+    .keyboard-row { gap: 2px; margin-bottom: 2px; }
+    .key { min-width: 28px; max-width: 38px; height: 42px; border-width: 1px; }
+    .key.active { border-width: 2px; }
+    .key-top { margin-bottom: 1px; gap: 2px; }
+    .key-letter { font-size: 0.9rem; }
+    .key-jianma { font-size: 0.625rem; }
+    .key-hint { font-size: 0.5rem; line-height: 1.1; }
+
+    /* 字库切换按钮缩小 */
+    .lib-toggle { width: 32px; height: 32px; font-size: 14px; top: 6px; right: 6px; }
+
+    /* 字库侧边栏手机端窄一些 */
+    .side-panel { width: 140px; }
+
+    /* 字根着色区缩小字号和间距 */
+    .root-legend li { font-size: 13px; padding: 3px 6px; gap: 6px; }
+    .root-name { font-size: 16px; min-width: 20px; }
+    .root-color-dot { width: 12px; height: 12px; }
+    .root-code { font-size: 11px; }
+    .root-kouju { font-size: 11px !important; margin-left: 4px !important; }
+    .root-stroke-count { font-size: 10px; }
+    /* 补码标签缩小 */
+    .sup-badge { font-size: 8px !important; padding: 0 2px !important; margin-left: 2px !important; }
+}
+
+/* ==================== 手机横屏布局 ==================== */
+@media (max-width: 800px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+    body { padding: 4px 8px 6px 8px; }
+
+    /* 标题缩小 */
+    .title-container { position: static; left: auto; top: auto; padding: 2px 0 4px 0; }
+    h1 { font-size: 0.95rem; }
+    .subtitle { font-size: 0.65rem; }
+
+    /* container flex 布局 */
+    .container { max-width: 100%; display: flex; flex-direction: column; }
+
+    /* main-display 横向排列，左右分栏 */
+    .main-display { flex-direction: row; align-items: flex-start; gap: 8px; }
+
+    /* SVG 区左侧 */
+    .svg-wrap { padding: 4px; flex-shrink: 0; }
+    #char-svg { width: 160px; height: 160px; }
+    #sup-mini-box { top: 2px !important; right: 2px !important; padding: 2px !important; border-radius: 4px !important; }
+    #sup-mini-box > div { font-size: 7px !important; margin-bottom: 1px !important; }
+    #sup-mini-svg { width: 28px !important; height: 28px !important; }
+
+    /* 笔画导航缩小 */
+    .stroke-nav { gap: 3px; }
+    .stroke-nav button { padding: 2px 8px; font-size: 11px; }
+    .stroke-nav span { font-size: 11px; }
+
+    /* 输入区 */
+    .input-section { width: 100%; }
+    #char-input { font-size: 16px; width: 6rem; padding: 0.2rem 0.4rem; }
+    #prev-btn, #next-btn { font-size: 0.8rem; padding: 0.3rem 0.6rem; }
+
+    /* 信息面板右侧 */
+    .info-panel { flex: 1; min-width: 0; max-width: 50%; }
+    .info-panel .info-card:nth-child(2) { order: -1; }
+
+    /* 文章面板全宽放底部 */
+    #article-panel { width: 100%; flex-shrink: 0; order: 2; }
+
+    /* 键盘缩小 */
+    .wubi-keyboard { padding: 4px; margin-top: 6px; }
+    .keyboard-row { gap: 2px; margin-bottom: 2px; }
+    .key { min-width: 26px; max-width: 36px; height: 38px; border-width: 1px; }
+    .key.active { border-width: 2px; }
+    .key-top { margin-bottom: 1px; gap: 2px; }
+    .key-letter { font-size: 0.85rem; }
+    .key-jianma { font-size: 0.6rem; }
+    .key-hint { font-size: 0.5rem; line-height: 1.1; }
+
+    /* 字库切换按钮 */
+    .lib-toggle { width: 30px; height: 30px; font-size: 13px; top: 4px; right: 4px; }
+
+    /* 字库侧边栏 */
+    .side-panel { width: 130px; }
+
+    /* 字根着色区 */
+    .root-legend li { font-size: 12px; padding: 2px 5px; gap: 5px; }
+    .root-name { font-size: 15px; min-width: 18px; }
+    .root-color-dot { width: 11px; height: 11px; }
+    .root-code { font-size: 10px; }
+    .root-kouju { font-size: 10px !important; margin-left: 4px !important; }
+    .root-stroke-count { font-size: 9px; }
+    .sup-badge { font-size: 7px !important; padding: 0 2px !important; margin-left: 2px !important; }
+}
+
 /* ==================== 多汉字拆分卡片 ==================== */
 #multi-char-cards {
     display: none;
@@ -607,101 +741,6 @@ body {
     border-radius: 4px;
     background: rgba(255,255,255,0.05);
     line-height: 1.3;
-}
-
-/* ==================== 手机端布局（方案B：纯 CSS 响应式，无 transform scale） ==================== */
-
-/* 手机竖屏：单列堆叠 */
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-    body { padding: 4px 8px 8px 8px; }
-    .title-container { position: static; padding: 4px 0 4px 0; }
-    .title-container h1 { font-size: 1rem; }
-    .title-container .subtitle { font-size: 0.65rem; }
-    #scale-wrapper { width: 100% !important; height: auto !important; transform: none !important; }
-    .container { max-width: 100%; }
-    .main-display { flex-direction: column; align-items: center; gap: 6px; }
-    .svg-wrap { padding: 6px; }
-    #char-svg { width: 180px; height: 180px; }
-    #sup-mini-box { top: 2px !important; right: 2px !important; padding: 2px !important; border-radius: 4px !important; }
-    #sup-mini-box > div { font-size: 7px !important; margin-bottom: 1px !important; }
-    #sup-mini-svg { width: 30px !important; height: 30px !important; }
-    .stroke-nav { gap: 4px; flex-wrap: wrap; justify-content: center; }
-    .stroke-nav button { padding: 3px 10px; font-size: 12px; }
-    .stroke-nav span { font-size: 12px; }
-    .input-section { width: 100%; }
-    #char-input { font-size: 16px; width: 6rem; padding: 0.25rem 0.5rem; }
-    #prev-btn, #next-btn { font-size: 0.85rem; padding: 0.35rem 0.8rem; }
-    .info-panel { max-width: 100%; min-width: 0; width: 100%; display: flex; flex-direction: column; }
-    .info-panel .info-card:nth-child(2) { order: -1; }
-    #article-panel { width: 100%; flex-shrink: 0; order: -2; }
-    .wubi-keyboard { padding: 4px; margin-top: 8px; }
-    .keyboard-row { gap: 2px; margin-bottom: 2px; }
-    .key { min-width: 28px; max-width: 38px; height: 42px; border-width: 1px; }
-    .key.active { border-width: 2px; }
-    .key-top { gap: 2px; margin-bottom: 2px; }
-    .key-letter { font-size: 1rem; }
-    .key-jianma { font-size: 0.625rem; }
-    .key-hint { font-size: 0.5rem; line-height: 1.1; }
-    .key-name { font-size: 0.65rem; }
-    .lib-toggle { width: 32px; height: 32px; font-size: 14px; top: 6px; right: 6px; }
-    .side-panel { width: 160px; }
-    .root-legend li { font-size: 13px; padding: 3px 6px; gap: 6px; }
-    .root-name { font-size: 15px; min-width: 20px; }
-    .root-color-dot { width: 12px; height: 12px; }
-    .root-code { font-size: 11px; }
-    .root-kouju { font-size: 11px !important; margin-left: 4px !important; }
-    .root-stroke-count { font-size: 10px; }
-    .sup-badge { font-size: 8px !important; padding: 0 2px !important; margin-left: 2px !important; }
-    #multi-char-cards { margin-top: 8px; padding: 10px; }
-    .multi-card { width: 110px; padding: 8px; }
-    .multi-card-svg-wrap { width: 80px; height: 80px; }
-    .multi-card-svg { width: 80px; height: 80px; }
-    .multi-card-code { font-size: 15px; }
-}
-
-/* 手机横屏：左右分栏 */
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-    body { padding: 2px 8px 6px 8px; }
-    .title-container { position: static; padding: 2px 0 4px 0; }
-    .title-container h1 { font-size: 0.9rem; }
-    .title-container .subtitle { display: none; }
-    #scale-wrapper { width: 100% !important; height: auto !important; transform: none !important; }
-    .container { max-width: 100%; }
-    .main-display { flex-direction: row; align-items: flex-start; gap: 8px; flex-wrap: nowrap; }
-    .char-display { flex-shrink: 0; }
-    .svg-wrap { padding: 4px; }
-    #char-svg { width: 140px; height: 140px; }
-    #sup-mini-box { top: 2px !important; right: 2px !important; padding: 2px !important; border-radius: 4px !important; }
-    #sup-mini-box > div { font-size: 7px !important; margin-bottom: 1px !important; }
-    #sup-mini-svg { width: 26px !important; height: 26px !important; }
-    .stroke-nav { gap: 3px; flex-wrap: wrap; justify-content: center; }
-    .stroke-nav button { padding: 2px 8px; font-size: 11px; }
-    .stroke-nav span { font-size: 11px; }
-    .input-section { width: auto; }
-    #char-input { font-size: 16px; width: 5rem; padding: 0.2rem 0.4rem; }
-    #prev-btn, #next-btn { font-size: 0.75rem; padding: 0.25rem 0.6rem; }
-    .info-panel { flex: 1; min-width: 0; max-width: 55%; display: flex; flex-direction: column; }
-    .info-panel .info-card:nth-child(2) { order: -1; }
-    #article-panel { width: 100%; flex-shrink: 0; order: 2; }
-    .wubi-keyboard { padding: 3px; margin-top: 6px; }
-    .keyboard-row { gap: 2px; margin-bottom: 2px; }
-    .key { min-width: 24px; max-width: 34px; height: 36px; border-width: 1px; }
-    .key.active { border-width: 2px; }
-    .key-top { gap: 2px; margin-bottom: 1px; }
-    .key-letter { font-size: 0.85rem; }
-    .key-jianma { font-size: 0.55rem; }
-    .key-hint { font-size: 0.45rem; line-height: 1.1; }
-    .key-name { font-size: 0.6rem; }
-    .lib-toggle { width: 28px; height: 28px; font-size: 12px; top: 4px; right: 4px; }
-    .side-panel { width: 140px; }
-    .root-legend li { font-size: 11px; padding: 2px 5px; gap: 5px; }
-    .root-name { font-size: 13px; min-width: 18px; }
-    .root-color-dot { width: 10px; height: 10px; }
-    .root-code { font-size: 9px; }
-    .root-kouju { font-size: 9px !important; margin-left: 3px !important; }
-    .root-stroke-count { font-size: 9px; }
-    .sup-badge { font-size: 7px !important; padding: 0 2px !important; margin-left: 2px !important; }
-    #multi-char-cards { margin-top: 6px; padding: 8px; }
 }
 
 </style>
@@ -835,9 +874,23 @@ body {
 
 <script>
 // ==================== 设备检测 ====================
-// 用 CSS 媒体查询检测触摸设备（hover:none + pointer:coarse），避免 UA 字符串判断
-function isTouchDevice() {
-    return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+// 区分真手机与桌面窄窗口：电脑窄窗口走 scale 缩放，仅真手机用手机布局
+var IS_MOBILE = (function(){
+    var ua = navigator.userAgent || '';
+    var isMobile = /Android|iPhone|iPad|iPod|Mobile|Windows Phone|Silk|Kindle|BlackBerry|Opera Mini/i.test(ua);
+    if (isMobile) document.documentElement.classList.add('is-mobile');
+    else document.documentElement.classList.add('is-desktop');
+    return isMobile;
+})();
+
+// 手机布局判断：仅真手机且窗口窄时返回 true（applyScale 主判断、初始化收起字库）
+function isPhoneLayout() {
+    var vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+    return IS_MOBILE && vw <= 800;
+}
+// 手机竖屏判断：手机布局且竖屏时返回 true（禁用 scale 容器内的 scrollIntoView）
+function isPhonePortrait() {
+    return isPhoneLayout() && window.innerHeight > window.innerWidth;
 }
 
 // ==================== 五笔字根颜色 ====================
@@ -1409,7 +1462,7 @@ const WUBI = {
     '靠':{c:'TFKD',r:['告','非']},
     '沤':{c:'IAQY',r:['氵','区']},
     '淮':{c:'IWYG',r:['氵','隹']},
-    '分':{c:'WVB',r:['八','刀']},
+    '分':{c:'WVR',r:['八','刀']},
     '还': {c:'GIPI', r:['不','辶']},
     // ========== 🆕 高频字补充（2026-04-30，前200常用字） ==========
     '于':{c:'GFK',r:['一','十']},
@@ -1564,7 +1617,7 @@ const WUBI = {
     '伐':{c:'WAT',r:['亻','戈']},
     '休':{c:'WSY',r:['亻','木']},
     '伕':{c:'WFWY',r:['亻','夫']},
-    '众':{c:'WWU',r:['人','从']},
+    '众':{c:'WWWU',r:['人','从']},
     '优':{c:'WDNN',r:['亻','尤']},
     '伙':{c:'WOY',r:['亻','火']},
     '伟':{c:'WFNH',r:['亻','韦']},
@@ -1971,7 +2024,7 @@ const WUBI = {
     '兮': {c:'WGNB', r:['八', '丂']},
     '兰': {c:'UFF', r:['䒑', '二']},
     '共': {c:'AWU', r:['龷', '八']},
-    '关': {c:'UDU', r:['丷', '天']},
+    '关': {c:'UDU', r:['䒑', '大']},
     '兵': {c:'RGWU', r:['丘', '八']},
     '具': {c:'HWU', r:['具头', '八']},
     '典': {c:'MAWU', r:['冂','龷','八']},
@@ -2045,13 +2098,13 @@ const WUBI = {
     '凶': {c:'QBK', r:['凵', '㐅']},
     '凸': {c:'HGMG', r:['丨', '一', '凸头', '一']},
     '凹': {c:'MMGD', r:['几', '几', '一']},
-    '击': {c:'FMK', r:['二','山']},
+    '击': {c:'FMK', r:['𰀁','凵']},
     '凼': {c:'IBK', r:['水','凵']},
     '函': {c:'BIBK', r:['了', '氺侧', '凵']},
-    '凿': {c:'OGUB', r:['业','䒑','十','凵']},
+    '凿': {c:'OGUB', r:['凵', '丵']},
     '刁': {c:'NGD', r:['𠃌', '㇀']},
     '刂': {c:'JHH', r:['刂', '丨', '亅']},
-    '刅': {c:'VWI', r:['刀', '八']},
+    '刅': {c:'VWI', r:['刃', '丶']},
     '切': {c:'AVN', r:['七', '刀']},
     '刈': {c:'QJH', r:['㐅', '刂']},
     '刊': {c:'FJH', r:['干', '刂']},
@@ -2154,7 +2207,7 @@ const WUBI = {
     '南': {c:'FMUF', r:['十', '冂', '䒑', '十']},
     '博': {c:'FGEF', r:['十', '尃']},
     '卜': {c:'HHY', r:['卜', '丨', '丶']},
-    '卞': {c:'YHU', r:['丶', '下']},
+    '卞': {c:'YHU', r:['亠', '卜']},
     '卟': {c:'KHY', r:['口', '卜']},
     '卢': {c:'HNE', r:['⺊', '尸']},
     '卣': {c:'HLNF', r:['⺊', '囗', 'コ']},
@@ -8475,7 +8528,7 @@ const WUBI = {
     '豖': {c:'EYI', r:['豕', '丶']},
     '豙': {c:'UEU', r:['立', '𧰨']},
     '豚': {c:'EEY', r:['月', '豕']},
-    '象': {c:'QJEU', r:['𠂊','口','𧰨']},
+    '象': {c:'QJEU', r:['⺈','𫩏','𧰨']},
     '豢': {c:'UDEU', r:['龹', '豕']},
     '豦': {c:'HAEI', r:['虍', '豕']},
     '豩': {c:'EEY', r:['豕', '豕']},
@@ -11281,9 +11334,8 @@ function detectWeiStructureSimple(char, wubiData, totalStrokes, expandedRoots) {
         const miKaoInWei =
             miIdxForWei !== -1 && miIdxForWei < radicals.length - 1;
         // 回结构：囗+口+后续字根（禀=亠+回+示），囗只包围口，示在框外
-        // weiIdx>0：囗前有字根时才触发（圆/圆=囗+口+貝/贝，囗是首字根，貝/贝在框内）
         const huiContentInWei =
-            weiIdx > 0 && radicals[weiIdx + 1] === '口' && weiIdx + 2 < radicals.length;
+            radicals[weiIdx + 1] === '口' && weiIdx + 2 < radicals.length;
         if (crossOnlyInWei || renMinInWei || daXinInWei || miKaoInWei) {
             // 米+丂结构：囗只包围米，丂在框外，weiInnerEnd 到米的下一个位置
             if (miKaoInWei) {
@@ -12217,6 +12269,33 @@ function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset
         result[5] = strokeOffset + 2;
         result[6] = strokeOffset + 2;
         result[7] = strokeOffset + 1;
+        return result;
+    }
+
+    // ===== 齿字特殊处理 =====
+    // 齿：r=['止','人','凵']，8笔
+    // hasNCInOrigRoots（止∈NC）会误入首字根包裹分支
+    // 正确映射：止(4笔连续) → 人(2笔) → 凵(2笔)
+    if (currentChar === '齿' && n === 8) {
+        const result = new Array(8);
+        for (let i = 0; i < 4; i++) result[i] = strokeOffset + 0;
+        for (let i = 4; i < 6; i++) result[i] = strokeOffset + 1;
+        for (let i = 6; i < 8; i++) result[i] = strokeOffset + 2;
+        return result;
+    }
+
+    // ===== 厉字特殊处理 =====
+    // 厉：r=['厂','万']，展开后['厂','丆','㇆']，5笔
+    // 万∈NC导致hasNCInOrigRoots误触通用首字根包裹分支
+    // 万为NC字符，应保留首尾包裹（丆首尾、㇆中间），与standalone厉一致
+    // 映射：厂(2笔) → 丆(首尾) → ㇆(中间) → [0,0,1,2,1]
+    if (currentChar === '厉' && n === 5) {
+        console.log('[DEBUG厉] autoDetectNonContinuous HIT! currentChar=', currentChar, 'roots=', JSON.stringify(roots), 'n=', n, 'strokeOffset=', strokeOffset, 'isEmbedded=', isEmbedded);
+        const result = new Array(5);
+        for (let i = 0; i < 2; i++) result[i] = strokeOffset + 0;
+        result[2] = strokeOffset + 1;
+        result[3] = strokeOffset + 2;
+        result[4] = strokeOffset + 1;
         return result;
     }
 
@@ -13258,15 +13337,6 @@ const CUSTOM_STROKE_ORDER = {
         swapLast: true,
         swapScope: 'roots'  // 只交换力字根部分的末两笔，不交换整体字的末两笔
     },
-    '刀': {
-        // 刀：与力同理，报户口(刀)+第1笔(㇆)+第2笔(丿)，交换最后两笔
-        condition: (wubi, currentChar) => {
-            const r = wubi.r;
-            return r.length >= 2 && r[r.length-2] === '㇆' && r[r.length-1] === '丿';
-        },
-        swapLast: true,
-        swapScope: 'roots'  // 只交换刀字根部分的末两笔
-    },
     '乃': {
         // 乃：标准笔顺 𠄎(横折折折钩)→丿(撇)，五笔拆分 报户口(乃)+丿(T)+𠄎(N识别码)，交换最后两笔
         condition: (wubi, currentChar) => {
@@ -13732,7 +13802,7 @@ async function loadAndRender(ch) {
         // 此分支处理报户口字符（力、乃等），报户口字根覆盖全部笔画，
         // 物理交换笔画顺序使显示与标准笔顺一致
         // 非连续字根已通过 autoDetectNonContinuous 统一处理，不走此路径
-        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2 && currentChar !== '刀') {
+        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2) {
             const n = strokes.length;
             // 只交换物理笔画顺序（strokes），不交换 strokeRootMap
             // strokeRootMap 按字根顺序对应笔画索引，交换 strokes 后映射关系自动正确
@@ -13856,6 +13926,14 @@ async function loadAndRender(ch) {
                 }
                 strokeOffset += rootStrokeCount;
             }
+        }
+
+        // DEBUG 励
+        if (currentChar === '励') {
+            console.log('[DEBUG励] strokeRootMap=' + JSON.stringify(strokeRootMap));
+            console.log('[DEBUG励] strokeRootMapForDisplay=' + JSON.stringify(strokeRootMapForDisplay));
+            console.log('[DEBUG励] roots=' + JSON.stringify(roots));
+            console.log('[DEBUG励] strokes.length=' + strokes.length);
         }
 
         // 渲染
@@ -14118,13 +14196,10 @@ function initStrokeRootMap() {
         }
     }
     
-    // ========== 囗结构排除：NC预检应该跳过囗结构字，由后面的囗检测统一处理 ==========
-    const _hasWeiInOriginal = wubiData?.r?.includes('囗');
-    
-    if (!_hasWeiInOriginal && (NON_CONTINUOUS_CHARS.has(currentChar) ||
+    if (NON_CONTINUOUS_CHARS.has(currentChar) ||
         roots.some((_, i) => i <= 1 && i + 1 < roots.length && roots[i] === '十' && roots[i+1] === '戈') ||
         (roots.includes('戈') && roots.indexOf('戈') >= 1 && roots.indexOf('戈') < roots.length - 1 &&
-         !roots.some((_, i) => i <= 1 && roots[i] === '十' && roots[i+1] === '戈')))) {
+         !roots.some((_, i) => i <= 1 && roots[i] === '十' && roots[i+1] === '戈'))) {
         const _expandedRootsNC = recursivelyExpandRoots(roots);
         const supIndices = WUBI[currentChar]?.sup || [];
         const nonConMap = autoDetectNonContinuous(currentChar, _expandedRootsNC, n, supIndices, 0);
@@ -14207,9 +14282,8 @@ function initStrokeRootMap() {
                     const congXinInWei =
                         expanded[weiIdx + 1] === '𠚤' && expanded[weiIdx + 2] === '心';
                     // 回结构：囗+口+其他父字根内容（禀=亠+回+示），囗只包围口，示/禾在框外
-                    // weiIdx>0：囗前有字根时才触发（圆/圆=囗+口+貝/贝，囗是首字根，貝/贝在框内）
                     const huiContentInWei =
-                        weiIdx > 0 && expanded[weiIdx + 1] === '口' && weiIdx + 2 < expanded.length;
+                        expanded[weiIdx + 1] === '口' && weiIdx + 2 < expanded.length;
                     if (crossOnlyInWei || renMinInWei || daXinInWei || congXinInWei || huiContentInWei) {
                         weiInnerEnd = weiIdx + 2;
                     }
@@ -15335,7 +15409,7 @@ function renderInfo() {
         // 直接从rootColorMap取颜色字符串，避免存索引导致0值falsy问题
         return rootColorMap[codeIdx] || '#555';
     });
-    if (currentChar === '哥' || currentChar === '奇' || currentChar === '孚' || currentChar === '酉' || currentChar === '戊' || currentChar === '戳' || currentChar === '靠' || currentChar === '摁' || currentChar === '鹵' || currentChar === '県' || currentChar === '歌' || currentChar === '战' || currentChar === '麥' || currentChar === '蘩' || currentChar === '繁' || currentChar === '海' || currentChar === '每' || currentChar === '嗨' || currentChar === '酶' || currentChar === '鳘' || currentChar === '毓' || currentChar === '敏' || currentChar === '蔬' || currentChar === '疏' || currentChar === '止' || currentChar === '嗇' || currentChar === '牆' || currentChar === '薔' || currentChar === '穡' || currentChar === '闈' || currentChar === '偉' || currentChar === '圍' || currentChar === '韓' ) {
+    if (currentChar === '哥' || currentChar === '奇' || currentChar === '孚' || currentChar === '酉' || currentChar === '戊' || currentChar === '戳' || currentChar === '靠' || currentChar === '摁' || currentChar === '鹵' || currentChar === '県' || currentChar === '歌' || currentChar === '战' || currentChar === '麥' || currentChar === '蘩' || currentChar === '繁' || currentChar === '海' || currentChar === '每' || currentChar === '嗨' || currentChar === '酶' || currentChar === '鳘' || currentChar === '毓' || currentChar === '敏' || currentChar === '蔬' || currentChar === '疏' || currentChar === '止' || currentChar === '嗇' || currentChar === '牆' || currentChar === '薔' || currentChar === '穡' || currentChar === '闈' || currentChar === '偉' || currentChar === '圍' || currentChar === '韓') {
         console.log('[DEBUG' + currentChar + '] strokeRootMapForDisplay=' + JSON.stringify(strokeRootMapForDisplay));
         console.log('[DEBUG' + currentChar + '] expandedRootToCodeIndex=' + JSON.stringify(expandedRootToCodeIndex));
         console.log('[DEBUG' + currentChar + '] strokeColorMap=' + JSON.stringify(strokeColorMap));
@@ -15426,7 +15500,7 @@ function renderInfo() {
         // 乃字例外：笔画需要交换，但字根着色区的字根列表不交换
         const rootCustom = CUSTOM_STROKE_ORDER[currentChar];
         let displayRoots = [...roots];
-        if (rootCustom && rootCustom.swapLast && currentChar !== '乃' && currentChar !== '刀' && wubiData && rootCustom.condition(wubiData, currentChar) && displayRoots.length > 2) {
+        if (rootCustom && rootCustom.swapLast && currentChar !== '乃' && wubiData && rootCustom.condition(wubiData, currentChar) && displayRoots.length > 2) {
             const n = displayRoots.length;
             [displayRoots[n-2], displayRoots[n-1]] = [displayRoots[n-1], displayRoots[n-2]];
             [rootToCodeIndex[n-2], rootToCodeIndex[n-1]] = [rootToCodeIndex[n-1], rootToCodeIndex[n-2]];
@@ -15616,14 +15690,7 @@ function renderKeyboard() {
 }
 
 // ==================== 字库渲染（左右两栏） ====================
-let libExpanded = !isTouchDevice();
-// 手机端默认收起字库栏：同步 DOM 状态
-if (!libExpanded) {
-    document.getElementById('lib-panel-left')?.classList.add('collapsed');
-    document.getElementById('lib-panel-right')?.classList.add('collapsed');
-    const btn = document.getElementById('lib-toggle');
-    if (btn) { btn.textContent = '📚'; btn.title = '展开字库'; }
-}
+let libExpanded = true;
 
 function toggleLibPanels() {
     libExpanded = !libExpanded;
@@ -15694,10 +15761,14 @@ function renderCharLibrary() {
     document.getElementById('lib-grid-left').innerHTML = leftChars.map(makeCell).join('');
     document.getElementById('lib-grid-right').innerHTML = rightChars.map(makeCell).join('');
 
-    requestAnimationFrame(() => {
-        const activeCell = document.querySelector('.char-cell.active');
-        if (activeCell) activeCell.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-    });
+    // 自动滚动到当前选中的字（手机竖屏禁用，scale 缩放容器内 scrollIntoView 会导致页面跳动）
+    const _isPhone = isPhonePortrait();
+    if (!_isPhone) {
+        requestAnimationFrame(() => {
+            const activeCell = document.querySelector('.char-cell.active');
+            if (activeCell) activeCell.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        });
+    }
 }
 
 function selectChar(ch) {
@@ -15791,7 +15862,9 @@ function showStrokeSelector(strokeIdx, event) {
     const assigns = document.querySelectorAll('.assign-row');
     if (assigns[strokeIdx]) {
         assigns[strokeIdx].style.background = 'rgba(100,100,200,0.3)';
-        assigns[strokeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (!isPhonePortrait()) {
+            assigns[strokeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
         const select = assigns[strokeIdx].querySelector('.assign-select');
         if (select) select.focus();
         setTimeout(() => { assigns[strokeIdx].style.background = ''; }, 2000);
@@ -16321,8 +16394,9 @@ function updateArticleChipsHighlight() {
         const idx = parseInt(chip.dataset.idx);
         chip.classList.toggle('active', idx === articleIndex);
     });
+    // 滚动到当前chip（手机竖屏禁用，避免 scale 容器内跳动）
     const activeChip = document.querySelector('.article-char-chip.active');
-    if (activeChip) {
+    if (activeChip && !isPhonePortrait()) {
         activeChip.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
 }
@@ -16557,21 +16631,45 @@ function togglePracticeMode(on) {
     const BODY_PAD_H = 30;  // 上下 padding 之和
 
     function applyScale() {
-        // ===== 触摸设备：跳过 transform scale，由 CSS 媒体查询接管 =====
-        if (isTouchDevice()) {
+        // ===== 手机端（竖屏/横屏）：不用 transform scale，由 CSS 媒体查询处理布局 =====
+        if (isPhoneLayout()) {
+            // 清空所有桌面端设置的 inline style，让 CSS 媒体查询接管
             wrapper.style.transform = '';
             wrapper.style.transformOrigin = '';
             wrapper.style.width = '';
             wrapper.style.height = '';
             wrapper.style.marginTop = '';
+
             const container = document.querySelector('.container');
-            if (container) { container.style.minHeight = ''; container.style.display = ''; }
+            container.style.minHeight = '';
+            container.style.display = '';
+            container.style.flexDirection = '';
+            container.style.justifyContent = '';
+
+            const keyboard = document.getElementById('wubi-keyboard');
+            if (keyboard) keyboard.style.marginTop = '';
+
+            // 标题：CSS 媒体查询已改为 static，清空 inline style
             const tc = document.querySelector('.title-container');
             if (tc) { tc.style.transform = ''; tc.style.left = ''; tc.style.top = ''; }
+
+            // toggle：清空 inline scale，由 CSS 媒体查询处理
             const toggle = document.getElementById('lib-toggle');
             if (toggle) { toggle.style.transform = ''; toggle.style.right = ''; toggle.style.top = ''; }
+
+            // input：CSS 已设 font-size:16px，清空 inline style
+            const ci = document.getElementById('char-input');
+            if (ci) { ci.style.fontSize = ''; }
+
+            // 面板：清空 inline style
+            const leftPanel = document.getElementById('lib-panel-left');
+            const rightPanel = document.getElementById('lib-panel-right');
+            if (leftPanel) { leftPanel.style.top = ''; leftPanel.style.maxHeight = ''; leftPanel.style.height = ''; }
+            if (rightPanel) { rightPanel.style.top = ''; rightPanel.style.maxHeight = ''; rightPanel.style.height = ''; }
+
+            // 强制重排，确保旋转后布局立即生效
             wrapper.offsetHeight;
-            return;
+            return; // 不执行任何 scale
         }
 
         // ===== 桌面端：用 transform scale 缩放 =====
@@ -16593,7 +16691,7 @@ function togglePracticeMode(on) {
         container.style.justifyContent = '';
         if (keyboard) keyboard.style.marginTop = '';
 
-        // 面板
+        // 面板：清空手机端 inline style
         const leftPanel = document.getElementById('lib-panel-left');
         const rightPanel = document.getElementById('lib-panel-right');
         if (leftPanel) { leftPanel.style.top = ''; leftPanel.style.maxHeight = ''; leftPanel.style.height = ''; }
@@ -16617,17 +16715,29 @@ function togglePracticeMode(on) {
             toggle.style.top = (12 * ratio) + 'px';
         }
 
+        // input：清空手机端 inline style
         const ci = document.getElementById('char-input');
         if (ci) ci.style.fontSize = '';
 
-        wrapper.offsetHeight;
+        wrapper.offsetHeight; // force reflow
+    }
+
+    // 手机端默认收起字库侧边栏（仅初始化一次，用户可手动展开）
+    if (isPhoneLayout() && typeof libExpanded !== 'undefined' && libExpanded) {
+        libExpanded = false;
+        const _lp = document.getElementById('lib-panel-left');
+        const _rp = document.getElementById('lib-panel-right');
+        const _btn = document.getElementById('lib-toggle');
+        if (_lp) _lp.classList.add('collapsed');
+        if (_rp) _rp.classList.add('collapsed');
+        if (_btn) { _btn.textContent = '📚'; _btn.title = '展开字库'; }
     }
 
     // 页面加载时执行
     applyScale();
 
-    // 多字拆分卡片定位
-    function adjustCardsLayout() {
+    // 手机端/桌面端：多字拆分卡片定位
+    function adjustMobileLayout() {
         const multiCards = document.getElementById('multi-char-cards');
         const keyboard = document.getElementById('wubi-keyboard');
         if (!multiCards || !keyboard) return;
@@ -16636,8 +16746,8 @@ function togglePracticeMode(on) {
             keyboard.parentNode.insertBefore(multiCards, keyboard);
         }
     }
-    adjustCardsLayout();
-    window.addEventListener('load', function() { adjustCardsLayout(); });
+    adjustMobileLayout();
+    window.addEventListener('load', function() { adjustMobileLayout(); });
 
     // 页面完全加载后兜底重算一次
     window.addEventListener('load', function() {
@@ -17044,8 +17154,8 @@ function computeMultiCardColors(ch, strokeList) {
             applyShaDianPieSwap();
         }
 
-        // swapScope:'roots' 交换（力、方、戋等；刀单独时不交换）
-        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2 && currentChar !== '刀') {
+        // swapScope:'roots' 交换（力、方、戋等）
+        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2) {
             const n = strokes.length;
             [strokes[n - 2], strokes[n - 1]] = [strokes[n - 1], strokes[n - 2]];
             if (NON_CONTINUOUS_CHARS.has(currentChar)) {
