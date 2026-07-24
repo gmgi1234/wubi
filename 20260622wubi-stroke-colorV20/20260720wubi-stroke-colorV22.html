@@ -788,6 +788,10 @@ body {
                     <span id="stroke-indicator">笔画 0/0</span>
                     <button onclick="nextStroke()">下一笔 ▶</button>
                     <button onclick="showAll()" style="margin-left:8px">全部显示</button>
+                    <label style="font-size:13px;color:#aaa;cursor:pointer;user-select:none;margin-left:10px;" title="输入正确后播放烟花动画">
+                        <input type="checkbox" id="fireworks-toggle" onchange="fireworksEnabled=this.checked">
+                        <span style="color:#aaa">烟花</span>
+                    </label>
                 </div>
                 <!-- 输入框（与大框同宽并紧贴） -->
                 <div class="input-section" style="margin-top:0;">
@@ -1372,7 +1376,7 @@ const WUBI = {
     '员':{c:'KMU',r:['口','贝']},
     '财':{c:'MFTT',r:['贝','才']},
     '败':{c:'MTY',r:['贝','攵']},
-    '呗':{c:'KMIY',r:['口','贝']},
+    '呗':{c:'KMY',r:['口','贝']},
     '页':{c:'DMU',r:['丆','贝']},
     '个':{c:'WHJ',r:['人','丨']},
     '尤':{c:'DNV',r:['尤前','㇟']},
@@ -1462,7 +1466,7 @@ const WUBI = {
     '靠':{c:'TFKD',r:['告','非']},
     '沤':{c:'IAQY',r:['氵','区']},
     '淮':{c:'IWYG',r:['氵','隹']},
-    '分':{c:'WVR',r:['八','刀']},
+    '分':{c:'WVB',r:['八','刀']},
     '还': {c:'GIPI', r:['不','辶']},
     // ========== 🆕 高频字补充（2026-04-30，前200常用字） ==========
     '于':{c:'GFK',r:['一','十']},
@@ -2104,7 +2108,7 @@ const WUBI = {
     '凿': {c:'OGUB', r:['凵', '丵']},
     '刁': {c:'NGD', r:['𠃌', '㇀']},
     '刂': {c:'JHH', r:['刂', '丨', '亅']},
-    '刅': {c:'VWI', r:['刃', '丶']},
+    '刅': {c:'VWI', r:['刀', '八']},
     '切': {c:'AVN', r:['七', '刀']},
     '刈': {c:'QJH', r:['㐅', '刂']},
     '刊': {c:'FJH', r:['干', '刂']},
@@ -2524,7 +2528,7 @@ const WUBI = {
     '喑': {c:'KUJG', r:['口', '音']},
     '喔': {c:'KNGF', r:['口', '屋']},
     '喘': {c:'KMDJ', r:['口', '耑']},
-    '喙': {c:'KXEY', r:['口', '彖']},
+    '喙': {c:'KXEY', r:['口', '互框', '豕']},
     '喚': {c:'KQMD', r:['口', '奐']},
     '喜': {c:'FKUK', r:['壴', '口']},
     '喝': {c:'KJQN', r:['口', '曷']},
@@ -7361,7 +7365,7 @@ const WUBI = {
     '舉': {c:'WFGH', r:['與','二','丨']},
     '舊': {c:'AWYV', r:['艹','隹','臼']},
     '舋': {c:'WFMG', r:['亻', '二', '冂', '二', '丨', '𠃍', '二', '冖', '且']},
-    '舍': {c:'WFKF', r:['人', '舌']},
+    '舍': {c:'WFKF', r:['人', '干', '口']},
     '舐': {c:'TDQA', r:['舌', '氏']},
     '舒': {c:'WFKB', r:['舍', '予']},
     '舔': {c:'TDGN', r:['舌', '忝']},
@@ -10579,7 +10583,7 @@ const WUBI = {
     '麦': {c:'GTU', r:['龶', '夂']},
     '麩': {c:'SWWW', r:['麥', '夫']},
     '麯': {c:'SWWA', r:['麥', '曲']},
-    '麴': {c:'FWWO', r:['十', '人', '人', '八', '夂', '勹', '米']},
+    '麴': {c:'FWWO', r:['麥', '勹', '米']},
     '麵': {c:'SWWD', r:['麥', '面']},
     '麸': {c:'GQFW', r:['龶', '夕', '夫']},
     '麼': {c:'YSSX', r:['麻', '幺']},
@@ -10688,7 +10692,7 @@ const WUBI = {
 
 // 全局常量：需要非连续笔画分配的字（万、母、那）
 // 注：含'匚'字根的字（区、欧、沤等）由 roots.includes('匚') 自动检测，无需列入
-const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','嗇','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','舞','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁','垂','喪','噩','爾','畿','帶','齊','樂','盥','無','韋','甴','㠯','燕','翰','犮','巫','豐','彧','豳','齑','櫱','眾','冢']);
+const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','嗇','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','舞','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁','垂','喪','噩','爾','畿','帶','齊','樂','盥','無','韋','甴','㠯','燕','翰','犮','巫','豐','彧','豳','齑','櫱','眾','豖']);
 
 // ==================== 计算五笔识别码 ====================
 // 根据末笔和字型计算识别码
@@ -12235,22 +12239,44 @@ function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset
         return result;
     }
 
+    // ===== 豖字特殊处理 =====
+    // 豖：r=['豕','丶']，8笔
+    // 第6笔(索引5)属于丶(1)，其余属于豕(0)
+    // 适用于豖本身和含豖作为基字的复合字（啄、涿、琢、瘃、诼、冢等）
+    // 冢不在NON_CONTINUOUS_CHARS中，由复合字检测识别豖为基字后，
+    // 以currentChar='豖'调用本函数触发此分支（与啄、涿等同理）
+    if (currentChar === '豖' && roots.length === 2
+        && roots[0] === '豕' && roots[1] === '丶' && n === 8) {
+        const result = new Array(8);
+        result[0] = strokeOffset + 0;   // 第1笔 → 豕(0)
+        result[1] = strokeOffset + 0;   // 第2笔 → 豕(0)
+        result[2] = strokeOffset + 0;   // 第3笔 → 豕(0)
+        result[3] = strokeOffset + 0;   // 第4笔 → 豕(0)
+        result[4] = strokeOffset + 0;   // 第5笔 → 豕(0)
+        result[5] = strokeOffset + 1;   // 第6笔 → 丶(1)
+        result[6] = strokeOffset + 0;   // 第7笔 → 豕(0)
+        result[7] = strokeOffset + 0;   // 第8笔 → 豕(0)
+        return result;
+    }
+
     // ===== 冢字特殊处理 =====
-    // 冢：r=['冖','豕','丶']，10笔
-    // 第8笔(索引7)属于丶(2)，其余按笔顺
+    // 冢：r=['冖','豖']，展开后['冖','豕','丶']，10笔
+    // 冖(2笔) + 豖(8笔，第6笔属于丶)
+    // 冢本身由复合字检测识别豖为基字走豖的handler；
+    // 此handler用于冢作为基字的复合字（如塚=土+冢），此时currentChar='冢'
     if (currentChar === '冢' && roots.length === 3
         && roots[0] === '冖' && roots[1] === '豕' && roots[2] === '丶' && n === 10) {
         const result = new Array(10);
-        result[0] = strokeOffset + 0;   // 第1笔 → 冖(0)
-        result[1] = strokeOffset + 0;   // 第2笔 → 冖(0)
-        result[2] = strokeOffset + 1;   // 第3笔 → 豕(1)
-        result[3] = strokeOffset + 1;   // 第4笔 → 豕(1)
-        result[4] = strokeOffset + 1;   // 第5笔 → 豕(1)
-        result[5] = strokeOffset + 1;   // 第6笔 → 豕(1)
-        result[6] = strokeOffset + 1;   // 第7笔 → 豕(1)
-        result[7] = strokeOffset + 2;   // 第8笔 → 丶(2)
-        result[8] = strokeOffset + 1;   // 第9笔 → 豕(1)
-        result[9] = strokeOffset + 1;   // 第10笔 → 豕(1)
+        result[0] = strokeOffset + 0;   // 冖
+        result[1] = strokeOffset + 0;   // 冖
+        result[2] = strokeOffset + 1;   // 豕
+        result[3] = strokeOffset + 1;   // 豕
+        result[4] = strokeOffset + 1;   // 豕
+        result[5] = strokeOffset + 1;   // 豕
+        result[6] = strokeOffset + 1;   // 豕
+        result[7] = strokeOffset + 2;   // 丶（豖的第6笔）
+        result[8] = strokeOffset + 1;   // 豕
+        result[9] = strokeOffset + 1;   // 豕
         return result;
     }
 
@@ -13337,6 +13363,34 @@ const CUSTOM_STROKE_ORDER = {
         swapLast: true,
         swapScope: 'roots'  // 只交换力字根部分的末两笔，不交换整体字的末两笔
     },
+    '刀': {
+        // 刀：与力同理，报户口(刀)+第1笔(㇆)+第2笔(丿)，交换最后两笔
+        condition: (wubi, currentChar) => {
+            const r = wubi.r;
+            return r.length >= 2 && r[r.length-2] === '㇆' && r[r.length-1] === '丿';
+        },
+        swapLast: true,
+        swapScope: 'roots'  // 只交换刀字根部分的末两笔
+    },
+    '分': {
+        // 分=[八,刀]：末字根为刀，需交换刀字根的末两笔
+        // condition严格匹配r=['八','刀']（length===2），防止展开roots检测误匹配含分的复合字
+        condition: (wubi, currentChar) => {
+            const r = wubi.r;
+            return r.length === 2 && r[0] === '八' && r[1] === '刀';
+        },
+        swapLast: true,
+        swapScope: 'roots'  // 只交换分字根部分（即刀）的末两笔
+    },
+    '切': {
+        // 切=[七,刀]：末字根为刀，需交换刀字根的末两笔
+        condition: (wubi, currentChar) => {
+            const r = wubi.r;
+            return r.length === 2 && r[0] === '七' && r[1] === '刀';
+        },
+        swapLast: true,
+        swapScope: 'roots'  // 只交换切字根部分（即刀）的末两笔
+    },
     '乃': {
         // 乃：标准笔顺 𠄎(横折折折钩)→丿(撇)，五笔拆分 报户口(乃)+丿(T)+𠄎(N识别码)，交换最后两笔
         condition: (wubi, currentChar) => {
@@ -13418,7 +13472,7 @@ function shiftPathY(pathStr, dy) {
     return pathStr.replace(/([MLCQHVSmlcqhvs])([^MLCQHVSZmlcqhvsz]*)/g, (match, cmd, params) => {
         const isRelative = cmd === cmd.toLowerCase() && cmd !== cmd.toUpperCase();
         if (isRelative) return match; // 相对坐标不偏移
-        const nums = params.trim().split(/[\\s,]+/).filter(s => s.length > 0).map(Number);
+        const nums = params.trim().split(/[\s,]+/).filter(s => s.length > 0).map(Number);
         if (nums.length === 0) return match;
         const cmdUpper = cmd.toUpperCase();
         // H/V 只有一个坐标
@@ -13449,6 +13503,40 @@ function scalePath(pathStr, scale, offsetX, offsetY) {
         }
         return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
     });
+}
+
+// 独立缩放X和Y的SVG路径坐标（用于宽高不同比例缩放）
+function scalePathXY(pathStr, scaleX, scaleY, offsetX, offsetY) {
+    return pathStr.replace(/([MLCQHVSmlcqhvs])([^MLCQHVSZmlcqhvsz]*)/g, (match, cmd, params) => {
+        const isRelative = cmd === cmd.toLowerCase() && cmd !== cmd.toUpperCase();
+        if (isRelative) return match;
+        const nums = params.trim().split(/[\s,]+/).filter(s => s.length > 0).map(Number);
+        if (nums.length === 0) return match;
+        const cmdUpper = cmd.toUpperCase();
+        for (let i = 0; i < nums.length; i += 2) {
+            nums[i] = nums[i] * scaleX + offsetX;       // X坐标
+            if (i + 1 < nums.length) nums[i + 1] = nums[i + 1] * scaleY + offsetY; // Y坐标
+        }
+        return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+    });
+}
+
+// 围绕笔画数据的X中心做缩放（Y不变），用于"上下不变、左右变窄"
+function scalePathXCenter(strokesArray, scaleX) {
+    let minX = Infinity, maxX = -Infinity;
+    for (const s of strokesArray) {
+        s.replace(/([MLCQHVS])([^MLCQHVSZ]*)/g, (m, cmd, params) => {
+            const nums = params.trim().split(/[\s,]+/).filter(x => x.length > 0).map(Number);
+            for (let i = 0; i < nums.length; i += 2) {
+                if (nums[i] < minX) minX = nums[i];
+                if (nums[i] > maxX) maxX = nums[i];
+            }
+            return m;
+        });
+    }
+    const centerX = (minX + maxX) / 2;
+    const offsetX = centerX * (1 - scaleX);
+    return strokesArray.map(s => scalePathXY(s, scaleX, 1, offsetX, 0));
 }
 
 const dataSource = {}; // 'bundle' 'local' 或 'cdn'
@@ -13621,6 +13709,56 @@ async function getStrokeData(char) {
     if (char === '豱') {
         const wenData = await fetchCharData('腽');
         strokes = [...strokes.slice(0, 7), ...wenData.strokes.slice(4).map(s => shiftPathX(s, 80))];
+    }
+    // 啫=口(3笔)+者(9笔)，右侧者字笔划数据有误
+    // 用堵字(土3笔+者9笔)的右侧者部分(第4-12笔)替换
+    // 此替换在 isCdnData 判断之外，无论数据来源都执行
+    if (char === '啫') {
+        const duData = await fetchCharData('堵');
+        strokes = [...strokes.slice(0, 3), ...duData.strokes.slice(3)];
+    }
+    // 吶=口(3笔)+內(4笔)，內中入字根笔划数据有误
+    // 用籴字(入2笔+米6笔)上面的入(前2笔)替换吶的入(第6-7笔)，X方向缩窄+下移
+    // 此替换在 isCdnData 判断之外，无论数据来源都执行
+    if (char === '吶') {
+        const diData = await fetchCharData('籴');
+        const ruStrokes = scalePathXCenter(diData.strokes.slice(0, 2), 0.5).map(s => shiftPathX(shiftPathY(s, -140), 40));
+        strokes = [...strokes.slice(0, 5), ...ruStrokes];
+    }
+    // 內=冂(2笔)+入(2笔)，入字根笔划数据有误
+    // 用籴字(入2笔+米6笔)上面的入(前2笔)替换內的入(第3-4笔)，X方向缩窄+下移
+    // 此替换在 isCdnData 判断之外，无论数据来源都执行
+    if (char === '內') {
+        const diData = await fetchCharData('籴');
+        const ruStrokes = scalePathXCenter(diData.strokes.slice(0, 2), 0.5).map(s => shiftPathX(shiftPathY(s, -100), -40));
+        strokes = [...strokes.slice(0, 2), ...ruStrokes];
+        strokes._strokeWidthScale = {2: 3, 3: 3}; // 入字根X缩窄后加粗
+    }
+    // 象字及其复合字(像、橡、蟓、豫)的笔划修正：替换𫩏笔划数据，缩放各字根
+    // prefix=前缀字根笔画数, dx=象部X偏移(相对独立象字)
+    function applyXiangFix(strokes, linData, prefix, dx) {
+        const prefixStrokes = strokes.slice(0, prefix);
+        const qianStrokes = strokes.slice(prefix, prefix + 2).map(s => shiftPathY(s, 30));
+        const linYanStrokes = linData.strokes.slice(5, 9).map(s => scalePathXY(s, 1.1, 0.75, -281 + dx, 378));
+        const shiStrokes = strokes.slice(prefix + 5).map(s => scalePath(s, 0.85, Math.round((450 + dx) * 0.15), 0));
+        return [...prefixStrokes, ...qianStrokes, ...linYanStrokes, ...shiStrokes];
+    }
+    // 象的𫩏字根笔划数据有误（笔顺错误+𧰨少第一笔），
+    // 用临字的𫩏字根（strokes 5-8，4笔）替换象的strokes 2-5，
+    // 并保留原stroke 5作为𧰨的第一笔（原笔顺错误导致它被归到𫩏）
+    // 临是左右结构，𫩏在右上；象是上下结构，𫩏在中间，需坐标偏移
+    // 此替换在 isCdnData 判断之外，无论数据来源都执行
+    const xiangFixConfigs = {
+        '象': {prefix: 0, dx: 0},
+        '像': {prefix: 2, dx: 147},   // 亻占2笔
+        '橡': {prefix: 4, dx: 151},   // 木占4笔
+        '蟓': {prefix: 6, dx: 155},   // 虫占6笔
+        '豫': {prefix: 4, dx: 159},   // 予占4笔
+    };
+    if (xiangFixConfigs[char]) {
+        const linData = await fetchCharData('临');
+        const cfg = xiangFixConfigs[char];
+        strokes = applyXiangFix(strokes, linData, cfg.prefix, cfg.dx);
     }
     // 鬮笔画数据有误，用鬥+縮小後的龜替換（龜放在鬥内部）
     if (char === '鬮') {
@@ -13802,7 +13940,8 @@ async function loadAndRender(ch) {
         // 此分支处理报户口字符（力、乃等），报户口字根覆盖全部笔画，
         // 物理交换笔画顺序使显示与标准笔顺一致
         // 非连续字根已通过 autoDetectNonContinuous 统一处理，不走此路径
-        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2) {
+        // 分、切排除：它们的刀是直接字根，由复合字交换循环处理，避免双重交换
+        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2 && currentChar !== '刀' && currentChar !== '分' && currentChar !== '切') {
             const n = strokes.length;
             // 只交换物理笔画顺序（strokes），不交换 strokeRootMap
             // strokeRootMap 按字根顺序对应笔画索引，交换 strokes 后映射关系自动正确
@@ -14025,7 +14164,9 @@ function buildEmbeddedMap(rootList, startIndex) {
                 subRoots = subRoots.slice(1);
             }
             const subN = subRoots.reduce((s, r) => s + (RADICAL_STROKES[r] || 1), 0);
-            const subMap = autoDetectNonContinuous(root, subRoots, subN, (WUBI[root].sup || []), idx, false);
+            // 传入 isEmbedded=true，确保"來"等NC字根作为子字根时走嵌入式映射
+            // 如麥=來+夂中，來应使用 [0,0,1,1,2,2,0,0] 而非独立映射 [0,1,1,2,2,0,0,0]
+            const subMap = autoDetectNonContinuous(root, subRoots, subN, (WUBI[root].sup || []), idx, true);
             if (subMap && subMap.length === subN) {
                 for (const v of subMap) map.push(v);
                 idx += subRoots.length;  // 增加字根数（非笔画数），确保后续字根索引正确
@@ -14256,10 +14397,10 @@ function initStrokeRootMap() {
                 const expanded = recursivelyExpandRoots(origEntry.r, currentChar);
                 if (expanded.includes('囗')) {
                     const weiIdx = expanded.indexOf('囗');
-                    // 囗不是该字根展开的第一个元素（前面有其他字根），
-                    // 且囗后不是口（回=囗+口模式），说明囗是内部部件而非外框。
-                    // 如鹽=臣+𠂉+鹵+皿，鹵=⺊+囗+乂+灬，囗在⺊之后且后非口，跳过。
-                    if (weiIdx > 0 && expanded[weiIdx + 1] !== '口') continue;
+                    // 鹵字特殊处理：鹵=⺊+囗+乂+灬，囗是内部部件（非外框），
+                    // 灬在框外，不应走囗包围结构检测。
+                    // 仅当展开精确匹配鹵的子字根时跳过，避免误伤囪(丿+囗+𰀪+丶)等囗是外框的字根。
+                    if (expanded.length === 4 && expanded[0] === '⺊' && expanded[1] === '囗' && expanded[2] === '乂' && expanded[3] === '灬') continue;
                     // 囗之前在字根内部的笔画偏移
                     let insideOffset = 0;
                     for (let j = 0; j < weiIdx; j++) {
@@ -14429,7 +14570,11 @@ function initStrokeRootMap() {
                             if (currentChar === '闈') console.log('[DEBUG闈-prefix+base] baseMap after NC:', JSON.stringify(baseMap), 'expectedBaseN:', expectedBaseN, 'baseN:', baseN);
                         } else {
                             const hasFu = (baseExpandedRoots||[]).includes('匚');
-                            if (hasFu || baseAutoSup.length > 0 || _prefixHasNCInOrig) {
+                            // 修复：移除 _prefixHasNCInOrig 条件
+                            // 当基字本身不在NC白名单中但含NC子字根时（如阿含可），
+                            // autoDetectNonContinuous 的通用算法会错误地把第一个展开字根当作包裹根，
+                            // 应回退到 buildEmbeddedMap（第14556行），由其递归处理嵌套的NC字根。
+                            if (hasFu || baseAutoSup.length > 0) {
                                 baseMap = autoDetectNonContinuous(compInfo.baseChar, baseWubi?.r || [], expectedBaseN, baseAutoSup, 0, false);
                             }
                         }
@@ -14534,7 +14679,10 @@ function initStrokeRootMap() {
                             baseMap = autoDetectNonContinuous(compInfo.baseChar, baseWubi?.r || [], expectedBaseN, baseAutoSup, 0, !_isLR);
                         } else {
                             const hasFu = (baseExpandedRoots||[]).includes('匚');
-                            if (hasFu || baseAutoSup.length > 0 || hasNCInOrigRoots) {
+                            // 修复：移除 hasNCInOrigRoots 条件（与 prefix+base 路径同理）
+                            // 当基字本身不在NC白名单中但含NC子字根时（如阿含可），
+                            // 应回退到 buildEmbeddedMap 递归处理嵌套的NC字根。
+                            if (hasFu || baseAutoSup.length > 0) {
                                 baseMap = autoDetectNonContinuous(compInfo.baseChar, baseWubi?.r || [], expectedBaseN, baseAutoSup, 0, true);
                             }
                         }
@@ -14959,12 +15107,15 @@ function renderSVG() {
         const isNonRoot = strokeRootMap[i] === undefined || strokeRootMap[i] < 0;
         // 龜的笔画加粗
         const isGuiStroke = guiStrokeStart !== undefined && i >= guiStrokeStart;
-        const strokeWidth = isGuiStroke ? '1.5' : (isNonRoot ? '0.3' : '0.5');
+        let strokeWidth = isGuiStroke ? 1.5 : (isNonRoot ? 0.3 : 0.5);
+        // 按笔画索引缩放宽度（如X缩窄后的入字根加粗）
+        const widthScale = strokes._strokeWidthScale;
+        if (widthScale && widthScale[i]) strokeWidth *= widthScale[i];
 
         if (isHighlighted) {
             path.setAttribute('fill', color);
             path.setAttribute('stroke', isNonRoot ? '#444' : '#333');
-            path.setAttribute('stroke-width', highlightStroke === -1 ? strokeWidth : '1.5');
+            path.setAttribute('stroke-width', highlightStroke === -1 ? strokeWidth : 1.5);
         } else {
             path.setAttribute('fill', isNonRoot ? '#777' : '#e8e8e8');
             path.setAttribute('stroke', isNonRoot ? '#666' : '#ccc');
@@ -15111,6 +15262,15 @@ function renderSVG() {
 
     // 彧：补码高亮取整个汉字的最后一笔（而不是末字根㇀的最后一笔）
     if (currentChar === '彧') {
+        actualEndStroke = strokes.length - 1;
+    }
+
+    // 豖及含豖作为基字的字（啄、涿、琢、瘃、诼、冢、塚等）：
+    // 豖的非连续映射使丶字根笔画在中间位置（第6笔），末字根丶的笔画不是最后一笔
+    // 但识别码基于整字末笔，补码高亮应取最后一笔
+    if (currentChar === '豖' ||
+        (wubiDataForColor?.r || []).includes('豖') ||
+        (wubiDataForColor?.r || []).includes('冢')) {
         actualEndStroke = strokes.length - 1;
     }
 
@@ -15409,7 +15569,7 @@ function renderInfo() {
         // 直接从rootColorMap取颜色字符串，避免存索引导致0值falsy问题
         return rootColorMap[codeIdx] || '#555';
     });
-    if (currentChar === '哥' || currentChar === '奇' || currentChar === '孚' || currentChar === '酉' || currentChar === '戊' || currentChar === '戳' || currentChar === '靠' || currentChar === '摁' || currentChar === '鹵' || currentChar === '県' || currentChar === '歌' || currentChar === '战' || currentChar === '麥' || currentChar === '蘩' || currentChar === '繁' || currentChar === '海' || currentChar === '每' || currentChar === '嗨' || currentChar === '酶' || currentChar === '鳘' || currentChar === '毓' || currentChar === '敏' || currentChar === '蔬' || currentChar === '疏' || currentChar === '止' || currentChar === '嗇' || currentChar === '牆' || currentChar === '薔' || currentChar === '穡' || currentChar === '闈' || currentChar === '偉' || currentChar === '圍' || currentChar === '韓') {
+    if (currentChar === '哥' || currentChar === '奇' || currentChar === '孚' || currentChar === '酉' || currentChar === '戊' || currentChar === '戳' || currentChar === '靠' || currentChar === '摁' || currentChar === '鹵' || currentChar === '県' || currentChar === '歌' || currentChar === '战' || currentChar === '麥' || currentChar === '蘩' || currentChar === '繁' || currentChar === '海' || currentChar === '每' || currentChar === '嗨' || currentChar === '酶' || currentChar === '鳘' || currentChar === '毓' || currentChar === '敏' || currentChar === '蔬' || currentChar === '疏' || currentChar === '止' || currentChar === '嗇' || currentChar === '牆' || currentChar === '薔' || currentChar === '穡' || currentChar === '闈' || currentChar === '偉' || currentChar === '圍' || currentChar === '韓' || currentChar === '媲') {
         console.log('[DEBUG' + currentChar + '] strokeRootMapForDisplay=' + JSON.stringify(strokeRootMapForDisplay));
         console.log('[DEBUG' + currentChar + '] expandedRootToCodeIndex=' + JSON.stringify(expandedRootToCodeIndex));
         console.log('[DEBUG' + currentChar + '] strokeColorMap=' + JSON.stringify(strokeColorMap));
@@ -15500,7 +15660,7 @@ function renderInfo() {
         // 乃字例外：笔画需要交换，但字根着色区的字根列表不交换
         const rootCustom = CUSTOM_STROKE_ORDER[currentChar];
         let displayRoots = [...roots];
-        if (rootCustom && rootCustom.swapLast && currentChar !== '乃' && wubiData && rootCustom.condition(wubiData, currentChar) && displayRoots.length > 2) {
+        if (rootCustom && rootCustom.swapLast && currentChar !== '乃' && currentChar !== '刀' && wubiData && rootCustom.condition(wubiData, currentChar) && displayRoots.length > 2) {
             const n = displayRoots.length;
             [displayRoots[n-2], displayRoots[n-1]] = [displayRoots[n-1], displayRoots[n-2]];
             [rootToCodeIndex[n-2], rootToCodeIndex[n-1]] = [rootToCodeIndex[n-1], rootToCodeIndex[n-2]];
@@ -15874,6 +16034,7 @@ function showStrokeSelector(strokeIdx, event) {
 // 输入即触发着色 + 答案验证
 let pendingChar = ''; // 当前需要用户输入的汉字
 let appReady = false; // 页面加载完成后才启用输入验证
+let fireworksEnabled = false; // 烟花动画开关，默认关闭
 
 const charInput = document.getElementById('char-input');
 
@@ -15939,8 +16100,12 @@ function handleCharInput(val) {
     
     if (single === currentChar) {
         // 输入的是当前汉字，显示烟花并跳转到下一个
-        showFireworks();
-        setTimeout(() => nextChar(), 1600);
+        if (fireworksEnabled) {
+            showFireworks();
+            setTimeout(() => nextChar(), 1600);
+        } else {
+            nextChar();
+        }
     } else {
         // 输入的是其他汉字，直接跳转
         loadAndRender(single);
@@ -17047,6 +17212,13 @@ function computeMultiCardSupInfo(ch, strokeList) {
         actualEndStroke = strokes.length - 1;
     }
 
+    // 豖及含豖作为基字的字：补码高亮取整字末笔
+    if (ch === '豖' ||
+        (wubiData?.r || []).includes('豖') ||
+        (wubiData?.r || []).includes('冢')) {
+        actualEndStroke = strokes.length - 1;
+    }
+
     return { hasSup: true, supStrokeIdx: actualEndStroke };
 }
 
@@ -17155,7 +17327,8 @@ function computeMultiCardColors(ch, strokeList) {
         }
 
         // swapScope:'roots' 交换（力、方、戋等）
-        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2) {
+        // 分、切排除：它们的刀是直接字根，由复合字交换循环处理，避免双重交换
+        if (customOrder && customOrder.swapLast && customOrder.swapScope === 'roots' && strokes.length >= 2 && currentChar !== '刀' && currentChar !== '分' && currentChar !== '切') {
             const n = strokes.length;
             [strokes[n - 2], strokes[n - 1]] = [strokes[n - 1], strokes[n - 2]];
             if (NON_CONTINUOUS_CHARS.has(currentChar)) {
@@ -17189,7 +17362,9 @@ function computeMultiCardColors(ch, strokeList) {
                     rootStrokeCount >= 2) {
                     const i1 = strokeOffset + rootStrokeCount - 2;
                     const i2 = strokeOffset + rootStrokeCount - 1;
-                    if (strokeRootMap[i1] === ri && strokeRootMap[i2] === ri) {
+                    // 展开字根（如分=[八,刀]）的子字根在strokeRootMap中用展开索引，不等于原始ri
+                    // 改为检查两笔是否属于同一展开子字根，兼容直接字根和嵌套字根
+                    if (strokeRootMap[i1] === strokeRootMap[i2]) {
                         [strokes[i1], strokes[i2]] = [strokes[i2], strokes[i1]];
                         [strokeRootMap[i1], strokeRootMap[i2]] = [strokeRootMap[i2], strokeRootMap[i1]];
                         strokeRootMapForDisplay = [...strokeRootMap];
