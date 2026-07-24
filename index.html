@@ -13734,6 +13734,23 @@ async function getStrokeData(char) {
         strokes = [...strokes.slice(0, 2), ...ruStrokes];
         strokes._strokeWidthScale = {2: 3, 3: 3}; // 入字根X缩窄后加粗
     }
+    // 喨=口(3笔)+亮(京头5笔+冖2笔+几2笔)，几字根笔划数据有误
+    // 用虎字(虎头4笔+七2笔+几2笔)的几(第7-8笔)替换喨的几(第11-12笔)
+    // 此替换在 isCdnData 判断之外，无论数据来源都执行
+    if (char === '喨') {
+        const huData = await fetchCharData('虎');
+        const jiStrokes = huData.strokes.slice(6, 8).map(s => shiftPathX(s, 40));
+        strokes = [...strokes.slice(0, 10), ...jiStrokes];
+    }
+    // 啟=启(7笔)+攵(4笔)，左侧启笔划数据有误，右侧攵笔划数据有误
+    // 左侧用启字整体笔划数据替换(压缩宽度+左移40)，右侧用收字(丩2笔+攵4笔)的攵(第3-6笔)替换
+    // 此替换在 isCdnData 判断之外，无论数据来源都执行
+    if (char === '啟') {
+        const qiData = await fetchCharData('启');
+        const shouData = await fetchCharData('收');
+        const qiStrokes = scalePathXCenter(qiData.strokes, 0.8).map(s => shiftPathX(s, -140));
+        strokes = [...qiStrokes, ...shouData.strokes.slice(2, 6).map(s => shiftPathX(s, 60))];
+    }
     // 象字及其复合字(像、橡、蟓、豫)的笔划修正：替换𫩏笔划数据，缩放各字根
     // prefix=前缀字根笔画数, dx=象部X偏移(相对独立象字)
     function applyXiangFix(strokes, linData, prefix, dx) {
