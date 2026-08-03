@@ -676,6 +676,14 @@ body {
         right: auto;
         margin: 10px auto 4px;
         justify-content: center;
+        color: #fff;
+        background: linear-gradient(135deg, #ff9a56, #ff6a3d);
+        border: none;
+        box-shadow: 0 4px 16px rgba(255, 106, 61, 0.45);
+    }
+    .donate-btn:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #ff9a56, #ff6a3d);
     }
 }
 
@@ -18348,6 +18356,11 @@ function togglePracticeMode(on) {
             donateBtn.style.position = 'static';
             donateBtn.style.top = 'auto';
             donateBtn.style.right = 'auto';
+            // 手机端恢复橙色样式（覆盖桌面端灰色）
+            donateBtn.style.color = '#fff';
+            donateBtn.style.background = 'linear-gradient(135deg, #ff9a56, #ff6a3d)';
+            donateBtn.style.border = 'none';
+            donateBtn.style.boxShadow = '0 4px 16px rgba(255, 106, 61, 0.45)';
         } else if (!donateMobile && donateBtn) {
             if (donateBtn.parentNode !== document.body) {
                 document.body.appendChild(donateBtn);
@@ -18355,6 +18368,11 @@ function togglePracticeMode(on) {
             donateBtn.style.position = 'fixed';
             donateBtn.style.top = '24px';
             donateBtn.style.right = '24px';
+            // 桌面端灰色低调样式
+            donateBtn.style.color = '#aaa';
+            donateBtn.style.background = 'rgba(255,255,255,0.08)';
+            donateBtn.style.border = '1px solid rgba(255,255,255,0.15)';
+            donateBtn.style.boxShadow = 'none';
         }
 
         // ===== 手机端（竖屏/横屏）：不用 transform scale，由 CSS 媒体查询处理布局 =====
