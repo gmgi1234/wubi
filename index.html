@@ -1466,7 +1466,7 @@ const WUBI = {
     '圊': {c:'LGED', r:['囗','青']},
     '園': {c:'LFKE', r:['囗','袁']},
     '圓': {c:'LKMI', r:['囗','員']},
-    '圙': {c:'LWDD', r:['囗','儿','面']},
+    '圙': {c:'LWDD', r:['囗','八','面']},
     '恩': { c: 'LDNU', r: ['因','心'] },
 
     '图': {c:'LTUI', r:['囗','冬'], type:'全包围'},
@@ -14343,6 +14343,14 @@ async function getStrokeData(char) {
         const tuBa = tuData.strokes.slice(3, 5); // 突的八部分2笔
         const baStrokes = fitStrokesToTargetBBox(tuBa, strokes.slice(7, 9));
         strokes = [...strokes.slice(0, 7), ...baStrokes, ...strokes.slice(9)];
+    }
+    // 圙=囗(2)+八(2)+面(10)，八在[2:4]（囗在笔划数据中为2笔：丨+𠃍），用突字的八字根笔划替换
+    // 此替换在 isCdnData 判断之外，无论数据来源都执行
+    if (char === '圙') {
+        const tuData = await fetchCharData('突');
+        const tuBa = tuData.strokes.slice(3, 5); // 突的八部分2笔
+        const baStrokes = fitStrokesToTargetBBox(tuBa, strokes.slice(2, 4));
+        strokes = [...strokes.slice(0, 2), ...baStrokes, ...strokes.slice(4)];
     }
     // 癢養中的丷+羊后+丶字根（前7笔）笔划数据有误，用鯗字的前7笔替换
     // 鯗字的前7笔本身来自养字（见上方鯗替换逻辑），这里复用养字作为数据源
