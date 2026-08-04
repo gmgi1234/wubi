@@ -16824,9 +16824,8 @@ function renderInfo() {
         // 当字根数少于编码数时（如歌=可+可+欠，3字根4键SKSW），
         // 最后一个字根对应末位编码（识别码），前面的字根按序对应
         if (roots.length < codeLen) {
-            // 键名字特殊处理：所有编码相同且只有1个字根（如王=GGGG），映射到位0（红色）
-            const isAllSameCode = rootCode.split('').every(ch => ch === rootCode[0]);
-            if (roots.length === 1 && isAllSameCode) {
+            // 单字根字符（如王=GGGG、一=GGLL、乙=NNLL）：无论编码是否全相同，都映射到位0
+            if (roots.length === 1) {
                 rootToCodeIndex.push(colorIdxMap[0]);
             } else {
                 // 字根数 < 编码数：按非补码编码位置映射
@@ -16987,9 +16986,8 @@ function renderInfo() {
             }
         } else if (roots.length < codeLen) {
             // 字根数 < 编码数：按非补码编码位置映射，末字根对应末位编码
-            // 键名字特殊处理：所有编码相同且只有1个字根（如王=GGGG），映射到位0
-            const isAllSameCode = rootCode.split('').every(ch => ch === rootCode[0]);
-            if (roots.length === 1 && isAllSameCode) {
+            // 单字根字符（如王=GGGG、一=GGLL、乙=NNLL）：无论编码是否全相同，都映射到位0
+            if (roots.length === 1) {
                 rootToCodeIndex.push(colorIdxMap[0]);
             } else {
                 const rootCodeIndices = [];
@@ -18674,9 +18672,8 @@ function computeMultiCardRootsInfo(ch) {
         }
     } else if (roots.length < codeLen) {
         // 字根数 < 编码数：按非补码编码位置映射，末字根对应末位编码
-        // 键名字特殊处理：所有编码相同且只有1个字根（如王=GGGG），映射到位0
-        const isAllSameCode = rootCode.split('').every(c => c === rootCode[0]);
-        if (roots.length === 1 && isAllSameCode) {
+        // 单字根字符（如王=GGGG、一=GGLL、乙=NNLL）：无论编码是否全相同，都映射到位0
+        if (roots.length === 1) {
             rootToCodeIndex.push(colorIdxMap[0]);
         } else {
             const rootCodeIndices = [];
