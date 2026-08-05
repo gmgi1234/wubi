@@ -27,6 +27,17 @@ h1 { text-align: left; font-size: 1.625rem; margin-bottom: 0.25rem; color: #c8c8
     left: 20px;
     top: 20px;
     z-index: 100;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+.title-container h1 {
+    margin-bottom: 0.25rem;
+}
+.title-container .subtitle {
+    flex-basis: 100%;
 }
 
 /* 输入区 */
@@ -597,6 +608,8 @@ body {
     .title-container { position: static; left: auto; top: auto; padding: 4px 0 6px 0; }
     h1 { font-size: 1.05rem; }
     .subtitle { font-size: 0.7rem; }
+    /* 主题切换按钮：手机端更紧凑 */
+    .theme-toggle-inline { font-size: 13px; padding: 4px 9px; }
 
     /* container 不限宽，flex 布局控制 main-display 和 keyboard 顺序 */
     .container { max-width: 100%; display: flex; flex-direction: column; }
@@ -999,7 +1012,6 @@ html.theme-light #wubi-info { color: #333 !important; }
 
 /* 字根着色列表 */
 html.theme-light .root-legend li { color: #333 !important; }
-html.theme-light .root-name { color: #333 !important; }
 html.theme-light .root-code { color: #888 !important; }
 html.theme-light .root-stroke-count { color: #aaa !important; }
 html.theme-light .root-kouju { color: #666 !important; }
@@ -1166,10 +1178,11 @@ html.theme-light .lib-toggle {
 
 /* 主题切换按钮（位于烟花选项旁边） */
 .theme-toggle-inline {
-    font-size: 14px; padding: 4px 10px;
+    font-size: 14px; padding: 6px 12px;
     background: #3a3a5a; color: #ddd;
-    border: 1px solid #555; border-radius: 6px; cursor: pointer;
+    border: 1px solid #555; border-radius: 999px; cursor: pointer;
     line-height: 1; white-space: nowrap; flex-shrink: 0;
+    align-self: center;
 }
 .theme-toggle-inline:hover { background: #5a5a8a; }
 html.theme-light .theme-toggle-inline {
@@ -1310,7 +1323,6 @@ html.theme-light .theme-toggle-inline:hover { background: #d0d0e8 !important; }
                         <input type="checkbox" id="fireworks-toggle" onchange="fireworksEnabled=this.checked">
                         <span style="color:#aaa">烟花</span>
                     </label>
-                    <button id="theme-toggle" class="theme-toggle-inline" onclick="toggleTheme()" title="切换深色/浅色主题" style="margin-left:10px;">🌙</button>
                     <label id="mobile-info-toggle-label" style="font-size:13px;color:#aaa;cursor:pointer;user-select:none;margin-left:10px;display:none;" title="显示/隐藏五笔编码区域">
                         <input type="checkbox" id="mobile-info-toggle" onchange="toggleMobileInfo(this.checked)">
                         <span style="color:#aaa">编码</span>
@@ -1405,6 +1417,7 @@ html.theme-light .theme-toggle-inline:hover { background: #d0d0e8 !important; }
 </div>
 <div class="title-container">
     <h1>🎨 汉字五笔字根 · 笔画着色</h1>
+    <button id="theme-toggle" class="theme-toggle-inline" onclick="toggleTheme()" title="切换深色/浅色主题">🌙</button>
     <p class="subtitle">基于 Make Me a Hanzi 笔画数据，按五笔字根精确着色每个笔画</p>
 </div>
 
