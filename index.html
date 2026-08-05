@@ -10,11 +10,13 @@ html { font-size: 16px; }
 /* 媒体查询已由 JS scale-wrapper 统一处理，避免双重缩放 */
 body {
     font-family: 'KaiTi', '楷体', 'STKaiti', '华文楷体', serif;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    background-color: #1a1a2e;
+    background-image: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
     color: #eee;
     min-height: 100vh;
     padding: 10px 20px 20px 20px;
     margin: 0;
+    transition: background-color 0.4s ease, color 0.4s ease;
 }
 .container { max-width: 68.75rem; margin: 0 auto; }
 h1 { text-align: left; font-size: 1.625rem; margin-bottom: 0.25rem; color: #c8c8ff; }
@@ -40,7 +42,7 @@ h1 { text-align: left; font-size: 1.625rem; margin-bottom: 0.25rem; color: #c8c8
 #prev-btn, #next-btn {
     font-size: 1rem; padding: 0.5rem 1.25rem; background: linear-gradient(135deg, #667eea, #764ba2);
     color: white; border: none; border-radius: 0.625rem; cursor: pointer;
-    font-weight: bold; transition: transform 0.15s;
+    font-weight: bold; transition: transform 0.15s; white-space: nowrap; flex-shrink: 0;
 }
 #prev-btn:hover, #next-btn:hover { transform: scale(1.05); }
 
@@ -935,6 +937,247 @@ body {
 }
 .donate-close:hover { background: #666; }
 
+/* ==================== 主题切换（无过渡动画，即时切换） ==================== */
+.svg-wrap, .info-card, .side-panel, .side-panel-header, .wubi-keyboard, .key,
+.char-cell, #char-input, #prev-btn, #next-btn, .stroke-nav button, .stroke-nav span, .stroke-nav label span,
+#article-panel, #article-textarea, #article-title-input, .article-saved-item, .article-char-chip,
+.multi-card, .stroke-assign-panel, .stroke-assign-panel .assign-item, .stroke-assign-panel select,
+.donate-btn, #app-loader, .lib-toggle, .lib-search-bar input, .progress-track,
+h1, .subtitle, .root-legend li, .root-name, .root-code, .root-stroke-count, .root-kouju,
+.side-panel-title, .side-panel-count, .multi-cards-header, .multi-card-code {
+    transition: none !important;
+}
+
+/* ==================== 亮色主题（html.theme-light） ==================== */
+html.theme-light body {
+    background-color: #f5f7fa !important;
+    background-image: none !important;
+    color: #333 !important;
+}
+html.theme-light h1 { color: #4a4a6a !important; }
+html.theme-light .subtitle { color: #888 !important; }
+
+/* 输入框 */
+html.theme-light #char-input {
+    background: #fff !important; color: #333 !important;
+    border-color: #ccc !important;
+}
+html.theme-light #prev-btn, html.theme-light #next-btn {
+    background: #f5f5fa !important; color: #555 !important;
+    border: 1px solid #ccc !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+}
+html.theme-light #prev-btn:hover, html.theme-light #next-btn:hover {
+    background: #e8e8f8 !important; color: #333 !important;
+}
+
+/* 笔画导航按钮 */
+html.theme-light .stroke-nav button {
+    background: #e8e8f0 !important; color: #555 !important;
+    border: 1px solid #ccc !important;
+}
+html.theme-light .stroke-nav button:hover { background: #d0d0e8 !important; }
+html.theme-light .stroke-nav span { color: #888 !important; }
+html.theme-light .stroke-nav label span { color: #888 !important; }
+
+/* SVG容器阴影减弱 */
+html.theme-light .svg-wrap {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
+}
+
+/* 信息卡片 */
+html.theme-light .info-card {
+    background: #fff !important;
+    border: 1px solid #e0e0e8 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+html.theme-light .info-card h3 {
+    color: #555 !important;
+    border-bottom: 1px solid #eee !important;
+}
+html.theme-light #wubi-info { color: #333 !important; }
+
+/* 字根着色列表 */
+html.theme-light .root-legend li { color: #333 !important; }
+html.theme-light .root-name { color: #333 !important; }
+html.theme-light .root-code { color: #888 !important; }
+html.theme-light .root-stroke-count { color: #aaa !important; }
+html.theme-light .root-kouju { color: #666 !important; }
+
+/* 字库侧边栏 */
+html.theme-light .side-panel {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid #e0e0e8 !important;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12) !important;
+}
+html.theme-light .side-panel-header { border-bottom: 1px solid #eee !important; }
+html.theme-light .side-panel-title { color: #555 !important; }
+html.theme-light .side-panel-count { color: #aaa !important; }
+html.theme-light .lib-search-bar { border-bottom: 1px solid #eee !important; }
+html.theme-light .lib-search-bar input {
+    background: #f5f5fa !important; color: #333 !important;
+    border: 1px solid #ddd !important;
+}
+html.theme-light .lib-search-bar input::placeholder { color: #bbb !important; }
+html.theme-light .char-cell {
+    background: #f5f5fa !important;
+    border: 1px solid #e0e0e8 !important;
+}
+html.theme-light .char-cell:hover { background: #e8e8f8 !important; }
+html.theme-light .char-cell.active {
+    background: rgba(0,188,212,0.12) !important;
+    border-color: #0097A7 !important;
+}
+html.theme-light .char-cell-char { color: #000 !important; }
+html.theme-light .char-cell-code { color: #000 !important; }
+html.theme-light .char-cell.no-wubi .char-cell-char { color: #999 !important; }
+html.theme-light .char-cell.no-wubi .char-cell-code { color: #bbb !important; }
+html.theme-light .char-cell.active .char-cell-char { color: #00BCD4 !important; }
+html.theme-light .side-panel-body::-webkit-scrollbar-thumb { background: rgba(100,100,180,0.3) !important; }
+
+/* 五笔键盘 - 不用!important，让JS内联样式能覆盖高亮键的背景和边框 */
+html.theme-light .wubi-keyboard {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid #e0e0e8 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+html.theme-light .key {
+    background: #f5f5fa;
+    border: 2px solid #e0e0e8;
+}
+/* 高亮键的背景和边框由JS内联style控制，不用CSS覆盖 */
+html.theme-light .key.active {
+    border-width: 3px;
+}
+html.theme-light .key-letter { color: #000; }
+html.theme-light .key-hint { color: #000 !important; }
+
+/* 文章模式面板 */
+html.theme-light #article-panel {
+    background: #fff !important;
+    border: 1px solid #e0e0e8 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+html.theme-light #article-panel-title { color: #555 !important; }
+html.theme-light #article-textarea {
+    background: #f8f8fc !important; color: #333 !important;
+    border: 1px solid #ddd !important;
+}
+html.theme-light #article-title-input {
+    background: #f8f8fc !important; color: #333 !important;
+    border: 1px solid #ddd !important;
+}
+html.theme-light #article-title-input::placeholder { color: #aaa !important; }
+html.theme-light #article-file-label {
+    background: #f0f0f8 !important; color: #667eea !important;
+    border: 1px solid #ddd !important;
+}
+html.theme-light #article-file-label:hover { background: #e8e8f8 !important; }
+html.theme-light .article-saved-item {
+    background: #f8f8fc !important; border: 1px solid #eee !important;
+}
+html.theme-light .article-saved-item:hover {
+    background: #f0f0f8 !important; border-color: #ddd !important;
+}
+html.theme-light .article-saved-item-title { color: #555 !important; }
+html.theme-light .article-char-chip {
+    background: #f0f0f8 !important; color: #666 !important;
+    border: 1px solid #e0e0e8 !important;
+    width: 36px !important; height: 36px !important;
+    font-size: 20px !important;
+}
+html.theme-light .article-char-chip:hover { background: #e8e8f8 !important; color: #333 !important; }
+html.theme-light .article-char-chip.active {
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    color: #fff !important;
+}
+
+/* 进度条 */
+html.theme-light .progress-track { background: #e0e0e8 !important; }
+html.theme-light .progress-label { color: #888 !important; }
+html.theme-light .progress-pct { color: #888 !important; }
+html.theme-light .speed-display { color: #888 !important; }
+html.theme-light .article-timer { color: #888 !important; }
+
+/* 多汉字拆分卡片 */
+html.theme-light #multi-char-cards {
+    background: rgba(245, 247, 250, 0.9) !important;
+    border: 1px solid #e0e0e8 !important;
+}
+html.theme-light .multi-cards-header { color: #888 !important; }
+html.theme-light .multi-card {
+    background: #fff !important;
+    border: 1px solid #e0e0e8 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+html.theme-light .multi-card-code { color: #333 !important; }
+html.theme-light .multi-root-tag { background: #f5f5fa !important; }
+
+/* 笔画分配面板 */
+html.theme-light .stroke-assign-panel {
+    background: #fff !important;
+    border: 1px solid #e0e0e8 !important;
+}
+html.theme-light .stroke-assign-panel .assign-item {
+    background: #f5f5fa !important;
+}
+html.theme-light .stroke-assign-panel select {
+    background: #f0f0f8 !important; color: #333 !important;
+    border: 1px solid #ddd !important;
+}
+
+/* 预览字符 */
+html.theme-light .char-preview { color: rgba(0,0,0,0.05) !important; }
+
+/* 加载动画 */
+html.theme-light #app-loader {
+    background: #f5f7fa !important;
+}
+html.theme-light .loader-text { color: #888 !important; }
+html.theme-light .loader-tip { color: #aaa !important; }
+
+/* 打赏按钮 */
+html.theme-light .donate-btn {
+    color: #888 !important;
+    background: rgba(255,255,255,0.9) !important;
+    border: 1px solid #e0e0e8 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+html.theme-light .donate-btn:hover {
+    color: #555 !important;
+    background: #fff !important;
+}
+
+/* 补码小框 */
+html.theme-light #sup-mini-box {
+    background: rgba(255,255,255,0.95) !important;
+}
+/* 多汉字拆分卡片补码小框（与大框补码小框一致） */
+html.theme-light .multi-card-sup-box {
+    background: rgba(255,255,255,0.95) !important;
+}
+
+/* 字库切换按钮 */
+html.theme-light .lib-toggle {
+    background: #fff !important; color: #888 !important;
+    border: 1px solid #ddd !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
+/* 主题切换按钮（位于烟花选项旁边） */
+.theme-toggle-inline {
+    font-size: 14px; padding: 4px 10px;
+    background: #3a3a5a; color: #ddd;
+    border: 1px solid #555; border-radius: 6px; cursor: pointer;
+    line-height: 1; white-space: nowrap; flex-shrink: 0;
+}
+.theme-toggle-inline:hover { background: #5a5a8a; }
+html.theme-light .theme-toggle-inline {
+    background: #e8e8f0 !important; color: #555 !important;
+    border: 1px solid #ccc !important;
+}
+html.theme-light .theme-toggle-inline:hover { background: #d0d0e8 !important; }
+
 </style>
 </head>
 <body>
@@ -1067,6 +1310,7 @@ body {
                         <input type="checkbox" id="fireworks-toggle" onchange="fireworksEnabled=this.checked">
                         <span style="color:#aaa">烟花</span>
                     </label>
+                    <button id="theme-toggle" class="theme-toggle-inline" onclick="toggleTheme()" title="切换深色/浅色主题" style="margin-left:10px;">🌙</button>
                     <label id="mobile-info-toggle-label" style="font-size:13px;color:#aaa;cursor:pointer;user-select:none;margin-left:10px;display:none;" title="显示/隐藏五笔编码区域">
                         <input type="checkbox" id="mobile-info-toggle" onchange="toggleMobileInfo(this.checked)">
                         <span style="color:#aaa">编码</span>
@@ -1199,11 +1443,48 @@ var IS_MOBILE = (function(){
     return isMobile;
 })();
 
+
+// ==================== 主题（自动初始化 + 手动切换） ====================
 // 手机布局判断：仅真手机且窗口窄时返回 true（applyScale 主判断、初始化收起字库）
 function isPhoneLayout() {
     var vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
     return IS_MOBILE && vw <= 800;
 }
+
+function applyTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.classList.add('theme-light');
+        document.documentElement.classList.remove('theme-dark');
+    } else {
+        document.documentElement.classList.add('theme-dark');
+        document.documentElement.classList.remove('theme-light');
+    }
+    const btn = document.getElementById('theme-toggle');
+    if (btn) {
+        btn.textContent = (theme === 'light') ? '🌙' : '☀';
+        btn.title = (theme === 'light') ? '切换为深色主题' : '切换为浅色主题';
+    }
+}
+
+function toggleTheme() {
+    const isLight = document.documentElement.classList.contains('theme-light');
+    const newTheme = isLight ? 'dark' : 'light';
+    applyTheme(newTheme);
+    try { localStorage.setItem('wubi-theme', newTheme); } catch(e) {}
+    // 切换主题后重新渲染键盘（深色/浅色下非高亮字母颜色不同）
+    if (typeof renderKeyboard === 'function') renderKeyboard();
+}
+
+// 初始化主题：优先使用手动保存的偏好，否则自动判断（手机浅色，电脑深色）
+(function initTheme() {
+    let savedTheme = null;
+    try { savedTheme = localStorage.getItem('wubi-theme'); } catch(e) {}
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else {
+        applyTheme(isPhoneLayout() ? 'light' : 'dark');
+    }
+})();
 // 手机竖屏判断：手机布局且竖屏时返回 true（禁用 scale 容器内的 scrollIntoView）
 function isPhonePortrait() {
     return isPhoneLayout() && window.innerHeight > window.innerWidth;
@@ -1365,6 +1646,20 @@ const WUBI_ROOT_TABLE = {
 };
 
 // 键盘行布局
+// 键位→字根颜色映射（按五笔5个区，循环使用ROOT_COLORS的4种颜色）
+const KEY_ZONE_COLOR = {};
+(function() {
+    // 区号→颜色索引：横1=红0, 竖2=橙1, 撇3=绿2, 捺4=蓝3, 折5=红0(循环)
+    const zoneMap = {
+        'G':0,'F':0,'D':0,'S':0,'A':0,       // 横区
+        'H':1,'J':1,'K':1,'L':1,'M':1,       // 竖区
+        'T':2,'R':2,'E':2,'W':2,'Q':2,       // 撇区
+        'Y':3,'U':3,'I':3,'O':3,'P':3,       // 捺区
+        'N':0,'B':0,'V':0,'C':0,'X':0        // 折区（循环回红色）
+    };
+    for (const k in zoneMap) KEY_ZONE_COLOR[k] = ROOT_COLORS[zoneMap[k]];
+})();
+
 const KB_ROWS = [
     ['Q','W','E','R','T','Y','U','I','O','P'],
     ['A','S','D','F','G','H','J','K','L'],
@@ -17158,10 +17453,10 @@ function renderKeyboard() {
         });
     }
     
-    // 构建字母→颜色映射（用于键盘高亮，取该字母最后一次非补码的颜色）
+    // 构建字母→颜色映射（用于键盘高亮，取该字母第一次非补码的颜色）
     const codeColors = {};
     positionColors.forEach((info, i) => {
-        if (info && !info.isSup) {
+        if (info && !info.isSup && !codeColors[info.letter]) {
             codeColors[info.letter] = info;
         }
     });
@@ -17195,11 +17490,13 @@ function renderKeyboard() {
                     <div class="key-hint-wrap"><span class="key-hint">${kouju}</span></div>
                 </div>`;
             } else {
-                // 普通状态
+                // 普通状态：深色模式下字母颜色与字根提示文字一致(#aaa)，浅色模式由CSS控制为黑色
+                const isDark = !document.documentElement.classList.contains('theme-light');
+                const letterStyle = isDark ? ` style="color:#aaa"` : '';
                 return `<div class="key">
                     <div class="key-top">
                         <span class="key-jianma" style="color:#4FC3F799">${jianma}</span>
-                        <span class="key-letter" style="color:#888">${key}</span>
+                        <span class="key-letter"${letterStyle}>${key}</span>
                         <span class="key-name" style="color:#66BB6A99">${keyName}</span>
                     </div>
                     <div class="key-hint-wrap"><span class="key-hint">${kouju}</span></div>
