@@ -2156,263 +2156,37 @@ const KEY_NAME_CHARS = new Set('王土大木工目日口田山禾白月人金言
 // 单笔画字：特殊编码，无识别码
 const SINGLE_STROKE_CHARS = new Set('一乙丨丿乛丶'.split(''));
 
-/**
- * 计算五笔识别码（补码）
- * 规则：识别码 = 末笔类型 × 3 + 字结构类型
- * 
- * 末笔类型：横(1)、竖(2)、撇(3)、捺(4)、折(5)
- * 字结构：左右(1)、上下(2)、杂合/独体(3)
- * 
- * 识别码字母表：
- *   横：G(11) F(12) D(13)
- *   竖：H(21) J(22) K(23)
- *   撇：T(31) R(32) E(33)
- *   捺：Y(41) U(42) I(43)
- *   折：N(51) B(52) V(53)
- */
-function calculateSupplementCode(lastStrokeType, structureType) {
-    // 识别码字母矩阵（五笔86标准）
-    const SUPPLEMENT_MAP = {
-        1: { 1: 'G', 2: 'F', 3: 'D' }, // 横
-        2: { 1: 'H', 2: 'J', 3: 'K' }, // 竖
-        3: { 1: 'T', 2: 'R', 3: 'E' }, // 撇
-        4: { 1: 'Y', 2: 'U', 3: 'I' }, // 捺
-        5: { 1: 'N', 2: 'B', 3: 'V' }  // 折
-    };
-    
-    return SUPPLEMENT_MAP[lastStrokeType]?.[structureType] || null;
-}
-
-/**
- * 判断笔画类型
- * @param {string} stroke - 笔画名称（㇐㇑㇒㇓㇔等）
- * @returns {number} 1=横, 2=竖, 3=撇, 4=捺, 5=折
- */
-function _getStrokeTypeFromRootName(rootName) {
-    if (!rootName) return null;
-    if (/[㇐一]/.test(rootName)) return 1;
-    if (/[㇑丨]/.test(rootName)) return 2;
-    if (/[㇒丿]/.test(rootName)) return 3;
-    if (/[㇓㇔丶]/.test(rootName)) return 4;
-    if (/[㇕㇖㇗㇘㇙㇚㇛㇜㇝乙乛亅]/.test(rootName)) return 5;
-    return 5; // 默认折
-}
-
-// 通过SVG路径数据判断笔画类型（用于戈/戋末两笔区分丿和丶）
-// 返回 3=撇, 4=捺/点, null=不确定
-function _getStrokeTypeFromPath(pathStr) {
-    if (typeof pathStr !== 'string') return null;
-    // 丶（点）通常是闭合形状（以Z结尾），丿（撇）是开放路径
-    const endsWithZ = /\s*Z\s*$/i.test(pathStr.trim());
-    if (endsWithZ) return 4; // 丶/点
-    // 开放路径：检查方向判断是否为撇
-    const parts = pathStr.split(/(?=[MLQCZmlqcz])/);
-    if (parts.length < 2) return null;
-    const mNums = parts[0].match(/-?\d+\.?\d*/g);
-    if (!mNums || mNums.length < 2) return null;
-    const startX = parseFloat(mNums[0]);
-    const startY = parseFloat(mNums[1]);
-    // 找最后一个带坐标的命令
-    let lastNums = null;
-    for (let i = parts.length - 1; i >= 1; i--) {
-        const nums = parts[i].match(/-?\d+\.?\d*/g);
-        if (nums && nums.length >= 2) { lastNums = nums; break; }
-    }
-    if (!lastNums) return null;
-    const endX = parseFloat(lastNums[lastNums.length - 2]);
-    const endY = parseFloat(lastNums[lastNums.length - 1]);
-    const dx = endX - startX;
-    const dy = endY - startY;
-    // 撇：向左下方（dx<0, dy>0）
-    if (dx < -20 && dy > 20) return 3;
-    // 其他开放路径默认为撇（戈/戋的开放路径只有撇）
-    if (Math.abs(dx) > 50 || Math.abs(dy) > 50) return 3;
-    return null;
-}
-
-function getStrokeType(stroke) {
-    // 若stroke是对象（hanzi-writer笔画路径数据），通过五笔分解推断末笔类型
-    if (typeof stroke !== 'string') {
-        if (rootCode && WUBI[currentChar] && strokeRootMapForDisplay && strokeRootMapForDisplay.length > 0) {
-            // 取最后一个编码笔画所对应的字根索引
-            const lastRi = strokeRootMapForDisplay[strokeRootMapForDisplay.length - 1];
-            if (lastRi < 0) return null;
-            // 获取该字根的展开列表
-            const expanded = recursivelyExpandRoots(WUBI[currentChar].r || [], currentChar);
-            const lastRootName = expanded[lastRi];
-            if (!lastRootName) return null;
-            // 如果字根本身有WUBI分解（如戈→戈一㇂丶丿），取分解中的最后一笔（跳过报户口自身）
-            const lastRootWubi = WUBI[lastRootName];
-            if (lastRootWubi && lastRootWubi.r && lastRootWubi.r.length >= 2) {
-                const sub = lastRootWubi.r;
-                // 报户口字：r[0]==自身，取r[last]；非报户口：取r[last]
-                const lastSub = (sub[0] === lastRootName) ? sub[sub.length - 1] : sub[sub.length - 1];
-                if (currentChar === '战') console.log('[DEBUG战] lastRi=', lastRi, 'lastRootName=', lastRootName, 'sub=', sub, 'lastSub=', lastSub, 'type=', _getStrokeTypeFromRootName(lastSub));
-                const result = _getStrokeTypeFromRootName(lastSub);
-                if (currentChar === '战') alert('战补码检测: 末笔=' + lastSub + ' type=' + result + ' 结构=左右(1) 预期=T');
-                return result;
-            }
-            // 直接检测字根名是否是笔画名
-            const type = _getStrokeTypeFromRootName(lastRootName);
-            if (type !== null) return type;
-        }
-        return null;
-    }
-    // 横类：㇐ 一
-    if (/[㇐一]/.test(stroke)) return 1;
-    // 竖类：㇑ 丨
-    if (/[㇑丨]/.test(stroke)) return 2;
-    // 撇类：㇒ 丿
-    if (/[㇒丿]/.test(stroke)) return 3;
-    // 捺类：㇓ ㇔ 丶
-    if (/[㇓㇔丶]/.test(stroke)) return 4;
-    // 折类：㇕ ㇖ ㇗ ㇘ ㇙ ㇚ ㇛ ㇜ ㇝ 乙 乛 亅
-    if (/[㇕㇖㇗㇘㇙㇚㇛㇜㇝乙乛亅]/.test(stroke)) return 5;
-    
-    // 无法识别时返回null，避免误判导致补码显示错误
-    return null;
-}
-
-/**
- * 获取字的末笔类型
- * @param {string} char - 汉字
- * @returns {number} 1=横, 2=竖, 3=撇, 4=捺, 5=折
- */
-function getLastStrokeType(char) {
-    // 从笔画数据获取末笔
-    if (strokes && strokes.length > 0) {
-        const wubiData = WUBI[char];
-        if (wubiData && roots && roots.length > 0) {
-            // ========== 【囗】包围结构特殊处理 ==========
-            // 规则：含囗的字 → 补码取非囗字根的末笔（不是整字的最后一笔/封口横）
-            const weiIdx = roots.indexOf('囗');
-            if (weiIdx !== -1 && strokeRootMap && strokeRootMap.length > 0) {
-                let innerLastStrokeIdx = -1;
-                for (let i = 0; i < strokeRootMap.length; i++) {
-                    if (strokeRootMap[i] !== weiIdx) {
-                        innerLastStrokeIdx = Math.max(innerLastStrokeIdx, i);
-                    }
-                }
-                if (innerLastStrokeIdx !== -1) {
-                    return getStrokeType(strokes[innerLastStrokeIdx]);
-                }
-            }
-
-            // ========== 【匚】结构特殊处理 ==========
-            // 规则：含【匚】且有补码的字 → 优先取匚后方字根的末笔；
-            // 若匚已是末字根（如汇=氵+匚），则取匚自身末笔
-            // 如【区】AQI（匚+乂，补码取乂末笔）
-            // 如【沤】IAQY（氵+匚+乂，补码取乂末笔）
-            // 如【汇】IAN（氵+匚，补码取匚末笔折）
-            // 【欧】AQQW 4码无补码，不会进入此分支
-            const fuIdx = roots.indexOf('匚');
-            const hasSup = wubiData.sup && wubiData.sup.length > 0;
-            if (fuIdx !== -1 && hasSup && strokeRootMap && strokeRootMap.length > 0) {
-                let innerLastStrokeIdx = -1;
-                let fuLastStrokeIdx = -1;
-                for (let i = 0; i < strokeRootMap.length; i++) {
-                    if (strokeRootMap[i] > fuIdx) {  // 匚后方笔画 = 内部/后续字根
-                        innerLastStrokeIdx = Math.max(innerLastStrokeIdx, i);
-                    } else if (strokeRootMap[i] === fuIdx) {
-                        fuLastStrokeIdx = Math.max(fuLastStrokeIdx, i);
-                    }
-                }
-                const targetStrokeIdx = innerLastStrokeIdx !== -1 ? innerLastStrokeIdx : fuLastStrokeIdx;
-                if (targetStrokeIdx !== -1) {
-                    return getStrokeType(strokes[targetStrokeIdx]);
-                }
-            }
-
-            // ========== 【辶/廴】结构特殊处理 ==========
-            // 规则：含辶/廴的字 → 补码取被包围部分的末笔（不是辶的最后一笔）
-            // 如【迈】DNPV（万+辶，取万末笔）
-            // 如【这】YPI（文+辶，取文末笔）
-            const zouIdx = roots.indexOf('辶');
-            const yanIdx = roots.indexOf('廴');
-            const walkIdx = zouIdx !== -1 ? zouIdx : yanIdx;
-            if (walkIdx !== -1 && strokeRootMap && strokeRootMap.length > 0) {
-                let innerLastStrokeIdx = -1;
-                for (let i = 0; i < strokeRootMap.length; i++) {
-                    if (strokeRootMap[i] !== walkIdx) {
-                        innerLastStrokeIdx = Math.max(innerLastStrokeIdx, i);
-                    }
-                }
-                if (innerLastStrokeIdx !== -1) {
-                    return getStrokeType(strokes[innerLastStrokeIdx]);
-                }
-            }
-
-        }
-        
-        // 默认：通过五笔字根分解推断末笔类型
-        // 优先从 strokeRootMapForDisplay 获取末笔对应的字根来确定笔画类型
-        if (strokeRootMapForDisplay && strokeRootMapForDisplay.length > 0 && roots && roots.length > 0) {
-            const lastRootName = roots[roots.length - 1];
-            if (lastRootName) {
-                const lastRootWubi = WUBI[lastRootName];
-                if (lastRootWubi && lastRootWubi.r && lastRootWubi.r.length >= 2) {
-                    const sub = lastRootWubi.r;
-                    const lastSub = sub[sub.length - 1];
-                    const type = _getStrokeTypeFromRootName(lastSub);
-                    if (type !== null) return type;
-                }
-                const type = _getStrokeTypeFromRootName(lastRootName);
-                if (type !== null) return type;
-            }
-        }
-        // 回退：尝试从最后一笔SVG路径推断
-        const lastStroke = strokes[strokes.length - 1];
-        return getStrokeType(lastStroke);
-    }
-    
-    // 从hanzi-writer数据推断（如果有）
-    // TODO: 从hanzi-writer-data获取笔画信息
-    
-    return null;
-}
-
-/**
- * 获取字结构类型
- * @param {string} char - 汉字
- * @returns {number} 1=左右, 2=上下, 3=杂合/独体
- */
-function getStructureType(char) {
-    const structure = CHAR_STRUCTURE[char];
-    if (!structure) return 3; // 默认杂合
-    
-    if (structure === '左右') return 1;
-    if (structure === '上下') return 2;
-    // 全包围、半包围、独体 都是杂合
-    return 3;
-}
+// 识别码字母逆查表：字母 → [末笔类型, 结构类型]（三版通用）
+// 规则：识别码 = 末笔(1横 2竖 3撇 4捺 5折) × 字结构(1左右 2上下 3杂合) 交叉取码
+const SUPPLEMENT_REVERSE = {
+    G: [1, 1], F: [1, 2], D: [1, 3], // 横：左右/上下/杂合
+    H: [2, 1], J: [2, 2], K: [2, 3], // 竖
+    T: [3, 1], R: [3, 2], E: [3, 3], // 撇
+    Y: [4, 1], U: [4, 2], I: [4, 3], // 捺
+    N: [5, 1], B: [5, 2], V: [5, 3]  // 折
+};
 
 /**
  * 自动计算补码（识别码）
+ * 码表中补码位的字母唯一对应一组「末笔×结构」，直接逆查得出判断依据。
  * @param {string} char - 汉字
- * @returns {object} { code: 补码字母, lastStrokeType: 末笔类型, structureType: 结构类型 }
+ * @returns {object|null} { code, lastStrokeType, structureType, lastStrokeName, structureName }
  */
 function autoCalculateSupplement(char) {
-    const lastStrokeType = getLastStrokeType(char);
-    if (char === '戛') console.log('[DEBUG戛 补码] lastStrokeType=' + lastStrokeType + ' strokeRootMapForDisplay=' + JSON.stringify(strokeRootMapForDisplay));
-    const structureType = getStructureType(char);
-    
-    if (!lastStrokeType) {
-        console.warn(`[补码计算] ${char}: 无法确定末笔类型`);
-        return null;
-    }
-    
-    const code = calculateSupplementCode(lastStrokeType, structureType);
-    
-    const strokeNames = { 1: '横', 2: '竖', 3: '撇', 4: '捺', 5: '折' };
-    const structNames = { 1: '左右', 2: '上下', 3: '杂合' };
-    
-    
+    const wubiData = WUBI[char];
+    const supIndices = (wubiData && wubiData.sup) || [];
+    if (!wubiData || supIndices.length === 0 || !wubiData.c) return null;
+
+    const letter = wubiData.c[supIndices[0]];
+    const rev = SUPPLEMENT_REVERSE[letter];
+    if (!rev) return null;
+
     return {
-        code,
-        lastStrokeType,
-        structureType,
-        lastStrokeName: strokeNames[lastStrokeType],
-        structureName: structNames[structureType]
+        code: letter,
+        lastStrokeType: rev[0],
+        structureType: rev[1],
+        lastStrokeName: { 1: '横', 2: '竖', 3: '撇', 4: '捺', 5: '折' }[rev[0]],
+        structureName: { 1: '左右', 2: '上下', 3: '杂合' }[rev[1]]
     };
 }
 
@@ -7747,7 +7521,7 @@ function renderSVG() {
             
             if (hasGeHouPattern) {
                 // 戈/戋类字根：末两笔为丶+丿，需确定丿的位置作为补码高亮
-                // 不能用_getStrokeTypeFromPath判断，因为hanzi-writer数据中所有路径都以Z结尾
+                // 不能用路径形状判断（hanzi-writer数据中所有路径都以Z结尾）
                 // 改为检查swapLast是否已应用：swap后丿在末位(i2)，未swap则丿在倒数第二位(i1)
                 if (lastRootStrokes.length >= 2) {
                     const i1 = lastRootStrokes[lastRootStrokes.length - 2]; // 倒数第二笔
@@ -7880,11 +7654,12 @@ function renderSVG() {
 
             miniG.appendChild(path);
         });
-    } else if (wubiDataForColor?.r && wubiDataForColor.r[0] === currentChar && strokes.length > 0) {
+    } else if (wubiDataForColor?.r && wubiDataForColor.r[0] === currentChar && wubiDataForColor.r.length > 1 && strokes.length > 0) {
         // ========== 报户口小框 ==========
-        // 成字字根报户口（r[0]=字本身，如 止=[止,丨,一,丨,一]、键名四连打）：
+        // 成字字根报户口（r[0]=字本身且还有后续笔画，如 止=[止,丨,一,丨,一]）：
         // 报户口字根本身不占大框笔画、无处显示——右上角小框显示该字完整字形、全部红色（字根红）。
         // 大框颜色保持当前分配不变。有补码时优先走上方补码分支。
+        // 键名字（r=[自身]连打四下）与单笔画字（一/乙）不显示报户口小框。
         miniBox.style.display = 'block';
         const _miniLabel = document.getElementById('sup-mini-label');
         if (_miniLabel) _miniLabel.textContent = '报户口';
@@ -8175,7 +7950,7 @@ function renderInfo() {
         // 编码中每个字母按字根位置着色（每个位置独立颜色，补码用青色）
         const codeHtml = rootCode.split('').map((ch, i) => {
             const color = rootColorMap[i] || '#555';
-            return `<span style="color:${color};font-weight:bold">${ch}</span>`;
+            return `<span class="enc-letter" data-code-idx="${i}" style="color:${color};font-weight:bold;cursor:pointer">${ch}</span>`;
         }).join('');
         const realRoots = roots.filter(r => r !== '').length;
         const nonRoots = wubiData?.nr || [];
@@ -8218,7 +7993,11 @@ function renderInfo() {
     // 字根图例
     const legend = document.getElementById('root-legend');
     const nonRoots = wubiData?.nr || []; // 非编码部首列表
-    
+
+    // 重置悬停高亮映射（本字无字根时避免残留上一个字的映射）
+    window.__hlRootToCode = null;
+    window.__hlPosToRoot = null;
+
     if (roots.length > 0) {
         
         // 计算字根→编码的映射关系（与笔画颜色逻辑完全一致）
@@ -8281,11 +8060,16 @@ function renderInfo() {
         //     该 condition 已按版本（86/98/06）区分，此处不再额外拦截
         const rootCustom = CUSTOM_STROKE_ORDER[currentChar];
         let displayRoots = [...roots];
+        const __posToRoot = displayRoots.map((_, i) => i); // 显示位置 → 原始字根索引（悬停高亮用）
         if (rootCustom && rootCustom.swapLast && currentChar !== '乃' && currentChar !== '刀' && currentChar !== '力' && wubiData && rootCustom.condition(wubiData, currentChar) && displayRoots.length > 2) {
             const n = displayRoots.length;
             [displayRoots[n-2], displayRoots[n-1]] = [displayRoots[n-1], displayRoots[n-2]];
             [rootToCodeIndex[n-2], rootToCodeIndex[n-1]] = [rootToCodeIndex[n-1], rootToCodeIndex[n-2]];
+            [__posToRoot[n-2], __posToRoot[n-1]] = [__posToRoot[n-1], __posToRoot[n-2]];
         }
+        // 导出悬停高亮所需映射（字根→编码位、显示位置→原始字根索引）
+        window.__hlRootToCode = rootToCodeIndex;
+        window.__hlPosToRoot = __posToRoot;
 
         // roots 已经是展开后的基本字根数组，无需再展开
         // displayRoots 和 rootToCodeIndex 已在上面通过 swapLast 处理完毕
@@ -8310,7 +8094,7 @@ function renderInfo() {
             const keyLetter = rootCode[codeIdx] || '';
             const kouju = keyLetter ? WUBI_KOuju[keyLetter] || '' : '';
             const rootTable = keyLetter ? WUBI_ROOT_TABLE[keyLetter] || '' : '';
-            return '<li style="background:' + bgColor + '22">' +
+            return '<li data-root-idx="' + i + '" style="background:' + bgColor + '22;cursor:pointer">' +
                 '<span class="root-letter-big" style="color:' + bgColor + '">' + keyLetter + '</span>' +
                 '<div class="root-content">' +
                 '<div class="root-row">' +
@@ -8362,7 +8146,7 @@ function renderInfo() {
                 }
             }
 
-            html += '<li style="background:#00BCD455">' +
+            html += '<li data-sup="1" style="background:#00BCD455;cursor:pointer">' +
                 '<span class="root-letter-big" style="color:#00BCD4">' + supCodeLetters + '</span>' +
                 '<div class="root-content">' +
                 '<div class="root-row">' +
@@ -8380,7 +8164,7 @@ function renderInfo() {
         if (nonRoots.length > 0) {
             const grayCount = strokeRootMap.filter(x => x < 0).length;
             html += nonRoots.map(nr => {
-                return '<li style="background:rgba(80,80,80,0.25)">' +
+                return '<li data-gray="1" style="background:rgba(80,80,80,0.25)">' +
                     '<span class="root-letter-big" style="color:#777">—</span>' +
                     '<div class="root-content">' +
                     '<div class="root-row">' +
@@ -10563,8 +10347,8 @@ async function fillMultiCard(card, ch, ctx) {
             if (result.supInfo && result.supInfo.hasSup && supBox && supSvg) {
                 renderMultiCardSupSVG(supSvg, renderStrokes, result.supInfo.supStrokeIdx);
                 supBox.style.display = 'block';
-            } else if (wubiData && wubiData.r && wubiData.r[0] === ch && strokeList.length > 0) {
-                // 报户口小框：r[0]=字本身（成字字根报户口/键名四连打）→ 字根本身全红显示
+            } else if (wubiData && wubiData.r && wubiData.r[0] === ch && wubiData.r.length > 1 && strokeList.length > 0) {
+                // 报户口小框：r[0]=字本身且还有后续笔画（成字字根报户口）→ 字根本身全红显示；键名单根字不显示
                 supBox.style.display = 'block';
                 supSvg.innerHTML = '';
                 const _bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -11913,6 +11697,266 @@ document.addEventListener('fullscreenchange', function () {
     }
     if (typeof ccCloneToPreview === 'function') ccCloneToPreview();
 });
+</script>
+<script>
+// ==================== 悬停交互：编码字母/字根→高亮笔画 + 取码规则自动讲解 ====================
+(function () {
+    'use strict';
+
+    // 注入悬停样式
+    const hoverCss = document.createElement('style');
+    hoverCss.textContent =
+        '.enc-letter{display:inline-block;transition:filter .12s,transform .12s;}' +
+        '.enc-letter:hover{filter:brightness(1.45) drop-shadow(0 0 5px currentColor);}' +
+        '@keyframes supPulse{0%,100%{filter:drop-shadow(0 0 2px #00BCD4);}50%{filter:drop-shadow(0 0 9px #00BCD4);}}' +
+        '#sup-mini-svg path.sup-hl{animation:supPulse 1s ease-in-out infinite;}' +
+        '#sup-mini-box.sup-hl-box{outline:2px solid #00BCD4;outline-offset:-1px;}' +
+        '@keyframes hukouPulse{0%,100%{filter:drop-shadow(0 0 2px #E74C3C);}50%{filter:drop-shadow(0 0 9px #E74C3C);}}' +
+        '#sup-mini-box.hukou-hl-box{outline:2px solid #E74C3C;outline-offset:-1px;}' +
+        '#sup-mini-svg path.hukou-hl{animation:hukouPulse 1s ease-in-out infinite;}' +
+        '#sup-mini-box{transition:opacity .15s;}' +
+        '#sup-mini-box.mini-dim{opacity:0.25;}' +
+        '#rule-tip{background:#1e1e3e;color:#ddd;border:1px solid #4a4a68;box-shadow:0 10px 28px rgba(0,0,0,.5);--tip-accent:#FFD54F;--tip-code:#4FC3F7;--tip-muted:#999;}' +
+        'html.theme-light #rule-tip{background:#ffffff;color:#333;border:1px solid #e0e0e8;box-shadow:0 6px 20px rgba(0,0,0,.12);--tip-accent:#9a6b00;--tip-code:#1565c0;--tip-muted:#888;}' +
+        '#rule-tip b{font-weight:600;}';
+    document.head.appendChild(hoverCss);
+
+    // —— 笔画高亮：调暗非目标笔画（只动 opacity，不与选笔/填色机制冲突）——
+    function eachStrokePath(fn) {
+        document.querySelectorAll('#char-svg path[data-stroke-index]').forEach(fn);
+    }
+    function hlClear() {
+        eachStrokePath(p => { p.style.opacity = ''; });
+        const box = document.getElementById('sup-mini-box');
+        if (box) box.classList.remove('mini-dim'); // 恢复小框亮度
+    }
+    function hlRootPosSet(posSet) { // posSet: 原始字根索引集合
+        const box = document.getElementById('sup-mini-box');
+        if (box) box.classList.add('mini-dim'); // 小框（补码/报户口）随大框一起调暗
+        const map = (typeof strokeRootMapForDisplay !== 'undefined' && strokeRootMapForDisplay.length)
+            ? strokeRootMapForDisplay
+            : (typeof strokeRootMap !== 'undefined' ? strokeRootMap : []);
+        eachStrokePath(p => {
+            const s = +p.dataset.strokeIndex;
+            p.style.opacity = (map[s] !== undefined && posSet.has(map[s])) ? '1' : '0.13';
+        });
+    }
+    function supMiniHl(on) { // 补码/识别码位：高亮补码小框（右上角）中着色（青色）的那一笔，同时大框整体调暗
+        if (on) {
+            const box = document.getElementById('sup-mini-box');
+            if (box && box.style.display !== 'none') {
+                box.classList.add('sup-hl-box');
+                box.querySelectorAll('path[fill="#00BCD4"]').forEach(p => p.classList.add('sup-hl'));
+            }
+            eachStrokePath(p => { p.style.opacity = '0.13'; }); // 大框整体调暗
+        } else {
+            const box = document.getElementById('sup-mini-box');
+            if (box) {
+                box.classList.remove('sup-hl-box');
+                box.classList.remove('hukou-hl-box'); // 同步清理报户口高亮
+                box.classList.remove('mini-dim'); // 恢复小框亮度
+                box.querySelectorAll('path.sup-hl').forEach(p => p.classList.remove('sup-hl'));
+                box.querySelectorAll('path.hukou-hl').forEach(p => p.classList.remove('hukou-hl'));
+            }
+            eachStrokePath(p => { p.style.opacity = ''; }); // 恢复大框
+        }
+    }
+    function hukouMiniHl(on) { // 报户口位：高亮右上角报户口小框（红框发光+红笔脉冲），大框整体调暗
+        if (on) {
+            const box = document.getElementById('sup-mini-box');
+            if (box && box.style.display !== 'none') {
+                box.classList.add('hukou-hl-box');
+                box.querySelectorAll('path[fill="#E74C3C"]').forEach(p => p.classList.add('hukou-hl'));
+            }
+            eachStrokePath(p => { p.style.opacity = '0.13'; }); // 大框整体调暗
+        } else {
+            supMiniHl(false); // 清理路径与补码高亮相同
+        }
+    }
+    function isHukouRootPos(pos) { // 原始字根索引是否为报户口位（字根名 = 当前汉字本身，键名单根字除外）
+        try { return roots[pos] === currentChar && WUBI[currentChar] && WUBI[currentChar].r && WUBI[currentChar].r.length > 1; } catch (e) { return false; }
+    }
+
+    // —— 悬停编码字母 → 高亮该编码位对应字根的笔画 ——
+    const wubiInfo = document.getElementById('wubi-info');
+    wubiInfo.addEventListener('mouseover', e => {
+        const el = e.target.closest('.enc-letter');
+        if (!el) return;
+        supMiniHl(false);
+        const r2c = window.__hlRootToCode, p2r = window.__hlPosToRoot;
+        if (!r2c || !p2r) return;
+        const codeIdx = +el.dataset.codeIdx;
+        const posSet = new Set();
+        r2c.forEach((ci, pos) => { if (ci === codeIdx && p2r[pos] !== undefined) posSet.add(p2r[pos]); });
+        if (posSet.size && Array.from(posSet).every(isHukouRootPos)) hukouMiniHl(true); // 报户口位：高亮报户口小框
+        else if (posSet.size) hlRootPosSet(posSet);
+        else supMiniHl(true); // 补码/识别码位：高亮补码小框中的着色笔划（不动大框）
+    });
+    wubiInfo.addEventListener('mouseout', e => {
+        const el = e.target.closest('.enc-letter');
+        if (el && !(e.relatedTarget && el.contains(e.relatedTarget))) { hlClear(); supMiniHl(false); }
+    });
+
+    // —— 悬停字根图例 → 高亮该字根的笔画 ——
+    const legend = document.getElementById('root-legend');
+    legend.addEventListener('mouseover', e => {
+        const li = e.target.closest('li[data-root-idx]');
+        if (li) {
+            supMiniHl(false);
+            const p2r = window.__hlPosToRoot;
+            const pos = (p2r && p2r[+li.dataset.rootIdx] !== undefined) ? p2r[+li.dataset.rootIdx] : +li.dataset.rootIdx;
+            if (isHukouRootPos(pos)) hukouMiniHl(true); // 报户口位：高亮报户口小框
+            else hlRootPosSet(new Set([pos]));
+            return;
+        }
+        if (e.target.closest('li[data-sup="1"]')) supMiniHl(true); // 补码行：高亮补码小框中的着色笔划
+    });
+    legend.addEventListener('mouseout', e => {
+        const li = e.target.closest('li[data-root-idx],li[data-sup="1"]');
+        if (li && !(e.relatedTarget && li.contains(e.relatedTarget))) { hlClear(); supMiniHl(false); }
+    });
+
+    // —— 悬停「字根着色」标题 → 取码规则自动讲解浮层 ——
+    let tip = null, hideTimer = null;
+    function ensureTip() {
+        if (tip) return;
+        tip = document.createElement('div');
+        tip.id = 'rule-tip';
+        tip.style.cssText = 'position:fixed;z-index:99999;max-width:440px;display:none;border-radius:10px;padding:12px 15px;font-size:13px;line-height:1.75;cursor:default;';
+        tip.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+        tip.addEventListener('mouseleave', hideTip);
+        document.body.appendChild(tip);
+    }
+    function showTip(anchor) {
+        ensureTip();
+        tip.innerHTML = buildRuleHtml();
+        tip.style.display = 'block';
+        const r = anchor.getBoundingClientRect();
+        const tw = Math.min(440, window.innerWidth - 16);
+        tip.style.left = Math.max(8, Math.min(r.left, window.innerWidth - tw - 8)) + 'px';
+        tip.style.top = (r.bottom + 8) + 'px';
+        const th = tip.offsetHeight;
+        if (r.bottom + 8 + th > window.innerHeight - 8) tip.style.top = Math.max(8, r.top - th - 8) + 'px';
+    }
+    function hideTip() {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => { if (tip) tip.style.display = 'none'; }, 260);
+    }
+    function ruleBlock(txt) { return '<div style="margin-top:6px">' + txt + '</div>'; }
+    function verLabel() {
+        try { return ({ '86': '86版', '98': '98版', '06': '新世纪版' })[currentWubiVersion] || ''; }
+        catch (e) { return ''; }
+    }
+
+    function buildRuleHtml() {
+        const ch = (typeof currentChar !== 'undefined') ? currentChar : '';
+        if (!ch) return '<b style="color:var(--tip-accent)">取码规则</b><div style="margin-top:6px">请先选择一个汉字。</div>';
+        const d = (typeof WUBI !== 'undefined') ? WUBI[ch] : null;
+        const head = '<b style="color:var(--tip-accent)">「' + ch + '」取码规则</b>' +
+            (verLabel() ? ' <span style="color:var(--tip-muted);font-size:11px">(' + verLabel() + ')</span>' : '');
+        if (!d) return head + ruleBlock('该字未收录五笔数据，页面仅按笔画顺序着色。');
+
+        const parts = [];
+        const rootsArr = d.r || [];
+        const code = d.c || '';
+
+        if (d.special) {
+            parts.push(ruleBlock('<b>特殊编码字</b>：整字无常规拆分，直接连打 <b style="color:var(--tip-code)">' + code + '</b>。'));
+        } else if (rootsArr.length === 1 && rootsArr[0] === ch) {
+            parts.push(ruleBlock('<b>键名字</b>：本身就是键位上的主字根，输入时连打四下 <b style="color:var(--tip-code)">' + code + '</b>。'));
+        } else if (rootsArr.length > 0 && rootsArr[0] === ch) {
+            parts.push(ruleBlock('<b>成字字根</b>：先按所在键位 <b style="color:var(--tip-code)">' + code.charAt(0) + '</b> 报户口，再依次打首笔、次笔、末笔。'));
+            parts.push(ruleBlock('拆分：' + rootsArr.join(' + ') + ' → <b style="color:var(--tip-code)">' + code + '</b>'));
+        } else if (d.comp) {
+            parts.push(ruleBlock('<b>部件级拆分</b>：按书写顺序分为 ' + rootsArr.join(' + ') + '，每个部件取首码。'));
+            parts.push(ruleBlock('编码：<b style="color:var(--tip-code)">' + code + '</b>'));
+        } else {
+            // 两级拆分描述：拆分表原始部件 → 递归展开后的最终字根
+            parts.push(ruleBlock('拆分表拆为：' + (rootsArr.join(' + ') || '（紧凑拆分，逐位取码）') + '。'));
+            const liveRoots = (typeof roots !== 'undefined' && roots && roots.length > 0) ? roots : null;
+            const expAll = (typeof recursivelyExpandRoots === 'function') ? recursivelyExpandRoots([...rootsArr], ch) : [...rootsArr];
+            const finalRoots = (liveRoots || expAll).filter(x => x !== ''); // 去补码空占位
+            const isExpanded = finalRoots.length !== rootsArr.length || finalRoots.some((r, i) => r !== rootsArr[i]);
+            if (isExpanded) {
+                const notes = []; const seen = new Set();
+                rootsArr.forEach(p => {
+                    if (seen.has(p)) return; seen.add(p);
+                    const sub = (typeof recursivelyExpandRoots === 'function') ? recursivelyExpandRoots([p], ch) : [p];
+                    if (sub.length > 1 || sub[0] !== p) notes.push('<b style="color:var(--tip-accent)">' + p + '</b> → ' + sub.join(' + '));
+                });
+                if (notes.length) parts.push(ruleBlock('其中' + notes.join('；') + '，继续展开。'));
+            }
+            // 最终字根清单：颜色/字母与字根着色区一致（r2c 按显示位对齐、p2r 转原始索引），不取码的显示灰色
+            const cmap = (typeof rootColorMap !== 'undefined') ? rootColorMap : null;
+            const r2c = window.__hlRootToCode, p2r = window.__hlPosToRoot;
+            const items = []; const skipped = [];
+            if (liveRoots && r2c && p2r) {
+                p2r.forEach((origIdx, dispPos) => {
+                    const name = liveRoots[origIdx];
+                    if (!name) return; // 补码空占位 ''
+                    const ci = r2c[dispPos];
+                    if (ci === undefined || ci === null || ci < 0 || ci >= code.length) {
+                        skipped.push(name);
+                        items.push('<span style="color:#888">' + name + '</span><span style="color:#888">(灰·不取码)</span>');
+                        return;
+                    }
+                    const color = cmap ? (cmap[ci] || '#555') : '#555';
+                    items.push('<b style="color:' + color + '">' + name + '</b><span style="color:var(--tip-muted)">(' + (code.charAt(ci) || '') + ')</span>');
+                });
+            }
+            const n = finalRoots.length;
+            if (items.length) {
+                const lead = isExpanded ? '展开后共 <b>' + n + '</b> 个字根' : '共 <b>' + n + '</b> 个基本字根';
+                parts.push(ruleBlock(lead + '：' + items.join('、')));
+            } else {
+                parts.push(ruleBlock((isExpanded ? '展开后拆为：' : '最终拆分：') + finalRoots.join(' + ') + '。'));
+            }
+            if (d.sup && d.sup.length > 0) {
+                parts.push(ruleBlock('字根不足四个：末位需补<b>末笔识别码</b>。'));
+            } else if (n > code.length) {
+                parts.push(ruleBlock('字根超过四个：取第 <b>1、2、3</b> 及<b>最末</b>字根的编码，灰色字根（中间字根）不取码。'));
+            } else if (n === code.length) {
+                parts.push(ruleBlock('恰为 ' + n + ' 个字根：依次取码即可。'));
+            } else {
+                parts.push(ruleBlock('共 ' + n + ' 个字根，依次取码。'));
+            }
+            parts.push(ruleBlock('编码：<b style="color:var(--tip-code)">' + code + '</b>'));
+        }
+
+        // 识别码详解
+        if (d.sup && d.sup.length > 0 && !d.special) {
+            try {
+                const ac = autoCalculateSupplement(ch);
+                if (ac) parts.push(ruleBlock('识别码（第 ' + (d.sup[0] + 1) + ' 位）：<b>' + ac.code + '</b> = 末笔「' + ac.lastStrokeName + '」+ ' + ac.structureName + '。'));
+            } catch (e) {}
+        }
+
+        // 非编码部首
+        if (d.nr && d.nr.length > 0) {
+            parts.push(ruleBlock('<span style="color:var(--tip-muted)">' + d.nr.join('、') + '</span> 为非编码部首（灰笔），不参与取码。'));
+        }
+
+        parts.push(ruleBlock('<span style="color:var(--tip-muted);font-size:12px">💡 悬停编码字母或下方字根，可在左侧字上高亮对应笔画。</span>'));
+        return head + parts.join('');
+    }
+
+    // 悬停汉字大框 → 显示取码规则讲解
+    const svgWrap = document.querySelector('.char-display .svg-wrap');
+    if (svgWrap) {
+        svgWrap.style.cursor = 'help';
+        svgWrap.addEventListener('mouseenter', () => { clearTimeout(hideTimer); showTip(svgWrap); });
+        svgWrap.addEventListener('mouseleave', hideTip);
+    }
+    // 切换汉字/版本后刷新浮层内容（鼠标仍停留在大框上时 mouseenter 不会重新触发）
+    if (typeof window.renderSVG === 'function') {
+        const __origRenderSVG = window.renderSVG;
+        window.renderSVG = function () {
+            const ret = __origRenderSVG.apply(this, arguments);
+            if (tip && tip.style.display !== 'none' && svgWrap) showTip(svgWrap);
+            return ret;
+        };
+    }
+})();
 </script>
 </body>
 </html>
