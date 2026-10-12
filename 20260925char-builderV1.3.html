@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五笔造字工具 · 单屏版</title>
+<style>
+/* ==================== 单屏布局:全部功能一屏展示,页面本身不滚动 ==================== */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; margin: 0; background: #eef1f5; color: #333; font-size: 13px; display: flex; flex-direction: column; overflow: hidden; }
+
+/* 顶栏 */
+header { background: #2c3e50; color: #fff; padding: 7px 14px; display: flex; align-items: center; gap: 12px; flex: none; }
+header h1 { font-size: 15px; margin: 0; letter-spacing: 1px; white-space: nowrap; }
+#bundle-status { font-size: 11px; background: rgba(255,255,255,0.18); padding: 2px 10px; border-radius: 10px; white-space: nowrap; }
+header .hint { margin-left: auto; font-size: 11px; color: rgba(255,255,255,0.65); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
+/* 主区:三列网格(最右侧覆盖检查/bundle查询已移除) */
+main { flex: 1; min-height: 0; padding: 10px; display: grid; gap: 10px;
+  grid-template-columns: minmax(260px, 0.92fr) minmax(400px, 1.9fr) minmax(320px, 1.05fr);
+  grid-template-rows: minmax(0, 1fr); overflow: auto; }
+
+.col { display: flex; flex-direction: column; gap: 10px; min-height: 0; min-width: 0; }
+
+/* 面板 */
+.panel { background: #fff; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: auto; }
+.panel h2 { margin: 0 0 7px; font-size: 13px; color: #2c3e50; border-left: 3px solid #3498db; padding-left: 7px; line-height: 1.3; flex: none; }
+.p-view h2 { border-left-color: #27ae60; }
+.p-out  h2 { border-left-color: #e67e22; }
+
+/* 列内面板高度分配 */
+#panel-input-main { flex: 1.06 1 auto; }
+#panel-pick       { flex: 0 0 auto; }
+#panel-preview    { flex: 1.75 1 auto; }
+#panel-stroke     { flex: 0 0 auto; }
+#panel-adjust     { flex: 1.3 1 auto; }
+#panel-export     { flex: 1 1 auto; }
+
+/* 基础控件 */
+textarea { width: 100%; font-family: Consolas, monospace; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; padding: 6px 8px; resize: none; flex: 1 1 auto; min-height: 52px; line-height: 1.5; }
+textarea:focus { outline: none; border-color: #3498db; }
+#export-output { background: #f8f8f8; }
+button { background: #2c3e50; color: #fff; border: none; padding: 5px 11px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+button:hover { background: #3d566e; }
+button.secondary { background: #7f8c8d; }
+button.secondary:hover { background: #95a5a6; }
+button.danger { background: #e74c3c; }
+button:disabled { background: #bdc3c7; cursor: not-allowed; }
+.toolbar { display: flex; gap: 6px; row-gap: 5px; flex-wrap: wrap; align-items: center; margin-bottom: 7px; flex: none; }
+label { font-size: 12px; }
+input[type=text] { border: 1px solid #ccc; border-radius: 4px; padding: 4px 7px; font-size: 13px; width: 110px; }
+#target-char, #pick-char { width: 58px; text-align: center; }
+select { border: 1px solid #ccc; border-radius: 4px; padding: 4px 6px; font-size: 12px; background: #fff; }
+
+/* 第 1 列:输入 + 取材 */
+#msg { font-size: 12px; color: #e67e22; margin-top: 6px; white-space: pre-wrap; min-height: 17px; max-height: 48px; overflow-y: auto; flex: none; }
+#src-preview-wrap { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; margin-top: 6px; flex: none; }
+.src-preview { flex: 0 0 auto; text-align: center; font-size: 11px; color: #666; line-height: 1.35; }
+.src-preview svg { width: 52px; height: 52px; border: 1px solid #eee; border-radius: 4px; background: #fff; }
+
+/* 笔画取材预览已合并到中间大预览框 #preview，本面板只保留控件与摘要 */
+#pick-summary { font-size: 11px; color: #27ae60; margin-top: 5px; min-height: 14px; flex: none; }
+
+/* 第 2 列:预览(正方形显示区域,居中) */
+#preview { flex: 1 1 auto; min-height: 150px; max-height: 100%; aspect-ratio: 1 / 1; width: auto; height: auto; max-width: 100%; display: block; margin: auto; border: 1px solid #ddd; border-radius: 6px; background: #fff; align-self: center; }
+#stroke-order-chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 50px; min-height: 20px; overflow-y: auto; }
+#stroke-preview-info { font-size: 11px; color: #666; }
+
+/* 第 3 列:调整 + 导出 */
+#component-controls { flex-direction: column; flex: 1 1 auto; min-height: 0; }
+#component-rows { flex: 1 1 auto; min-height: 36px; overflow-y: auto; }
+#adjust-placeholder { color: #999; font-size: 11px; }
+
+/* 图例 */
+.legend { font-size: 11px; color: #777; margin: 6px 0 0; line-height: 1.55; flex: none; }
+.legend code { background: #f0f0f0; padding: 0 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>五笔造字工具</h1>
+  <span id="bundle-status">正在加载笔画数据…</span>
+  <span class="hint">单屏布局:输入 → 预览 → 调整/导出,全部一屏可见</span>
+</header>
+
+<main>
+
+  <!-- ═══ 第 1 列:目标字输入 + 笔画取材 ═══ -->
+  <div class="col">
+    <div class="panel" id="panel-input-main">
+      <h2>目标字与拆分</h2>
+      <div class="toolbar">
+        <label>目标字 <input type="text" id="target-char" maxlength="1" placeholder="字"></label>
+        <label><input type="checkbox" id="keep-aspect" checked> 保持宽高比</label>
+        <label><input type="checkbox" id="auto-layout" checked> 自动结构布局</label>
+      </div>
+      <textarea id="parts-input" spellcheck="false" placeholder="每行一个部件,如:&#10;氵:0:3:L&#10;邑:0:7:R:90:0"></textarea>
+      <div class="toolbar" style="margin-top:6px;margin-bottom:0">
+        <button id="btn-preview">预览 / 生成</button>
+        <button class="secondary" id="btn-auto-split">自动拆分</button>
+        <button class="secondary" id="btn-example">示例(浥)</button>
+        <button class="secondary" id="btn-auto-suggest">字根建议</button>
+        <button class="secondary" id="btn-clear">清空</button>
+      </div>
+      <div id="msg"></div>
+      <div id="src-preview-wrap"></div>
+      <p class="legend">格式 <code>源字:起始笔:笔数:区域[:dx:dy][:H|V][:角度]</code>;区域 <code>K</code>原位保留 <code>L</code>左 <code>R</code>右 <code>T</code>上 <code>B</code>下 <code>C</code>中 <code>F</code>全 <code>TL/TR/BL/BR</code>四角,或自定义 <code>x,y,w,h</code>(0~1 比例);镜像 <code>H</code>水平/<code>V</code>垂直/<code>HV</code>,旋转为角度数(正角=逆时针)。旋转参数位置:有 <code>dx:dy</code> 时放最末,仅旋转无 <code>dx:dy</code> 时写 <code>:0:0:角度</code>。例:<code>鱼:0:8:L:H</code> 水平镜像;<code>氵:0:3:L:0:0:90</code> 旋转90°。<br><code>K</code> 原位保留=部件不缩放不平移,留在源字中的相对位置(适合从单个源字移植部件,如 癀:0:3:K + 癀:5:11:K → 廣);区域留空或写 <code>F</code> 且勾选<b>自动结构布局</b>时，按各部件宽高比自动判断左右/上下结构，并按部件比例分配位置。</p>
+    </div>
+
+    <div class="panel" id="panel-pick">
+      <h2>笔画取材</h2>
+      <div class="toolbar">
+        <label>源字 <input type="text" id="pick-char" maxlength="1" placeholder="字"></label>
+        <button id="btn-pick-load">载入</button>
+        <label>区域
+          <select id="pick-zone">
+            <option value="K" selected>K 原位</option>
+            <option value="F">F 全</option>
+            <option value="L">L 左</option>
+            <option value="R">R 右</option>
+            <option value="T">T 上</option>
+            <option value="B">B 下</option>
+            <option value="C">C 中</option>
+            <option value="TL">TL 左上</option>
+            <option value="TR">TR 右上</option>
+            <option value="BL">BL 左下</option>
+            <option value="BR">BR 右下</option>
+          </select>
+        </label>
+        <label>镜像
+          <select id="pick-mirror">
+            <option value="">无</option>
+            <option value="H">水平 H</option>
+            <option value="V">垂直 V</option>
+            <option value="HV">H+V</option>
+          </select>
+        </label>
+        <label>旋转° <input type="number" id="pick-rot" value="0" step="15" min="-360" max="360" style="width:52px;font-size:12px"></label>
+        <button id="btn-pick-insert">插入拆分行</button>
+        <button class="secondary" id="btn-pick-clear">清空选择</button>
+      </div>
+      <div id="pick-summary"></div>
+      <p class="legend">取材笔画显示在<b>中间大预览框</b>(生成预览时自动切回)。点击笔画选中(可多选),选中笔画按<b>连续区间</b>自动合并成 <code>源字:起始笔:笔数:区域[:H|V][:角度]</code> 拆分行插入上方输入框;区域默认 <code>K</code> 原位保留(部件保持源字中的位置,适合单字移植造字);从多个不同源字拼装时把区域改成 <code>F</code> 即可走自动布局。镜像 <code>H</code>水平/<code>V</code>垂直/<code>HV</code>,角度为旋转度数(正角=逆时针),可与镜像叠加;笔画上的红色数字为笔序号。</p>
+    </div>
+  </div>
+
+  <!-- ═══ 第 2 列:预览 + 笔画预览排序 ═══ -->
+  <div class="col">
+    <div class="panel p-view" id="panel-preview">
+      <h2>预览</h2>
+      <div class="toolbar" style="margin-bottom:4px">
+        <label style="font-size:11px"><input type="checkbox" id="show-medians" checked> 显示中线（medians，导出附带）</label>
+      </div>
+      <svg id="preview" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel p-view" id="panel-stroke">
+      <h2>笔画预览与排序</h2>
+      <div class="toolbar">
+        <button id="btn-preview-toggle">笔画预览</button>
+        <button id="btn-order-set">设置笔顺</button>
+        <button class="secondary" id="btn-prev-stroke">上一笔</button>
+        <button class="secondary" id="btn-next-stroke">下一笔</button>
+        <button class="secondary" id="btn-play-strokes">自动播放</button>
+        <span id="stroke-preview-info"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:none">
+        <b style="font-size:12px">笔画顺序</b>
+        <div id="stroke-order-chips"><span style="color:#999">先生成汉字后可调整笔顺</span></div>
+        <button class="secondary" style="padding:2px 8px;font-size:11px" id="btn-order-up">↑ 上移</button>
+        <button class="secondary" style="padding:2px 8px;font-size:11px" id="btn-order-down">↓ 下移</button>
+        <button class="secondary" style="padding:2px 8px;font-size:11px" id="btn-order-reset">重置顺序</button>
+      </div>
+      <p class="legend">直接点击<b>下一笔 / 上一笔</b>或<b>自动播放</b>即可逐笔预览(无需先点"笔画预览");点选笔画序号后用<b>上移/下移</b>调整笔顺,预览立即反映,导出按新顺序输出。</p>
+    </div>
+  </div>
+
+  <!-- ═══ 第 3 列:部件调整 + 导出 ═══ -->
+  <div class="col">
+    <div class="panel p-out" id="panel-adjust">
+      <h2>部件调整与整体移动</h2>
+      <div id="component-controls" style="display:none">
+        <div class="toolbar">
+          <b style="font-size:12px">部件调整</b>
+          <label style="font-size:11px">步长 <input type="number" id="step-size" value="20" min="1" max="200" style="width:48px;font-size:11px"></label>
+          <button class="secondary" id="btn-reset-all" style="font-size:11px;padding:3px 9px">全部重置</button>
+        </div>
+        <div id="component-rows"></div>
+      </div>
+      <div id="adjust-placeholder">生成汉字后显示部件移动 / 缩放与整体移动控件</div>
+    </div>
+    <div class="panel p-out" id="panel-export">
+      <h2>导出 / 还原</h2>
+      <div class="toolbar">
+        <button id="btn-export-bundle">生成 bundle 片段</button>
+        <button class="secondary" id="btn-export-sources">生成 STROKE_SOURCES 配置</button>
+        <button class="secondary" id="btn-restore-preview">还原预览</button>
+      </div>
+      <textarea id="export-output" spellcheck="false"></textarea>
+      <p class="legend">bundle 片段:粘贴到 <code>data/stroke-bundle.js</code> 的 <code>window.STROKE_DATA</code> 中对应字符位置。导出自动附带笔画中线(<code>medians</code>):优先沿用各部件源字的中线并随镜像/旋转/缩放/平移同步变换,源字缺中线的笔画按轮廓自动估算;"还原预览"粘贴旧的无中线片段后再次导出,也会自动补上中线。<br>STROKE_SOURCES:粘贴到页面 <code>STROKE_SOURCES</code> 常量(仅支持平移,不支持缩放)。</p>
+    </div>
+  </div>
+
+</main>
+<script>
+// ==================== 几何函数（与主页面一致） ====================
+function shiftPathX(pathStr, dx) {
+    return pathStr.replace(/([MLCQHVSmlcqhvs])([^MLCQHVSZmlcqhvsz]*)/g, (match, cmd, params) => {
+        const isRelative = cmd === cmd.toLowerCase() && cmd !== cmd.toUpperCase();
+        if (isRelative) return match;
+        const nums = params.trim().split(/[\s,]+/).filter(s => s.length > 0).map(Number);
+        if (nums.length === 0) return match;
+        const cmdUpper = cmd.toUpperCase();
+        if (cmdUpper === 'V') return match;
+        if (cmdUpper === 'H') {
+            nums[0] += dx;
+            return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+        }
+        for (let i = 0; i < nums.length; i += 2) nums[i] += dx;
+        return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+    });
+}
+function shiftPathY(pathStr, dy) {
+    return pathStr.replace(/([MLCQHVSmlcqhvs])([^MLCQHVSZmlcqhvsz]*)/g, (match, cmd, params) => {
+        const isRelative = cmd === cmd.toLowerCase() && cmd !== cmd.toUpperCase();
+        if (isRelative) return match;
+        const nums = params.trim().split(/[\s,]+/).filter(s => s.length > 0).map(Number);
+        if (nums.length === 0) return match;
+        const cmdUpper = cmd.toUpperCase();
+        if (cmdUpper === 'H') return match;
+        if (cmdUpper === 'V') {
+            nums[0] += dy;
+            return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+        }
+        for (let i = 1; i < nums.length; i += 2) nums[i] += dy;
+        return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+    });
+}
+function scalePathXY(pathStr, scaleX, scaleY, offsetX, offsetY) {
+    return pathStr.replace(/([MLCQHVSmlcqhvs])([^MLCQHVSZmlcqhvsz]*)/g, (match, cmd, params) => {
+        const isRelative = cmd === cmd.toLowerCase() && cmd !== cmd.toUpperCase();
+        if (isRelative) return match;
+        const nums = params.trim().split(/[\s,]+/).filter(s => s.length > 0).map(Number);
+        if (nums.length === 0) return match;
+        const cmdUpper = cmd.toUpperCase();
+        for (let i = 0; i < nums.length; i += 2) {
+            nums[i] = nums[i] * scaleX + offsetX;
+            if (i + 1 < nums.length) nums[i + 1] = nums[i + 1] * scaleY + offsetY;
+        }
+        return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+    });
+}
+// 水平镜像：关于 x 中线 (cX) 翻转 x 坐标
+function flipPathX(pathStr, minX, maxX) {
+    const cX = (minX + maxX) / 2;
+    return pathStr.replace(/([MLCQHVSmlcqhvs])([^MLCQHVSZmlcqhvsz]*)/g, (match, cmd, params) => {
+        if (cmd === cmd.toLowerCase() && cmd !== cmd.toUpperCase()) return match;
+        const nums = params.trim().split(/[\s,]+/).filter(s => s.length > 0).map(Number);
+        if (nums.length === 0) return match;
+        const U = cmd.toUpperCase();
+        if (U === 'V') return match; // 竖直命令无横向坐标
+        if (U === 'H') { nums[0] = 2 * cX - nums[0]; return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' '); }
+        for (let i = 0; i < nums.length; i += 2) nums[i] = 2 * cX - nums[i];
+        return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+    });
+}
+// 垂直镜像：关于 y 中线 (cY) 翻转 y 坐标
+function flipPathY(pathStr, minY, maxY) {
+    const cY = (minY + maxY) / 2;
+    return pathStr.replace(/([MLCQHVSmlcqhvs])([^MLCQHVSZmlcqhvsz]*)/g, (match, cmd, params) => {
+        if (cmd === cmd.toLowerCase() && cmd !== cmd.toUpperCase()) return match;
+        const nums = params.trim().split(/[\s,]+/).filter(s => s.length > 0).map(Number);
+        if (nums.length === 0) return match;
+        const U = cmd.toUpperCase();
+        if (U === 'H') return match; // 水平命令无纵向坐标
+        if (U === 'V') { nums[0] = 2 * cY - nums[0]; return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' '); }
+        for (let i = 1; i < nums.length; i += 2) nums[i] = 2 * cY - nums[i];
+        return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+    });
+}
+// 旋转：绕中心 (cx,cy) 旋转 deg 度（数学坐标,正角为逆时针;H/V 单轴线段作近似旋转）
+function rotPath(pathStr, deg, cx, cy) {
+    const rad = deg * Math.PI / 180, cos = Math.cos(rad), sin = Math.sin(rad);
+    return pathStr.replace(/([MLCQHVSmlcqhvs])([^MLCQHVSZmlcqhvsz]*)/g, (match, cmd, params) => {
+        if (cmd === cmd.toLowerCase() && cmd !== cmd.toUpperCase()) return match;
+        const nums = params.trim().split(/[\s,]+/).filter(s => s.length > 0).map(Number);
+        if (nums.length === 0) return match;
+        const U = cmd.toUpperCase();
+        if (U === 'H') { const x = nums[0]; nums[0] = cx + (x - cx) * cos; return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' '); }
+        if (U === 'V') { const y = nums[0]; nums[0] = cy + (y - cy) * cos; return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' '); }
+        for (let i = 0; i < nums.length; i += 2) {
+            const x = nums[i], y = nums[i + 1];
+            const nx = cx + (x - cx) * cos - (y - cy) * sin;
+            const ny = cy + (x - cx) * sin + (y - cy) * cos;
+            nums[i] = nx; nums[i + 1] = ny;
+        }
+        return cmd + ' ' + nums.map(n => n.toFixed(2)).join(' ');
+    });
+}
+function getStrokesBBox(strokesArray) {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const s of strokesArray || []) {
+        s.replace(/([MLCQHVS])([^MLCQHVSZ]*)/g, (m, cmd, params) => {
+            const nums = params.trim().split(/[\s,]+/).filter(x => x.length > 0).map(Number);
+            const cmdUpper = cmd.toUpperCase();
+            if (cmdUpper === 'H') { for (const x of nums) { if (Number.isFinite(x)) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); } } return; }
+            if (cmdUpper === 'V') { for (const y of nums) { if (Number.isFinite(y)) { minY = Math.min(minY, y); maxY = Math.max(maxY, y); } } return; }
+            for (let i = 0; i < nums.length; i += 2) {
+                const x = nums[i], y = nums[i + 1];
+                if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+                minX = Math.min(minX, x); maxX = Math.max(maxX, x);
+                minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+            }
+        });
+    }
+    if (!Number.isFinite(minX) || !Number.isFinite(minY)) return null;
+    return { minX, maxX, minY, maxY, width: maxX - minX, height: maxY - minY };
+}
+// 将笔画fit进指定rect（保留宽高比则取min缩放并居中）
+function fitToRect(sourceStrokes, rect, keepAspect) {
+    const src = getStrokesBBox(sourceStrokes);
+    if (!src || src.width <= 0 || src.height <= 0 || rect.w <= 0 || rect.h <= 0) return sourceStrokes;
+    let sx = rect.w / src.width, sy = rect.h / src.height;
+    if (keepAspect) { const s = Math.min(sx, sy); sx = sy = s; }
+    const cx = rect.x + rect.w / 2, cy = rect.y + rect.h / 2;
+    const ox = cx - (src.minX + src.width / 2) * sx;
+    const oy = cy - (src.minY + src.height / 2) * sy;
+    return sourceStrokes.map(s => scalePathXY(s, sx, sy, ox, oy));
+}
+
+// ==================== 中线（medians）生成 ====================
+// 仿射矩阵 [a,b,c,d,e,f]：x' = a·x + c·y + e, y' = b·x + d·y + f。
+// 部件的镜像/旋转/缩放/平移全是仿射，用矩阵同步变换 medians 点列，保证与笔画严格一致
+const AFF_ID = () => [1, 0, 0, 1, 0, 0];
+function affMul(m, n) { // 复合：先施加 n，再施加 m
+    return [
+        m[0] * n[0] + m[2] * n[1],
+        m[1] * n[0] + m[3] * n[1],
+        m[0] * n[2] + m[2] * n[3],
+        m[1] * n[2] + m[3] * n[3],
+        m[0] * n[4] + m[2] * n[5] + m[4],
+        m[1] * n[4] + m[3] * n[5] + m[5],
+    ];
+}
+function affFit(sx, sy, ox, oy) { return [sx, 0, 0, sy, ox, oy]; }
+function affShift(dx, dy) { return [1, 0, 0, 1, dx, dy]; }
+function affApply(m, pts) {
+    return pts.map(pt => [m[0] * pt[0] + m[2] * pt[1] + m[4], m[1] * pt[0] + m[3] * pt[1] + m[5]]);
+}
+// 源字的中线（条数必须与笔画数一致才算有效；象86等特殊数据自动判为无效走估算）
+function getCharMedians(ch) {
+    const st = getCharStrokes(ch);
+    if (!st || !st.length) return null;
+    const entry = window.STROKE_DATA && window.STROKE_DATA[ch];
+    const md = entry && entry.medians;
+    if (Array.isArray(md) && md.length === st.length) return md;
+    return null;
+}
+// 把路径字符串展平成采样点（支持绝对/相对 M L H V C Q S Z）
+function flattenPathPts(d, segSamples) {
+    const pts = [];
+    const S = segSamples || 10;
+    let cx = 0, cy = 0, sx = 0, sy = 0;
+    const re = /([MLCQHVSZmlcqhvsz])([^MLCQHVSZmlcqhvsz]*)/g;
+    let m;
+    const cubic = (x1, y1, x2, y2, x, y) => { for (let t = 1; t <= S; t++) { const u = t / S, a = 1 - u; pts.push([a*a*a*cx + 3*a*a*u*x1 + 3*a*u*u*x2 + u*u*u*x, a*a*a*cy + 3*a*a*u*y1 + 3*a*u*u*y2 + u*u*u*y]); } cx = x; cy = y; };
+    const quad = (x1, y1, x, y) => { for (let t = 1; t <= S; t++) { const u = t / S, a = 1 - u; pts.push([a*a*cx + 2*a*u*x1 + u*u*x, a*a*cy + 2*a*u*y1 + u*u*y]); } cx = x; cy = y; };
+    while ((m = re.exec(d)) !== null) {
+        const cmd = m[1], rel = cmd === cmd.toLowerCase();
+        const nums = (m[2].match(/-?\d*\.?\d+(?:[eE][-+]?\d+)?/g) || []).map(Number);
+        const U = cmd.toUpperCase();
+        if (U === 'Z') { cx = sx; cy = sy; continue; }
+        for (let i = 0; i < nums.length;) {
+            if (U === 'L') { let x = nums[i++], y = nums[i++]; if (rel) { x += cx; y += cy; } cx = x; cy = y; pts.push([cx, cy]); }
+            else if (U === 'H') { let x = nums[i++]; if (rel) x += cx; cx = x; pts.push([cx, cy]); }
+            else if (U === 'V') { let y = nums[i++]; if (rel) y += cy; cy = y; pts.push([cx, cy]); }
+            else if (U === 'C') { let x1 = nums[i++], y1 = nums[i++], x2 = nums[i++], y2 = nums[i++], x = nums[i++], y = nums[i++]; if (rel) { x1 += cx; y1 += cy; x2 += cx; y2 += cy; x += cx; y += cy; } cubic(x1, y1, x2, y2, x, y); }
+            else if (U === 'Q') { let x1 = nums[i++], y1 = nums[i++], x = nums[i++], y = nums[i++]; if (rel) { x1 += cx; y1 += cy; x += cx; y += cy; } quad(x1, y1, x, y); }
+            else if (U === 'S') { let x2 = nums[i++], y2 = nums[i++], x = nums[i++], y = nums[i++]; if (rel) { x2 += cx; y2 += cy; x += cx; y += cy; } cx = x; cy = y; pts.push([cx, cy]); }
+            else if (U === 'M') { let x = nums[i++], y = nums[i++]; if (rel) { x += cx; y += cy; } cx = x; cy = y; pts.push([cx, cy]); if (i === 2) { sx = cx; sy = cy; } }
+        }
+    }
+    return pts;
+}
+// 从单笔轮廓估算中线：PCA 求主方向，沿主向分箱取轮廓点平均 → 中心折线（直线/缓弧笔准，急折笔近似）
+function estimateMedian(d) {
+    const raw = flattenPathPts(d, 12);
+    if (raw.length < 4) return null;
+    let mx = 0, my = 0;
+    raw.forEach(p => { mx += p[0]; my += p[1]; });
+    mx /= raw.length; my /= raw.length;
+    let sxx = 0, sxy = 0, syy = 0;
+    raw.forEach(p => { const dx = p[0] - mx, dy = p[1] - my; sxx += dx * dx; sxy += dx * dy; syy += dy * dy; });
+    let ax, ay;
+    if (Math.abs(sxy) < 1e-9) { if (sxx >= syy) { ax = 1; ay = 0; } else { ax = 0; ay = 1; } }
+    else { const theta = 0.5 * Math.atan2(2 * sxy, sxx - syy); ax = Math.cos(theta); ay = Math.sin(theta); }
+    const proj = raw.map(p => (p[0] - mx) * ax + (p[1] - my) * ay);
+    let pmin = Infinity, pmax = -Infinity;
+    proj.forEach(t => { if (t < pmin) pmin = t; if (t > pmax) pmax = t; });
+    if (!(pmax > pmin)) return null;
+    const K = 7, step = (pmax - pmin) / K;
+    const out = [];
+    for (let i = 0; i < K; i++) {
+        const lo = pmin + i * step, hi = (i === K - 1) ? pmax + 1e-6 : lo + step;
+        let sx2 = 0, sy2 = 0, c = 0;
+        for (let j = 0; j < raw.length; j++) if (proj[j] >= lo && proj[j] < hi) { sx2 += raw[j][0]; sy2 += raw[j][1]; c++; }
+        if (c >= 2) out.push([sx2 / c, sy2 / c]);
+    }
+    if (out.length < 2) return null;
+    // 方向规范：起点取更高者（y 轴向上）；近水平时取更靠左者
+    const A = out[0], B = out[out.length - 1];
+    const ddy = B[1] - A[1], ddx = B[0] - A[0];
+    if (Math.abs(ddy) > Math.abs(ddx) ? B[1] > A[1] : B[0] < A[0]) out.reverse();
+    return out;
+}
+
+// ==================== bundle 加载 ====================
+window._bundleReady = false;
+const s = document.createElement('script');
+s.src = 'data/stroke-bundle.js';
+s.onload = function () {
+    window._bundleReady = true;
+    const n = Object.keys(window.STROKE_DATA || {}).length;
+    document.getElementById('bundle-status').textContent = '已加载 ' + n + ' 个字符';
+};
+s.onerror = function () {
+    document.getElementById('bundle-status').textContent = '加载失败，请确认 data/stroke-bundle.js 存在';
+};
+document.body.appendChild(s);
+// WUBI_86 字根数据（自动拆分用）
+// 实际文件为 data/wubi86.js（const 声明不挂 window），加载后手动挂载
+const w = document.createElement('script');
+w.src = 'data/wubi86.js';
+w.onload = function () {
+    if (typeof WUBI_86 !== 'undefined') window.WUBI_86 = WUBI_86;
+};
+document.body.appendChild(w);
+
+function getCharStrokes(ch) {
+    // “象”字优先使用 86 版修正笔划（stroke-bundle.js 末尾 window.XIANG_86_STROKES，12笔）
+    // 若 86 版数据不存在，则回退到 bundle 内的“象”数据（11笔）
+    if (ch === '象') {
+        const x86 = getXiang86Strokes();
+        if (x86) return x86;
+    }
+    if (window.STROKE_DATA && window.STROKE_DATA[ch]) return window.STROKE_DATA[ch].strokes || [];
+    return null;
+}
+
+// 86版象字修正笔划数据（stroke-bundle.js 末尾 window.XIANG_86_STROKES，12笔）
+// 无副作用读取：仅当 window.XIANG_86_STROKES 存在时返回其数组
+function getXiang86Strokes() {
+    if (window.XIANG_86_STROKES && Array.isArray(window.XIANG_86_STROKES) && window.XIANG_86_STROKES.length) {
+        return window.XIANG_86_STROKES;
+    }
+    return null;
+}
+
+// ==================== 区域定义 ====================
+// 区域 y 按数学坐标（y 向上，y 大 = 屏幕上方）：T/TL/TR 在上、B/BL/BR 在下（旧版 T/B 曾颠倒，已修正）
+const ZONES = {
+    L:  { x: 0, y: 0, w: 0.46, h: 1 },
+    R:  { x: 0.54, y: 0, w: 0.46, h: 1 },
+    T:  { x: 0, y: 0.56, w: 1, h: 0.44 },
+    B:  { x: 0, y: 0, w: 1, h: 0.44 },
+    C:  { x: 0.28, y: 0.28, w: 0.44, h: 0.44 },
+    F:  { x: 0, y: 0, w: 1, h: 1 },
+    TL: { x: 0, y: 0.5, w: 0.5, h: 0.5 },
+    TR: { x: 0.5, y: 0.5, w: 0.5, h: 0.5 },
+    BL: { x: 0, y: 0, w: 0.5, h: 0.5 },
+    BR: { x: 0.5, y: 0, w: 0.5, h: 0.5 },
+};
+
+function parseZone(str) {
+    if (!str) return ZONES.F;
+    if (ZONES[str.toUpperCase()]) return ZONES[str.toUpperCase()];
+    const nums = str.split(/[,，\s]+/).map(Number);
+    if (nums.length === 4 && nums.every(Number.isFinite)) {
+        const [x, y, w, h] = nums;
+        if (x >= 0 && y >= 0 && w > 0 && h > 0 && x + w <= 1 && y + h <= 1) return { x, y, w, h };
+    }
+    return null;
+}
+
+// ==================== 解析部件行 ====================
+// 格式：源字:起始笔:笔数:区域[:dx:dy][:镜像][:旋转]
+// 镜像：H 水平 / V 垂直 / HV 两者；旋转：数字角度(度)。镜像标记也可直接放区域后(省略 dx/dy)
+function parsePartLine(line) {
+    line = line.trim();
+    if (!line || line.startsWith('#')) return null;
+    const parts = line.split(':');
+    const src = parts[0];
+    const start = parts[1] !== undefined ? parseInt(parts[1], 10) || 0 : 0;
+    const count = parts[2] !== undefined ? parseInt(parts[2], 10) || 0 : 0;
+    const zoneStr = parts[3] !== undefined ? parts[3] : 'F';
+    let dx = 0, dy = 0, mirror = '', rot = 0;
+    if (parts.length >= 5 && /^[HV]+$/i.test(parts[4])) {
+        // 第5位是镜像标记（省略 dx/dy）
+        mirror = parts[4].replace(/[^HVhv]/g, '').toUpperCase();
+        if (parts.length >= 6 && /^-?\d/.test(parts[5])) rot = parseFloat(parts[5]) || 0;
+    } else {
+        if (parts.length >= 5) dx = parseFloat(parts[4]) || 0;
+        if (parts.length >= 6) dy = parseFloat(parts[5]) || 0;
+        if (parts.length >= 7 && /^[HV]+$/i.test(parts[6])) {
+            mirror = parts[6].replace(/[^HVhv]/g, '').toUpperCase();
+            if (parts.length >= 8 && /^-?\d/.test(parts[7])) rot = parseFloat(parts[7]) || 0;
+        } else if (parts.length >= 7 && /^-?\d/.test(parts[6])) {
+            rot = parseFloat(parts[6]) || 0;
+        }
+    }
+    return { src, start, count, zoneStr, dx, dy, mirror, rot };
+}
+
+// ==================== 自动结构布局 ====================
+// 把区域留空或写 F 的部件按汉字左右/上下结构自动分配区域：
+// 比较两种排法的整体宽高比，越接近 1（方块字）越像汉字；区域宽度/高度按部件自然比例分配
+function inferAutoZones(parts, msgs) {
+    if (parts.length < 2 || parts.length > 4) return;
+    let fixed = 0;
+    for (const p of parts) {
+        const zs = (p.zoneStr || 'F').trim().toUpperCase();
+        if (zs === 'F' || zs === '') p._autoZone = true; else fixed++;
+    }
+    if (fixed > 0) {
+        if (parts.some(p => p._autoZone)) msgs.push('部分部件已指定区域，跳过自动布局');
+        parts.forEach(p => delete p._autoZone);
+        return;
+    }
+    const boxes = parts.map(p => {
+        const st = getCharStrokes(p.src);
+        return st ? getStrokesBBox(st.slice(p.start, p.start + p.count)) : null;
+    });
+    if (boxes.some(b => !b || b.width <= 0 || b.height <= 0)) { msgs.push('⚠ 自动布局失败：无法计算部件外框'); return; }
+    const ws = boxes.map(b => b.width), hs = boxes.map(b => b.height);
+    const n = parts.length, GAP = 0.05;
+    let label = '';
+    if (n <= 3) {
+        // 左右：宽度之和/最大高度；上下：最大宽度/高度之和。取宽高比更接近 1（|ln| 更小）的排法
+        const lr = ws.reduce((a, b) => a + b, 0) / Math.max(...hs);
+        const tb = Math.max(...ws) / hs.reduce((a, b) => a + b, 0);
+        if (Math.abs(Math.log(lr)) <= Math.abs(Math.log(tb))) {
+            const usable = 1 - GAP * (n - 1);
+            const letters = n === 2 ? ['L', 'R'] : ['L', 'C', 'R'];
+            let x = 0;
+            parts.forEach((p, k) => {
+                const w = ws[k] / ws.reduce((a, b) => a + b, 0) * usable;
+                p.zone = { x, y: 0, w, h: 1 };
+                p.zoneStr = letters[k];
+                x += w + GAP;
+            });
+            label = '左右结构';
+        } else {
+            const usable = 1 - GAP * (n - 1);
+            const letters = n === 2 ? ['T', 'B'] : ['T', 'C', 'B'];
+            let yTop = 1;
+            parts.forEach((p, k) => {
+                const h = hs[k] / hs.reduce((a, b) => a + b, 0) * usable;
+                yTop -= h;
+                p.zone = { x: 0, y: yTop, w: 1, h };
+                p.zoneStr = letters[k];
+                yTop -= GAP;
+            });
+            label = '上下结构';
+        }
+    } else {
+        // 4 部件按 2×2 四角：输入顺序 = 左上 右上 左下 右下
+        const wTopL = (1 - GAP) * ws[0] / (ws[0] + ws[1]);
+        const wBotL = (1 - GAP) * ws[2] / (ws[2] + ws[3]);
+        const hTop = (1 - GAP) * (hs[0] + hs[1]) / (hs[0] + hs[1] + hs[2] + hs[3]);
+        parts[0].zone = { x: 0, y: 1 - hTop, w: wTopL, h: hTop };                     parts[0].zoneStr = 'TL';
+        parts[1].zone = { x: wTopL + GAP, y: 1 - hTop, w: 1 - GAP - wTopL, h: hTop }; parts[1].zoneStr = 'TR';
+        const hBot = 1 - GAP - hTop;
+        parts[2].zone = { x: 0, y: 0, w: wBotL, h: hBot };                            parts[2].zoneStr = 'BL';
+        parts[3].zone = { x: wBotL + GAP, y: 0, w: 1 - GAP - wBotL, h: hBot };        parts[3].zoneStr = 'BR';
+        label = '四角结构(2×2)';
+    }
+    msgs.push('自动布局：' + label + (n === 4 ? '' : '（' + parts.map(p => p.zoneStr).join('/') + '）'));
+}
+
+// ==================== 主生成逻辑 ====================
+function buildChar(partsInput) {
+    const lines = partsInput.split('\n');
+    const parts = [];
+    const msgs = [];
+    for (const line of lines) {
+        const p = parsePartLine(line);
+        if (!p) continue;
+        const strokes = getCharStrokes(p.src);
+        if (!strokes) { msgs.push('⚠ 源字 "' + p.src + '" 在 bundle 中不存在'); continue; }
+        const inPlace = (p.zoneStr || '').trim().toUpperCase() === 'K';
+        const zone = inPlace ? { keep: true } : parseZone(p.zoneStr);
+        if (!zone) { msgs.push('⚠ 区域 "' + p.zoneStr + '" 无效'); continue; }
+        const start = Math.min(p.start, strokes.length);
+        const count = p.count > 0 ? Math.min(p.count, strokes.length - start) : (strokes.length - start);
+        if (count <= 0) { msgs.push('⚠ "' + p.src + '" 起始笔超出范围'); continue; }
+        parts.push({ src: p.src, start, count, zone, inPlace, zoneStr: p.zoneStr, dx: p.dx, dy: p.dy, mirror: p.mirror, rot: p.rot, raw: line });
+    }
+    if (parts.length === 0) { return { parts: [], strokes: [], msgs: ['未解析到有效部件'] }; }
+
+    // 自动结构布局：区域为 F/留空 的部件按左右/上下结构自动分配
+    if (document.getElementById('auto-layout') && document.getElementById('auto-layout').checked) {
+        inferAutoZones(parts, msgs);
+    }
+
+    // 收集所有源笔画计算 union bbox（先做区域定位用）
+    const allSource = [];
+    for (const p of parts) {
+        const strokes = getCharStrokes(p.src);
+        allSource.push(...strokes.slice(p.start, p.start + p.count));
+    }
+    const union = getStrokesBBox(allSource);
+    if (!union) { return { parts, strokes: [], msgs: ['无法计算外框'] }; }
+
+    // 每个部件fit进其区域
+    const allOut = [];
+    const perPart = [];
+    const perPartMedians = []; // 与 perPart 平行的中线点列（已含部件级变换，未归一化）；源字缺中线的部件为 null
+    for (const p of parts) {
+        const strokes = getCharStrokes(p.src);
+        const srcMedians = getCharMedians(p.src);
+        let med = srcMedians
+            ? srcMedians.slice(p.start, p.start + p.count).map(m => (m || []).map(pt => pt.slice()))
+            : null;
+        let M = AFF_ID(); // 本部件的仿射累积，供 medians 与笔画同步
+        let out = strokes.slice(p.start, p.start + p.count);
+        // 镜像：关于取出笔画自身 bbox 中线翻转（不改变 bbox，镜像后仍 fit 进原区域）
+        if (p.mirror) {
+            const mb = getStrokesBBox(out);
+            if (mb) {
+                if (p.mirror.includes('H')) { out = out.map(d => flipPathX(d, mb.minX, mb.maxX)); M = affMul(affFit(-1, 1, 2 * ((mb.minX + mb.maxX) / 2), 0), M); }
+                if (p.mirror.includes('V')) { out = out.map(d => flipPathY(d, mb.minY, mb.maxY)); M = affMul(affFit(1, -1, 0, 2 * ((mb.minY + mb.maxY) / 2)), M); }
+            }
+        }
+        // 旋转：绕取出笔画自身 bbox 中心旋转（正角为数学系逆时针）
+        if (p.rot) {
+            const rb = getStrokesBBox(out);
+            if (rb) {
+                const rcx = (rb.minX + rb.maxX) / 2, rcy = (rb.minY + rb.maxY) / 2;
+                out = out.map(d => rotPath(d, p.rot, rcx, rcy));
+                const rad = p.rot * Math.PI / 180, cos = Math.cos(rad), sin = Math.sin(rad);
+                // 平移到中心 → 旋转 → 平移回去（affMul 只收两个矩阵，需嵌套）
+                M = affMul(affShift(rcx, rcy), affMul([cos, sin, -sin, cos, 0, 0], affShift(-rcx, -rcy)));
+            }
+        }
+        if (p.inPlace) {
+            // K 原位保留：不做区域缩放平移，部件留在源字中的相对位置（镜像/旋转/dx/dy 仍生效）
+        } else {
+            const rect = { x: union.minX + p.zone.x * union.width, y: union.minY + p.zone.y * union.height, w: p.zone.w * union.width, h: p.zone.h * union.height };
+            const src = getStrokesBBox(out);
+            if (src && src.width > 0 && src.height > 0 && rect.w > 0 && rect.h > 0) {
+                let sx = rect.w / src.width, sy = rect.h / src.height;
+                if (document.getElementById('keep-aspect').checked) { const s = Math.min(sx, sy); sx = sy = s; }
+                const fcx = rect.x + rect.w / 2, fcy = rect.y + rect.h / 2;
+                const fox = fcx - (src.minX + src.width / 2) * sx;
+                const foy = fcy - (src.minY + src.height / 2) * sy;
+                out = out.map(s => scalePathXY(s, sx, sy, fox, foy));
+                M = affMul(affFit(sx, sy, fox, foy), M);
+            }
+        }
+        if (p.dx) { out = out.map(s => shiftPathX(s, p.dx)); M = affMul(affShift(p.dx, 0), M); }
+        if (p.dy) { out = out.map(s => shiftPathY(s, p.dy)); M = affMul(affShift(0, p.dy), M); }
+        perPart.push(out);
+        perPartMedians.push(med ? med.map(m => (m.length ? affApply(M, m) : null)) : null);
+        allOut.push(...out);
+    }
+
+    // 最终归一化：整体fit进标准画布
+    const final = getStrokesBBox(allOut);
+    const canvas = { x: 40, y: -154, w: 944, h: 1024 }; // 对应页面 x[0,1024] y[-124,900] 加边距
+    const keep = document.getElementById('keep-aspect').checked;
+    // 分部件预览必须复用整字的同一变换：各自重新 fit 会把每个部件都搬到画布中心
+    let nSx = final.width > 0 ? canvas.w / final.width : 1, nSy = final.height > 0 ? canvas.h / final.height : 1;
+    if (keep) { const nS = Math.min(nSx, nSy); nSx = nSy = nS; }
+    const nCx = canvas.x + canvas.w / 2, nCy = canvas.y + canvas.h / 2;
+    const nOx = nCx - (final.minX + final.width / 2) * nSx;
+    const nOy = nCy - (final.minY + final.height / 2) * nSy;
+    const normAll = allOut.map(d => scalePathXY(d, nSx, nSy, nOx, nOy));
+    const perPartNorm = perPart.map(pp => pp.map(d => scalePathXY(d, nSx, nSy, nOx, nOy)));
+    // medians：部件级中线再过同一归一化变换；源字缺中线的部件按归一化后笔画轮廓估算
+    const NM = affFit(nSx, nSy, nOx, nOy);
+    const mediansOut = [];
+    perPartMedians.forEach((pm, idx) => {
+        const fin = perPartNorm[idx];
+        if (!pm) { fin.forEach(d => mediansOut.push(estimateMedian(d))); return; }
+        pm.forEach(m => mediansOut.push(m && m.length ? affApply(NM, m) : estimateMedian(fin[pm.indexOf(m)])));
+    });
+
+    return { parts, strokes: normAll, medians: mediansOut, perPart: perPartNorm, rawParts: perPart, rawMedians: perPartMedians, msgs, canvas, finalBBox: getStrokesBBox(normAll) };
+}
+
+// ==================== 预览渲染 ====================
+const PART_COLORS = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#34495e', '#c0392b', '#16a085'];
+
+function renderPreview(partsResult) {
+    const svg = document.getElementById('preview');
+    svg.innerHTML = '';
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('x', '-50'); bg.setAttribute('y', '-150');
+    bg.setAttribute('width', '1150'); bg.setAttribute('height', '1250');
+    bg.setAttribute('fill', '#fff');
+    svg.appendChild(bg);
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', 'translate(0,900) scale(1,-1)');
+    svg.appendChild(g);
+
+    if (!partsResult || partsResult.strokes.length === 0) return;
+
+    partsResult.perPart.forEach((pp, idx) => {
+        const color = PART_COLORS[idx % PART_COLORS.length];
+        pp.forEach((d, i) => {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', d);
+            path.setAttribute('fill', color);
+            path.setAttribute('stroke', '#333');
+            path.setAttribute('stroke-width', '0.6');
+            path.style.opacity = '0.85';
+            g.appendChild(path);
+        });
+    });
+    // 中线层：勾选"显示中线"时叠加（teal 虚线，随导出一起生成）
+    const medCb = document.getElementById('show-medians');
+    if (medCb && medCb.checked && partsResult.medians && partsResult.medians.length === partsResult.strokes.length) {
+        partsResult.medians.forEach(m => {
+            if (!m || m.length < 2) return;
+            const pl = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+            pl.setAttribute('points', m.map(pt => pt[0].toFixed(1) + ',' + pt[1].toFixed(1)).join(' '));
+            pl.setAttribute('fill', 'none');
+            pl.setAttribute('stroke', '#00a8a8');
+            pl.setAttribute('stroke-width', '6');
+            pl.setAttribute('stroke-dasharray', '22 16');
+            pl.setAttribute('stroke-linecap', 'round');
+            pl.style.opacity = '0.9';
+            g.appendChild(pl);
+        });
+    }
+}
+
+// 渲染各源字预览
+function renderSourcePreviews(partsResult) {
+    const wrap = document.getElementById('src-preview-wrap');
+    wrap.innerHTML = '';
+    if (!partsResult || !partsResult.rawParts) return;
+    partsResult.rawParts.forEach((pp, idx) => {
+        const div = document.createElement('div');
+        div.className = 'src-preview';
+        const bbox = getStrokesBBox(pp);
+        if (!bbox) return;
+        const pad = 20;
+        const vx = bbox.minX - pad, vy = bbox.minY - pad, vw = bbox.width + pad * 2, vh = bbox.height + pad * 2;
+        div.innerHTML = '<svg width="90" height="90" viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '"><g transform="translate(0,' + (vy + vh).toFixed(0) + ') scale(1,-1)"></g></svg>';
+        const g = div.querySelector('g');
+        const color = PART_COLORS[idx % PART_COLORS.length];
+        pp.forEach(d => {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', d);
+            path.setAttribute('fill', color);
+            path.setAttribute('stroke', '#333');
+            path.setAttribute('stroke-width', '0.6');
+            g.appendChild(path);
+        });
+        div.innerHTML = div.innerHTML.replace('<svg ', '<svg ');
+        wrap.appendChild(div);
+        const srcName = String(partsResult.parts[idx].src || '?').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        div.insertAdjacentHTML('beforeend', '<br><b>' + srcName + '</b><br>' + pp.length + '笔');
+    });
+}
+
+// ==================== 部件交互调整 ====================
+let componentState = [];
+let baseRawParts = [];
+let baseRawMedians = [];
+let globalOffset = { dx: 0, dy: 0 };
+let globalScale = 1;
+
+function buildComponentControls(parts) {
+    componentState = parts.map(() => ({ dx: 0, dy: 0, scaleX: 1, scaleY: 1 }));
+    globalOffset = { dx: 0, dy: 0 };
+    globalScale = 1;
+    const wrap = document.getElementById('component-rows');
+    // 清理旧整体移动条，避免重复
+    const oldBar = document.getElementById('global-move-bar');
+    if (oldBar) oldBar.remove();
+    wrap.innerHTML = '';
+
+    // 整体移动控制条
+    const kbdBtn = 'padding:1px 0;cursor:pointer;font-size:11px;line-height:15px;min-width:20px;background:#95a5a6;color:#fff;border:none;border-radius:2px';
+    const kbdBtnS = 'padding:1px 0;cursor:pointer;font-size:11px;line-height:15px;min-width:20px;background:#27ae60;color:#fff;border:none;border-radius:2px';
+    const gPad =
+        '<div id="global-move-bar" style="display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;border-bottom:1px dashed #eee;padding-bottom:8px;flex-wrap:wrap">' +
+            '<b style="font-size:13px">整体移动</b>' +
+            '<div style="display:grid;grid-template-columns:repeat(3,20px);gap:2px;text-align:center">' +
+                '<span></span><button style="' + kbdBtn + '" onclick="adjustAll(0,-1)">▲</button><span></span>' +
+                '<button style="' + kbdBtn + '" onclick="adjustAll(-1,0)">◀</button><span style="font-size:9px;color:#ccc;display:flex;align-items:center;justify-content:center">·</span><button style="' + kbdBtn + '" onclick="adjustAll(1,0)">▶</button>' +
+                '<span></span><button style="' + kbdBtn + '" onclick="adjustAll(0,1)">▼</button><span></span>' +
+            '</div>' +
+            '<button class="secondary" style="padding:2px 8px;font-size:11px" onclick="resetAll()">整体复位</button>' +
+            '<button class="secondary" style="padding:2px 8px;font-size:11px" onclick="centerAll()">整体居中</button>' +
+            '<div style="display:inline-flex;align-items:center;gap:4px;border-left:1px dashed #eee;padding-left:8px">' +
+                '<b style="font-size:13px">整体缩放</b>' +
+                '<button style="' + kbdBtnS + '" onclick="adjustGlobalScale(1.1)" title="整体放大">＋</button>' +
+                '<button style="' + kbdBtnS + '" onclick="adjustGlobalScale(0.9091)" title="整体缩小">－</button>' +
+                '<span id="global-scale-info" style="color:#27ae60;font-size:10px;min-width:34px">×1.00</span>' +
+            '</div>' +
+            '<span id="global-offset-info" style="color:#999;font-size:10px"></span>' +
+        '</div>';
+    wrap.insertAdjacentHTML('beforebegin', gPad);
+
+    parts.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12px;flex-wrap:wrap';
+        const btnStyle = 'padding:2px 6px;cursor:pointer;font-size:12px;min-width:24px;text-align:center';
+        div.innerHTML =
+            '<b style="min-width:40px">' + p.src + '</b>' +
+            '<span style="color:#888">' + p.count + '笔 ' + p.zoneStr + '</span>' +
+            '<div style="display:grid;grid-template-columns:repeat(3,20px);gap:2px;text-align:center">' +
+                '<span></span><button style="' + kbdBtn + '" onclick="adjustComponent(' + idx + ',0,-1)">▲</button><span></span>' +
+                '<button style="' + kbdBtn + '" onclick="adjustComponent(' + idx + ',-1,0)">◀</button><span style="font-size:9px;color:#ccc;display:flex;align-items:center;justify-content:center">·</span><button style="' + kbdBtn + '" onclick="adjustComponent(' + idx + ',1,0)">▶</button>' +
+                '<span></span><button style="' + kbdBtn + '" onclick="adjustComponent(' + idx + ',0,1)">▼</button><span></span>' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(3,20px);gap:2px;text-align:center">' +
+                '<span></span><button title="高度放大" style="' + kbdBtnS + '" onclick="adjustScale(' + idx + ', \'y\', 1.1)">▲</button><span></span>' +
+                '<button title="宽度缩小" style="' + kbdBtnS + '" onclick="adjustScale(' + idx + ', \'x\', 0.9091)">◀</button><span style="font-size:8px;color:#d5e8d4;display:flex;align-items:center;justify-content:center">宽<br>高</span><button title="宽度放大" style="' + kbdBtnS + '" onclick="adjustScale(' + idx + ', \'x\', 1.1)">▶</button>' +
+                '<span></span><button title="高度缩小" style="' + kbdBtnS + '" onclick="adjustScale(' + idx + ', \'y\', 0.9091)">▼</button><span></span>' +
+            '</div>' +
+            '<button title="等比放大" ' + btnStyle + ' onclick="adjustComponent(' + idx + ',0,0,1.15)">＋</button>' +
+            '<button title="等比缩小" ' + btnStyle + ' onclick="adjustComponent(' + idx + ',0,0,0.8696)">－</button>' +
+            '<button class="secondary" style="padding:2px 6px;font-size:11px" onclick="resetComponent(' + idx + ')">重置</button>' +
+            '<span id="comp-info-' + idx + '" style="color:#999;font-size:10px;min-width:110px"></span>';
+        wrap.appendChild(div);
+    });
+    document.getElementById('component-controls').style.display = 'flex';
+    const ph = document.getElementById('adjust-placeholder');
+    if (ph) ph.style.display = 'none';
+}
+
+function adjustComponent(idx, moveX, moveY, scaleFactor) {
+    const step = parseInt(document.getElementById('step-size').value) || 20;
+    const s = componentState[idx];
+    s.dx += moveX * step;
+    s.dy -= moveY * step;
+    if (scaleFactor) {
+        s.scaleX = Math.round(s.scaleX * scaleFactor * 100) / 100;
+        s.scaleY = Math.round(s.scaleY * scaleFactor * 100) / 100;
+    }
+    renderAdjusted();
+}
+
+function adjustScale(idx, axis, factor) {
+    const s = componentState[idx];
+    if (axis === 'x') s.scaleX = Math.round(s.scaleX * factor * 1000) / 1000;
+    else if (axis === 'y') s.scaleY = Math.round(s.scaleY * factor * 1000) / 1000;
+    renderAdjusted();
+}
+
+function resetComponent(idx) {
+    componentState[idx] = { dx: 0, dy: 0, scaleX: 1, scaleY: 1 };
+    renderAdjusted();
+}
+
+function renderAdjusted() {
+    if (!baseRawParts.length) return;
+    const adjustedParts = baseRawParts.map((rawStrokes, idx) => {
+        const adj = componentState[idx];
+        let strokes = rawStrokes.map(s => s); // clone
+        if (adj.scaleX !== 1 || adj.scaleY !== 1) {
+            const bbox = getStrokesBBox(strokes);
+            if (bbox) {
+                const cx = bbox.minX + bbox.width / 2, cy = bbox.minY + bbox.height / 2;
+                strokes = strokes.map(s => scalePathXY(s, adj.scaleX, adj.scaleY, cx * (1 - adj.scaleX), cy * (1 - adj.scaleY)));
+            }
+        }
+        if (adj.dx) strokes = strokes.map(s => shiftPathX(s, adj.dx));
+        if (adj.dy) strokes = strokes.map(s => shiftPathY(s, adj.dy));
+        return strokes;
+    });
+    // medians 随部件调整同步变换（与笔画每一步一一对应）
+    const adjustedMedians = baseRawMedians.map((rawMed, idx) => {
+        if (!rawMed) return null;
+        const adj = componentState[idx];
+        let med = rawMed.map(m => m.map(pt => pt.slice()));
+        if (adj.scaleX !== 1 || adj.scaleY !== 1) {
+            const bbox = getStrokesBBox(baseRawParts[idx]);
+            if (bbox) {
+                const cx = bbox.minX + bbox.width / 2, cy = bbox.minY + bbox.height / 2;
+                med = med.map(m => affApply(affFit(adj.scaleX, adj.scaleY, cx * (1 - adj.scaleX), cy * (1 - adj.scaleY)), m));
+            }
+        }
+        if (adj.dx || adj.dy) med = med.map(m => affApply(affShift(adj.dx || 0, adj.dy || 0), m));
+        return med;
+    });
+    const allAdj = adjustedParts.flat();
+    const canvas = { x: 40, y: -154, w: 944, h: 1024 };
+    const keep = document.getElementById('keep-aspect').checked;
+    // 用未调整时的 union bbox 计算固定变换，避免每次重 fit 抵消部件偏移
+    const baseUnion = getStrokesBBox(baseRawParts.flat());
+    if (baseUnion && baseUnion.width > 0 && baseUnion.height > 0) {
+        let sx = canvas.w / baseUnion.width, sy = canvas.h / baseUnion.height;
+        if (keep) { const s = Math.min(sx, sy); sx = sy = s; }
+        const cx = canvas.x + canvas.w / 2, cy = canvas.y + canvas.h / 2;
+        const ox = cx - (baseUnion.minX + baseUnion.width / 2) * sx;
+        const oy = cy - (baseUnion.minY + baseUnion.height / 2) * sy;
+        const NM = affFit(sx, sy, ox, oy);
+        const normAll = allAdj.map(s => scalePathXY(s, sx, sy, ox, oy));
+        const perPartNorm = adjustedParts.map(pp => pp.map(s => scalePathXY(s, sx, sy, ox, oy)));
+        // medians 归一化（与笔画同一变换）；缺中线的部件按归一化后笔画估算
+        const medNorm = [];
+        adjustedMedians.forEach((pm, idx) => {
+            const fin = perPartNorm[idx];
+            if (!pm) { fin.forEach(d => medNorm.push(estimateMedian(d))); return; }
+            pm.forEach(m => medNorm.push(affApply(NM, m)));
+        });
+        // 整体偏移：归一化后再统一平移（不被 fit 抵消）
+        let finalStrokes = normAll;
+        let finalParts = perPartNorm;
+        let finalMedians = medNorm;
+        // 整体缩放：绕画布中心等比缩放（先缩放后偏移，顺序不互相抵消）
+        if (globalScale !== 1) {
+            const gcx = canvas.x + canvas.w / 2, gcy = canvas.y + canvas.h / 2;
+            const GS = affFit(globalScale, globalScale, gcx * (1 - globalScale), gcy * (1 - globalScale));
+            finalStrokes = finalStrokes.map(s => scalePathXY(s, globalScale, globalScale, gcx * (1 - globalScale), gcy * (1 - globalScale)));
+            finalParts = finalParts.map(pp => pp.map(s => scalePathXY(s, globalScale, globalScale, gcx * (1 - globalScale), gcy * (1 - globalScale))));
+            finalMedians = finalMedians.map(m => affApply(GS, m));
+        }
+        if (globalOffset.dx) {
+            finalStrokes = finalStrokes.map(s => shiftPathX(s, globalOffset.dx));
+            finalParts = finalParts.map(pp => pp.map(s => shiftPathX(s, globalOffset.dx)));
+            finalMedians = finalMedians.map(m => affApply(affShift(globalOffset.dx, 0), m));
+        }
+        if (globalOffset.dy) {
+            finalStrokes = finalStrokes.map(s => shiftPathY(s, globalOffset.dy));
+            finalParts = finalParts.map(pp => pp.map(s => shiftPathY(s, globalOffset.dy)));
+            finalMedians = finalMedians.map(m => affApply(affShift(0, globalOffset.dy), m));
+        }
+        lastResult = { ...lastResult, strokes: finalStrokes, medians: finalMedians, perPart: finalParts, rawParts: adjustedParts, rawMedians: adjustedMedians, finalBBox: getStrokesBBox(finalStrokes) };
+    }
+    renderPreview(lastResult);
+    const gInfo = document.getElementById('global-offset-info');
+    if (gInfo) gInfo.textContent = (globalOffset.dx || globalOffset.dy) ? '整体偏移 ' + globalOffset.dx + ',' + globalOffset.dy : '原位';
+    const gScaleInfo = document.getElementById('global-scale-info');
+    if (gScaleInfo) gScaleInfo.textContent = '×' + globalScale.toFixed(2);
+    componentState.forEach((s, i) => {
+        const info = document.getElementById('comp-info-' + i);
+        if (info) {
+            const infoParts = [];
+            if (s.dx || s.dy) infoParts.push('偏移 ' + s.dx + ',' + s.dy);
+            if (s.scaleX !== 1) infoParts.push('宽×' + s.scaleX);
+            if (s.scaleY !== 1) infoParts.push('高×' + s.scaleY);
+            info.textContent = infoParts.join(' ') || '原位';
+        }
+    });
+    const b = lastResult.finalBBox;
+    document.getElementById('msg').textContent = lastResult.parts.length + ' 个部件，' + lastResult.strokes.length + ' 笔\n外框 x[' + b.minX.toFixed(0) + ',' + b.maxX.toFixed(0) + '] y[' + b.minY.toFixed(0) + ',' + b.maxY.toFixed(0) + ']';
+    // 预览模式下同步刷新（部件调整/整体变换后笔画位置已变）
+    if (previewMode) refreshPreview();
+}
+
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+    if (!componentState.length) return;
+    componentState = componentState.map(() => ({ dx: 0, dy: 0, scaleX: 1, scaleY: 1 }));
+    globalOffset = { dx: 0, dy: 0 };
+    globalScale = 1;
+    renderAdjusted();
+});
+
+function adjustAll(moveX, moveY) {
+    const step = parseInt(document.getElementById('step-size').value) || 20;
+    globalOffset.dx += moveX * step;
+    globalOffset.dy -= moveY * step;
+    renderAdjusted();
+}
+
+function adjustGlobalScale(factor) {
+    globalScale = Math.round(globalScale * factor * 1000) / 1000;
+    renderAdjusted();
+}
+
+function resetAll() {
+    globalOffset = { dx: 0, dy: 0 };
+    globalScale = 1;
+    renderAdjusted();
+}
+
+// 整体居中：保留当前缩放，仅清零整体偏移，让最终结果回到画布中心
+// （fit 本身将字中心映射到画布中心，缩放绕画布中心，故偏移为 0 即居中，不做任何缩放处理）
+function centerAll() {
+    globalOffset = { dx: 0, dy: 0 };
+    renderAdjusted();
+}
+
+// ==================== 笔画预览与排序 ====================
+let previewMode = false;
+let previewIndex = 0;
+let playTimer = null;
+let strokeOrder = []; // 当前笔顺序（索引数组），与 strokes 等长
+let orderSetMode = false; // 设置笔顺模式：点击预览区笔画按顺序定义
+let orderSetNext = 1; // 下一个要分配的笔序号
+
+function resetStrokeUI() {
+    previewMode = false;
+    previewIndex = 0;
+    orderSetMode = false;
+    orderSetNext = 1;
+    stopPlay();
+}
+
+function getOrderedStrokes() {
+    if (!lastResult || !lastResult.strokes) return [];
+    const n = lastResult.strokes.length;
+    if (strokeOrder.length !== n) strokeOrder = Array.from({ length: n }, (_, i) => i);
+    return strokeOrder.map(i => lastResult.strokes[i]);
+}
+
+function getOrderedMedians() {
+    if (!lastResult || !lastResult.medians || !lastResult.strokes) return [];
+    if (lastResult.medians.length !== lastResult.strokes.length) return [];
+    if (strokeOrder.length !== lastResult.strokes.length) return lastResult.medians;
+    return strokeOrder.map(i => lastResult.medians[i]);
+}
+
+function renderOrderChips() {
+    const wrap = document.getElementById('stroke-order-chips');
+    if (!lastResult || !lastResult.strokes) {
+        wrap.innerHTML = '<span style="color:#999">先生成汉字后可调整笔顺</span>';
+        return;
+    }
+    const n = lastResult.strokes.length;
+    if (strokeOrder.length !== n) strokeOrder = Array.from({ length: n }, (_, i) => i);
+    wrap.innerHTML = strokeOrder.map((origIdx, pos) =>
+        '<span data-pos="' + pos + '" style="cursor:pointer;padding:2px 8px;border:1px solid #bbb;border-radius:12px;font-size:12px;user-select:none" ' +
+        (pos === strokeOrder.length - 1 ? 'style="cursor:pointer;padding:2px 8px;border:1px solid #bbb;border-radius:12px;font-size:12px;user-select:none;background:#ffe9a8" ' : '') +
+        'onclick="selectOrderChip(' + pos + ')" title="原第' + (origIdx + 1) + '笔">' + (pos + 1) + '</span>'
+    ).join('');
+}
+
+let selectedOrderPos = -1;
+function selectOrderChip(pos) {
+    const chips = document.querySelectorAll('#stroke-order-chips span[data-pos]');
+    chips.forEach(c => c.style.outline = 'none');
+    if (selectedOrderPos === pos) { selectedOrderPos = -1; return; }
+    selectedOrderPos = pos;
+    const chip = document.querySelector('#stroke-order-chips span[data-pos="' + pos + '"]');
+    if (chip) chip.style.outline = '2px solid #2c3e50';
+}
+
+// ============ 点击设置笔顺模式 ============
+function exitOrderSet() {
+    orderSetMode = false;
+    const btn = document.getElementById('btn-order-set');
+    if (btn) btn.textContent = '设置笔顺';
+    if (previewMode) refreshPreview();
+    else if (lastResult) renderPreview(lastResult);
+}
+
+function toggleOrderSet() {
+    if (!lastResult || !lastResult.strokes.length) { document.getElementById('msg').textContent = '请先生成汉字'; return; }
+    orderSetMode = !orderSetMode;
+    const btn = document.getElementById('btn-order-set');
+    btn.textContent = orderSetMode ? '退出设置' : '设置笔顺';
+    if (orderSetMode) {
+        // 进入设置模式：退出逐笔预览，重建 strokeOrder（保持当前顺序），从1开始分配
+        previewMode = false;
+        document.getElementById('btn-preview-toggle').textContent = '笔画预览';
+        document.getElementById('btn-play-strokes').textContent = '自动播放';
+        stopPlay();
+        const n = lastResult.strokes.length;
+        strokeOrder = Array.from({ length: n }, (_, i) => i);
+        orderSetNext = 1;
+        renderOrderChips();
+        renderOrderSetPreview();
+    } else {
+        exitOrderSet();
+    }
+}
+
+// 渲染设置笔顺模式下的预览：每笔可点击，已分配序号的显示绿色数字，未分配的显示灰色?
+function renderOrderSetPreview() {
+    if (!lastResult || !orderSetMode) return;
+    const svg = document.getElementById('preview');
+    svg.innerHTML = '';
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('x', '-50'); bg.setAttribute('y', '-150'); bg.setAttribute('width', '1150'); bg.setAttribute('height', '1250'); bg.setAttribute('fill', '#fff');
+    svg.appendChild(bg);
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', 'translate(0,900) scale(1,-1)');
+    svg.appendChild(g);
+    // 序号 → 笔画索引
+    const posOfStroke = {};
+    strokeOrder.forEach((origIdx, pos) => { posOfStroke[origIdx] = pos + 1; });
+    const strokes = lastResult.strokes;
+    strokes.forEach((d, idx) => {
+        const assigned = (posOfStroke[idx] || 0) <= orderSetNext - 1;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('fill', assigned ? '#2ecc71' : '#cfd8dc');
+        path.setAttribute('stroke', '#333');
+        path.setAttribute('stroke-width', '0.6');
+        path.style.cursor = 'pointer';
+        path.setAttribute('data-idx', idx);
+        path.addEventListener('click', () => clickOrderStroke(idx));
+        g.appendChild(path);
+        // 数字标签（用 getStrokesBBox 算中心）
+        const sb = getStrokesBBox([d]);
+        if (sb) {
+            const cx = (sb.minX + sb.maxX) / 2, cy = (sb.minY + sb.maxY) / 2;
+            const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            label.setAttribute('x', cx); label.setAttribute('y', 900 - cy);
+            label.setAttribute('font-size', '26');
+            label.setAttribute('text-anchor', 'middle');
+            label.setAttribute('dominant-baseline', 'central');
+            label.setAttribute('fill', assigned ? '#fff' : '#c0392b');
+            label.style.fontWeight = 'bold';
+            label.textContent = assigned ? String(posOfStroke[idx]) : '?';
+            svg.appendChild(label);
+        }
+    });
+    const info = document.getElementById('stroke-preview-info');
+    info.textContent = orderSetNext > strokes.length ? '笔顺已全部设置' : '点击第 ' + orderSetNext + ' 笔（按书写顺序点击笔画）';
+}
+
+// 点击笔画：分配当前序号
+function clickOrderStroke(idx) {
+    if (!orderSetMode) return;
+    const n = lastResult.strokes.length;
+    // 已在 strokeOrder 中的位置
+    const curPos = strokeOrder.indexOf(idx);
+    if (curPos >= 0 && curPos < orderSetNext - 1) {
+        // 已分配：可点击撤销到最后一步
+        if (curPos === orderSetNext - 2) {
+            orderSetNext--;
+            // 该笔回到未分配，位置保持不变（因为原顺序就是它）
+            renderOrderChips();
+            renderOrderSetPreview();
+        }
+        return;
+    }
+    // 未分配：放到 orderSetNext-1 位置
+    strokeOrder.splice(curPos, 1);
+    strokeOrder.splice(orderSetNext - 1, 0, idx);
+    orderSetNext++;
+    renderOrderChips();
+    renderOrderSetPreview();
+}
+
+document.getElementById('btn-order-set').addEventListener('click', toggleOrderSet);
+
+function moveOrder(delta) {
+    if (selectedOrderPos < 0) return;
+    const n = strokeOrder.length;
+    const to = selectedOrderPos + delta;
+    if (to < 0 || to >= n) return;
+    const t = strokeOrder[selectedOrderPos];
+    strokeOrder[selectedOrderPos] = strokeOrder[to];
+    strokeOrder[to] = t;
+    selectedOrderPos = to;
+    renderOrderChips();
+    selectOrderChip(to);
+    refreshPreview();
+}
+
+document.getElementById('btn-order-up').addEventListener('click', () => moveOrder(-1));
+document.getElementById('btn-order-down').addEventListener('click', () => moveOrder(1));
+document.getElementById('btn-order-reset').addEventListener('click', () => {
+    if (!lastResult) return;
+    strokeOrder = Array.from({ length: lastResult.strokes.length }, (_, i) => i);
+    selectedOrderPos = -1;
+    renderOrderChips();
+    refreshPreview();
+});
+
+function stopPlay() {
+    if (playTimer) { clearInterval(playTimer); playTimer = null; }
+}
+
+document.getElementById('btn-preview-toggle').addEventListener('click', () => {
+    if (!lastResult || !lastResult.strokes.length) { document.getElementById('msg').textContent = '请先生成汉字'; return; }
+    if (orderSetMode) exitOrderSet();
+    previewMode = !previewMode;
+    previewIndex = 0;
+    const btn = document.getElementById('btn-preview-toggle');
+    btn.textContent = previewMode ? '退出预览' : '笔画预览';
+    if (previewMode) {
+        document.getElementById('btn-play-strokes').textContent = '自动播放';
+        stopPlay();
+        refreshPreview();
+    } else {
+        stopPlay();
+        renderPreview(lastResult);
+        document.getElementById('stroke-preview-info').textContent = '';
+    }
+});
+
+// 直接点击 上一笔/下一笔/自动播放 时自动进入逐笔预览,无需先点"笔画预览"
+// 返回 null=尚未生成汉字; true=本次点击刚进入预览(显示第1笔,不再额外推进); false=已在预览模式(正常前进/后退)
+function enterPreview() {
+    if (previewMode) return false;
+    if (!lastResult || !lastResult.strokes.length) { document.getElementById('msg').textContent = '请先生成汉字'; return null; }
+    if (orderSetMode) exitOrderSet();
+    previewMode = true;
+    previewIndex = 0;
+    document.getElementById('btn-preview-toggle').textContent = '退出预览';
+    document.getElementById('btn-play-strokes').textContent = '自动播放';
+    stopPlay();
+    refreshPreview();
+    return true;
+}
+
+document.getElementById('btn-prev-stroke').addEventListener('click', () => {
+    const entered = enterPreview();
+    if (entered === null) return;
+    if (entered) return; // 刚进入,停留在第 1 笔
+    if (previewIndex > 0) { previewIndex--; refreshPreview(); }
+});
+document.getElementById('btn-next-stroke').addEventListener('click', () => {
+    const entered = enterPreview();
+    if (entered === null) return;
+    if (entered) return; // 刚进入,停留在第 1 笔
+    if (previewIndex < strokeOrder.length - 1) { previewIndex++; refreshPreview(); }
+});
+document.getElementById('btn-play-strokes').addEventListener('click', () => {
+    const entered = enterPreview();
+    if (entered === null) return;
+    if (playTimer) { stopPlay(); document.getElementById('btn-play-strokes').textContent = '自动播放'; return; }
+    if (previewIndex >= strokeOrder.length - 1) previewIndex = 0;
+    document.getElementById('btn-play-strokes').textContent = '停止播放';
+    playTimer = setInterval(() => {
+        if (previewIndex >= strokeOrder.length - 1) { stopPlay(); document.getElementById('btn-play-strokes').textContent = '自动播放'; return; }
+        previewIndex++;
+        refreshPreview();
+    }, 500);
+});
+
+// 按当前笔顺序渲染逐笔预览
+function refreshPreview() {
+    if (!lastResult || !previewMode) return;
+    const n = strokeOrder.length;
+    const svg = document.getElementById('preview');
+    svg.innerHTML = '';
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('x', '-50'); bg.setAttribute('y', '-150'); bg.setAttribute('width', '1150'); bg.setAttribute('height', '1250'); bg.setAttribute('fill', '#fff');
+    svg.appendChild(bg);
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', 'translate(0,900) scale(1,-1)');
+    svg.appendChild(g);
+    const shown = getOrderedStrokes().slice(0, previewIndex + 1);
+    shown.forEach((d, i) => {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('fill', '#2c3e50');
+        path.setAttribute('stroke', '#333');
+        path.setAttribute('stroke-width', '0.6');
+        g.appendChild(path);
+    });
+    const info = document.getElementById('stroke-preview-info');
+    info.textContent = '第 ' + (previewIndex + 1) + ' / ' + n + ' 笔';
+}
+
+// ==================== 事件绑定 ====================
+let lastResult = null;
+
+// 勾选"显示中线"时重绘预览
+document.getElementById('show-medians').addEventListener('change', () => {
+    if (lastResult) renderPreview(lastResult);
+});
+
+document.getElementById('btn-preview').addEventListener('click', () => {
+    const target = document.getElementById('target-char').value;
+    const input = document.getElementById('parts-input').value;
+    if (!target) { document.getElementById('msg').textContent = '请先输入目标字'; return; }
+    if (!input.trim()) { document.getElementById('msg').textContent = '请输入拆分部件'; return; }
+    const res = buildChar(input);
+    lastResult = res;
+    baseRawParts = res.rawParts;
+    baseRawMedians = res.rawMedians;
+    buildComponentControls(res.parts);
+    resetStrokeUI();
+    strokeOrder = Array.from({ length: res.strokes.length }, (_, i) => i);
+    renderPreview(res);
+    renderSourcePreviews(res);
+    renderOrderChips();
+    document.getElementById('msg').textContent = res.msgs.join('\n');
+    if (res.strokes.length > 0) {
+        const b = res.finalBBox;
+        document.getElementById('msg').textContent += '\n生成 ' + res.strokes.length + ' 笔，外框 x[' + b.minX.toFixed(0) + ',' + b.maxX.toFixed(0) + '] y[' + b.minY.toFixed(0) + ',' + b.maxY.toFixed(0) + ']';
+    }
+});
+
+document.getElementById('btn-export-bundle').addEventListener('click', () => {
+    if (!lastResult || lastResult.strokes.length === 0) { document.getElementById('msg').textContent = '请先生成'; return; }
+    const target = document.getElementById('target-char').value;
+    const ordered = getOrderedStrokes();
+    const orderedMed = getOrderedMedians().map(m => m ? m.map(pt => [Math.round(pt[0] * 10) / 10, Math.round(pt[1] * 10) / 10]) : null);
+    const payload = (orderedMed.length === ordered.length && orderedMed.every(m => m && m.length >= 2))
+        ? { strokes: ordered.map(s => s.replace(/\.?0+ /g, ' ')), medians: orderedMed }
+        : { strokes: ordered.map(s => s.replace(/\.?0+ /g, ' ')) };
+    const out = JSON.stringify(payload, null, 0);
+    document.getElementById('export-output').value = '"' + target + '":' + out + ',';
+});
+
+document.getElementById('btn-restore-preview').addEventListener('click', () => {
+    const raw = document.getElementById('export-output').value;
+    if (!raw.trim()) { document.getElementById('msg').textContent = '请先粘贴 bundle 片段到导出框'; return; }
+    let strokes = null, name = null, medians = null;
+    let text = raw.trim();
+    // 去掉 window.STROKE_DATA = 前缀、尾逗号、注释
+    text = text.replace(/^\s*window\.STROKE_DATA\s*=\s*/, '').replace(/\s*;?\s*$/, '');
+    try {
+        let obj = JSON.parse(text);
+        if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+            // 多字符对象：取第一个有 strokes 的字符
+            for (const k of Object.keys(obj)) {
+                const v = obj[k];
+                if (v && Array.isArray(v.strokes)) { name = k; strokes = v.strokes; medians = Array.isArray(v.medians) ? v.medians : null; break; }
+            }
+            if (!strokes && Array.isArray(obj.strokes)) { strokes = obj.strokes; medians = Array.isArray(obj.medians) ? obj.medians : null; }
+        } else if (Array.isArray(obj)) {
+            strokes = obj;
+        }
+    } catch (e) {
+        // JSON 失败：尝试从文本中提取第一个 "字":{"strokes":[...]}
+        const m = text.match(/"([^"]+)"\s*:\s*\{\s*"strokes"\s*:\s*(\[[\s\S]*?\])\s*\}/);
+        if (m) {
+            try {
+                name = m[1];
+                strokes = JSON.parse(m[2]);
+            } catch (e2) { /* fallthrough */ }
+        }
+    }
+    if (!strokes || strokes.length === 0) {
+        document.getElementById('msg').textContent = '无法解析 bundle，请粘贴形如 "字":{"strokes":[...]} 的内容';
+        return;
+    }
+    // 构造还原结果：bundle 笔画已是归一化坐标，直接作为最终笔画；perPart 整组一份，兼容预览
+    // 中线：片段自带则沿用，缺失/不等长时按轮廓估算（旧手工条目借此升级为带中线）
+    if (!medians || medians.length !== strokes.length) medians = strokes.map(estimateMedian);
+    const restored = {
+        parts: name ? [{ src: name, start: 0, count: strokes.length, zoneStr: 'F' }] : [{ src: '还原', start: 0, count: strokes.length, zoneStr: 'F' }],
+        strokes,
+        medians,
+        perPart: [strokes],
+        rawParts: [strokes],
+        rawMedians: [medians],
+        canvas: { x: 40, y: -154, w: 944, h: 1024 },
+        finalBBox: getStrokesBBox(strokes),
+        msgs: []
+    };
+    lastResult = restored;
+    baseRawParts = [strokes];
+    baseRawMedians = [medians];
+    componentState = [];
+    globalOffset = { dx: 0, dy: 0 };
+    globalScale = 1;
+    resetStrokeUI();
+    strokeOrder = Array.from({ length: strokes.length }, (_, i) => i);
+    renderPreview(restored);
+    renderSourcePreviews(restored);
+    renderOrderChips();
+    document.getElementById('component-controls').style.display = 'none';
+    const ph = document.getElementById('adjust-placeholder');
+    if (ph) ph.style.display = '';
+    document.getElementById('msg').textContent = (name ? '已还原 "' + name + '"' : '已还原') + '：' + strokes.length + ' 笔';
+});
+
+document.getElementById('btn-export-sources').addEventListener('click', () => {
+    if (!lastResult || lastResult.rawParts.length === 0) { document.getElementById('msg').textContent = '请先生成'; return; }
+    const target = document.getElementById('target-char').value;
+    const parts = lastResult.rawParts.map(pp => {
+        const bbox = getStrokesBBox(pp);
+        const union = lastResult.canvas;
+        // 计算相对位移（用bbox中心近似）
+        const cx = bbox.minX + bbox.width / 2, cy = bbox.minY + bbox.height / 2;
+        return { parent: pp[0]._src, offset: 0, count: pp.length, xOffset: Math.round(cx - union.minX - union.width / 2), yOffset: Math.round(cy - union.minY - union.height / 2) };
+    });
+    // 简化：直接用源字与区域
+    const simple = lastResult.parts.map(p => ({ parent: p.src, offset: p.start, count: p.count, xOffset: p.dx || 0, yOffset: p.dy || 0 }));
+    const lines = simple.map(p => '{ parent: \'' + p.parent + '\', offset: ' + p.offset + ', count: ' + p.count + ', xOffset: ' + p.xOffset + ', yOffset: ' + p.yOffset + ' }');
+    document.getElementById('export-output').value = '\'' + target + '\': { parts: [\n    ' + lines.join(',\n    ') + '\n] },';
+});
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+    document.getElementById('parts-input').value = '';
+    document.getElementById('export-output').value = '';
+    document.getElementById('msg').textContent = '';
+    document.getElementById('src-preview-wrap').innerHTML = '';
+    document.getElementById('preview').innerHTML = '';
+    document.getElementById('component-rows').innerHTML = '';
+    document.getElementById('component-controls').style.display = 'none';
+    const ph = document.getElementById('adjust-placeholder');
+    if (ph) ph.style.display = '';
+    baseRawParts = [];
+    baseRawMedians = [];
+    componentState = [];
+    lastResult = null;
+    orderSetMode = false;
+    orderSetNext = 1;
+    resetStrokeUI();
+    strokeOrder = [];
+    selectedOrderPos = -1;
+    renderOrderChips();
+    document.getElementById('stroke-preview-info').textContent = '';
+    document.getElementById('btn-preview-toggle').textContent = '笔画预览';
+    document.getElementById('btn-play-strokes').textContent = '自动播放';
+    document.getElementById('btn-order-set').textContent = '设置笔顺';
+});
+
+document.getElementById('btn-example').addEventListener('click', () => {
+    document.getElementById('target-char').value = '浥';
+    document.getElementById('parts-input').value = '氵:0:3:L\n邑:0:7:R:90:0';
+});
+
+// 自动拆分并直接预览
+document.getElementById('btn-auto-split').addEventListener('click', () => {
+    const target = document.getElementById('target-char').value;
+    if (!target) { document.getElementById('msg').textContent = '请先输入目标字'; return; }
+    if (getCharStrokes(target)) {
+        document.getElementById('msg').textContent = '目标字 "' + target + '" 已在 bundle 中，无需造字。';
+        return;
+    }
+    const res = autoSplit(target);
+    document.getElementById('msg').textContent = res.msgs.join('\n');
+    if (!res.ok) return;
+    document.getElementById('parts-input').value = res.lines;
+    // 自动预览
+    const buildRes = buildChar(res.lines);
+    lastResult = buildRes;
+    baseRawParts = buildRes.rawParts;
+    baseRawMedians = buildRes.rawMedians;
+    buildComponentControls(buildRes.parts);
+    resetStrokeUI();
+    strokeOrder = Array.from({ length: buildRes.strokes.length }, (_, i) => i);
+    renderPreview(buildRes);
+    renderSourcePreviews(buildRes);
+    renderOrderChips();
+    if (buildRes.strokes.length > 0) {
+        const b = buildRes.finalBBox;
+        document.getElementById('msg').textContent += '\n生成 ' + buildRes.strokes.length + ' 笔，外框 x[' + b.minX.toFixed(0) + ',' + b.maxX.toFixed(0) + '] y[' + b.minY.toFixed(0) + ',' + b.maxY.toFixed(0) + ']';
+    }
+});
+
+// 按字根建议：仅填入拆分（不预览），供手动微调后自行预览
+document.getElementById('btn-auto-suggest').addEventListener('click', () => {
+    const target = document.getElementById('target-char').value;
+    if (!target) { document.getElementById('msg').textContent = '请先输入目标字'; return; }
+    if (getCharStrokes(target)) {
+        document.getElementById('msg').textContent = '目标字 "' + target + '" 已在 bundle 中，无需造字。';
+        return;
+    }
+    const res = autoSplit(target);
+    document.getElementById('parts-input').value = res.ok ? res.lines : '';
+    document.getElementById('msg').textContent = res.msgs.join('\n');
+});
+
+// ==================== 笔画取材（可视化选择笔画） ====================
+let pickChar = '';
+let pickStrokes = [];
+let pickSelected = new Set();
+
+function loadPicker(ch) {
+    pickChar = ch;
+    pickStrokes = getCharStrokes(ch) || [];
+    pickSelected = new Set();
+    const info = document.getElementById('pick-summary');
+    const btn = document.getElementById('btn-pick-insert');
+    if (!pickStrokes.length) {
+        // 源字无效：只提示，不动大预览框（可能还显示着已生成的字）
+        info.style.color = '#e74c3c';
+        info.textContent = ch ? '"' + ch + '" 不在 bundle 中，无法取材' : '请先输入源字';
+        btn.disabled = true;
+        return;
+    }
+    info.style.color = '';
+    renderPicker();
+    updatePickSummary();
+}
+
+function getPickMirror() {
+    const el = document.getElementById('pick-mirror');
+    return el ? el.value : '';
+}
+function getPickRot() {
+    const el = document.getElementById('pick-rot');
+    if (!el) return 0;
+    const v = parseInt(el.value, 10);
+    return Number.isFinite(v) ? v : 0;
+}
+
+// 取材笔画渲染到中间大预览框 #preview（生成预览时会自动覆盖切回）
+function renderPicker() {
+    if (!pickChar || pickStrokes.length === 0) return;
+    const svg = document.getElementById('preview');
+    svg.innerHTML = '';
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('x', '-50'); bg.setAttribute('y', '-150');
+    bg.setAttribute('width', '1150'); bg.setAttribute('height', '1250');
+    bg.setAttribute('fill', '#fff');
+    svg.appendChild(bg);
+    const bbox = getStrokesBBox(pickStrokes);
+    if (!bbox) return;
+    // 镜像 / 旋转预览：根据所选镜像与角度对笔画提前变换显示（所见即所得）
+    const mirror = getPickMirror();
+    const rot = getPickRot();
+    const bcx = (bbox.minX + bbox.maxX) / 2, bcy = (bbox.minY + bbox.maxY) / 2;
+    let disp = pickStrokes;
+    if (mirror || rot) {
+        disp = pickStrokes.map(d => {
+            let dd = d;
+            if (mirror && mirror.includes('H')) dd = flipPathX(dd, bbox.minX, bbox.maxX);
+            if (mirror && mirror.includes('V')) dd = flipPathY(dd, bbox.minY, bbox.maxY);
+            if (rot) dd = rotPath(dd, rot, bcx, bcy);
+            return dd;
+        });
+    }
+    const db = getStrokesBBox(disp);
+    const pad = 40;
+    const vw = db.width + pad * 2, vh = db.height + pad * 2;
+    const ccx = db.minX - pad + vw / 2, ccy = db.minY - pad + vh / 2;
+    // 映射进主预览画布：可视中心约 (512,388)，四周留边
+    const sc = Math.min(904 / vw, 904 / vh);
+    const dispCenters = disp.map(d => {
+        const sb = getStrokesBBox([d]);
+        return sb ? { cx: (sb.minX + sb.maxX) / 2, cy: (sb.minY + sb.maxY) / 2 } : { cx: 0, cy: 0 };
+    });
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', 'translate(0,900) scale(1,-1)');
+    svg.appendChild(g);
+    const inner = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    inner.setAttribute('transform', 'translate(512,388) scale(' + sc.toFixed(4) + ') translate(' + (-ccx).toFixed(2) + ',' + (-ccy).toFixed(2) + ')');
+    g.appendChild(inner);
+    disp.forEach((d, i) => {
+        const sel = pickSelected.has(i);
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('fill', sel ? '#e74c3c' : '#cfd8dc');
+        path.setAttribute('stroke', '#333');
+        path.setAttribute('stroke-width', '0.6');
+        path.style.cursor = 'pointer';
+        path.style.opacity = sel ? 1 : 0.8;
+        path.addEventListener('click', () => togglePick(i));
+        const ti = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        ti.textContent = '第 ' + (i + 1) + ' 笔';
+        path.appendChild(ti);
+        inner.appendChild(path);
+    });
+    // 序号层：放在翻转组之外（屏幕坐标定位），避免数字被倒置
+    disp.forEach((d, i) => {
+        const sel = pickSelected.has(i);
+        const c = dispCenters[i];
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', (512 + (c.cx - ccx) * sc).toFixed(0));
+        label.setAttribute('y', (900 - (388 + (c.cy - ccy) * sc)).toFixed(0));
+        label.setAttribute('font-size', '30');
+        label.setAttribute('text-anchor', 'middle');
+        label.setAttribute('dominant-baseline', 'central');
+        label.setAttribute('fill', sel ? '#fff' : '#c0392b');
+        label.style.fontWeight = 'bold';
+        label.style.pointerEvents = 'none';
+        label.textContent = i + 1;
+        svg.appendChild(label);
+    });
+}
+
+function togglePick(i) {
+    if (pickSelected.has(i)) pickSelected.delete(i); else pickSelected.add(i);
+    renderPicker();
+    updatePickSummary();
+}
+
+// 将选中笔画按连续区间合并成拆分行
+function buildPickLines() {
+    if (!pickChar || pickSelected.size === 0) return [];
+    const idx = Array.from(pickSelected).sort((a, b) => a - b);
+    const zone = document.getElementById('pick-zone').value;
+    const mirror = getPickMirror();
+    const rot = getPickRot();
+    // 后缀：镜像(:H/:V/:HV) 与 旋转(:角度)。仅旋转而无镜像时用 :0:0:角度 占位以避免与 dx 冲突
+    let sfx = '';
+    if (mirror && rot) sfx = ':' + mirror + ':' + rot;
+    else if (mirror) sfx = ':' + mirror;
+    else if (rot) sfx = ':0:0:' + rot;
+    const lines = [];
+    let start = idx[0], prev = idx[0];
+    for (let i = 1; i < idx.length; i++) {
+        if (idx[i] === prev + 1) { prev = idx[i]; continue; }
+        lines.push(pickChar + ':' + start + ':' + (prev - start + 1) + ':' + zone + sfx);
+        start = idx[i]; prev = idx[i];
+    }
+    lines.push(pickChar + ':' + start + ':' + (prev - start + 1) + ':' + zone + sfx);
+    return lines;
+}
+
+function updatePickSummary() {
+    const info = document.getElementById('pick-summary');
+    const btn = document.getElementById('btn-pick-insert');
+    if (!pickChar || pickSelected.size === 0) {
+        info.style.color = '';
+        info.textContent = (pickChar && pickStrokes.length) ? '"' + pickChar + '" 共 ' + pickStrokes.length + ' 笔，点击大预览框中的笔画选中取材' : '';
+        btn.disabled = true;
+        return;
+    }
+    const lines = buildPickLines();
+    info.style.color = '';
+    info.textContent = '已选 ' + pickSelected.size + ' 笔 → ' + lines.join(' ； ');
+    btn.disabled = false;
+}
+
+document.getElementById('btn-pick-load').addEventListener('click', () => {
+    const ch = document.getElementById('pick-char').value;
+    if (!ch) { document.getElementById('msg').textContent = '请先输入源字'; return; }
+    loadPicker(ch);
+});
+document.getElementById('pick-char').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('btn-pick-load').click();
+});
+document.getElementById('btn-pick-clear').addEventListener('click', () => {
+    pickSelected.clear();
+    renderPicker();
+    updatePickSummary();
+});
+document.getElementById('pick-mirror').addEventListener('change', () => {
+    renderPicker();
+    updatePickSummary();
+});
+document.getElementById('pick-rot').addEventListener('input', () => {
+    renderPicker();
+    updatePickSummary();
+});
+document.getElementById('btn-pick-insert').addEventListener('click', () => {
+    const lines = buildPickLines();
+    if (!lines.length) return;
+    const input = document.getElementById('parts-input');
+    input.value += (input.value ? '\n' : '') + lines.join('\n');
+    document.getElementById('msg').textContent = '已插入 ' + lines.length + ' 行拆分行（' + pickChar + ' 取材）';
+});
+
+// ==================== 自动拆分（利用 WUBI_86 字根 r 数组） ====================
+function autoSplit(target) {
+    const msgs = [];
+    const wubi = window.WUBI_86;
+    const entry = wubi && wubi[target];
+    if (!entry || !entry.r) {
+        return { ok: false, msgs: ['WUBI_86 中查不到 "' + target + '" 的字根拆分'] };
+    }
+    const roots = entry.r;
+    const lines = [];
+    // 区域自动分配：按字根数量与布局
+    let zones = [];
+    const n = roots.length;
+    if (n === 1) zones = ['F'];
+    else if (n === 2) {
+        // 尝试判断左右/上下：用字根宽度比例粗判
+        const w0 = getCharStrokes(roots[0]), w1 = getCharStrokes(roots[1]);
+        const b0 = w0 ? getStrokesBBox(w0) : null, b1 = w1 ? getStrokesBBox(w1) : null;
+        const widthish = b0 && b1 && (b0.width / (b0.height || 1)) > 1.1 && (b1.width / (b1.height || 1)) > 1.1;
+        // 左右结构的字（如 汉=氵+又）：第一个字根通常窄
+        const firstNarrow = b0 && b1 && b0.width < b1.width * 0.8;
+        if (firstNarrow && b0.height > b0.width) zones = ['L', 'R'];
+        else zones = ['T', 'B'];
+    }
+    else if (n === 3) {
+        // 左中右 或 上中下：看中间字根
+        zones = ['L', 'C', 'R'];
+    }
+    else if (n === 4) {
+        zones = ['TL', 'TR', 'BL', 'BR'];
+    }
+    else if (n === 5) {
+        zones = ['TL', 'TR', 'C', 'BL', 'BR'];
+    }
+    else {
+        // 超过5根，只放前4（与页面 前3+末1 规则无关，这里取前4）
+        zones = [];
+        for (let i = 0; i < n; i++) zones.push(i < 3 ? (i === 0 ? 'L' : i === 1 ? 'C' : 'R') : 'B');
+    }
+
+    let missingRoots = 0;
+    for (let i = 0; i < n; i++) {
+        const r = roots[i];
+        const z = zones[i] || 'F';
+        if (getCharStrokes(r)) {
+            const cnt = getCharStrokes(r).length;
+            lines.push(r + ':0:' + cnt + ':' + z);
+        } else {
+            missingRoots++;
+            msgs.push('⚠ 字根 "' + r + '" 不在 bundle，需手动指定源字');
+            lines.push('#' + r + ':' + z + '  ← 请换成有笔画的源字');
+        }
+    }
+    if (missingRoots > 0) msgs.push(missingRoots + ' 个字根需要手动处理（可点击下方部件速查替换）');
+    return { ok: true, lines: lines.join('\n'), msgs, roots };
+}
+
+// ==================== URL 自动测试模式 ====================
+// 用法：char-builder.html?auto=浥  加载后自动拆分并预览
+(function autoTest() {
+    const params = new URLSearchParams(location.search);
+    const target = params.get('auto');
+    if (!target) return;
+    const wait = setInterval(() => {
+        if (window.STROKE_DATA && window.WUBI_86 && document.getElementById('btn-auto-split')) {
+            clearInterval(wait);
+            document.getElementById('target-char').value = target;
+            document.getElementById('btn-auto-split').click();
+        }
+    }, 200);
+})();
+</script>
+</body>
+</html>
