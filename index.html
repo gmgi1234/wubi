@@ -1891,12 +1891,12 @@ const RADICAL_STROKES = {
     '㡀':7,'卬左':2,'冫':2,'丬':3,'乂':2,'罒':5,'廿':4,'匚':2,'刀':2,'牛前':3,'衣示旁':3,
      '皮前':3,'兴头':4,'⺌':3,'㇀':1,'㇆':1,'㇔':1,'㇇':1,'𠃌':1,'𠄌':1,'㇟':1,'⺄':1,'力':2,'䒑':3,
     '𠂆':2,'𠂇':2,'長下':3,'コ':2,'氺侧':4,'⺀':2,'〢':2,'𠚤':3,'㇄':2,'㔾':2,'氺':5,'乑':6,'丘':5,'甫':7,'彑':3,'毌':4,
-    '古':5,'𰀪':2,'𠄎':1,'𠆢':2,'龶':4,'貝':7,'ス':2,'𧘇':4,'龴':2,'卄':3,
-     '𧰨':6,'豕':7,'豸头':3,'豸底':4,'骨头':5,'咼头':6,'冃':4,'⺮':6,'川':3,'甲':5,'上':3,'其上':6,'𤣩':4,'弋':3,'由':5,'𫠠':2,
-     '𫩏':4,'具头':6,'𡭔':3,'镸头':5,'長下':3,'尤前':3,'龰':4,'戋':5,'立头':4,'蒐中':6,
+    '古':5,'𰀪':2,'𠄎':1,'𠃓':3,'𠆢':2,'龶':4,'貝':7,'ス':2,'𧘇':4,'龴':2,'卄':3,
+     '𧰨':6,'豕':7,'豸头':3,'豸底':4,'骨头':5,'咼头':6,'冃':4,'⺮':6,'川':3,'甲':5,'上':3,'其上':6,'龜底':16,'𤣩':4,'弋':3,'由':5,'𫠠':2,
+     '𫩏':4,'具头':6,'𡭔':3,'镸头':5,'長下':3,'尤前':3,'龰':4,'戋':5,'立头':4,
       '龷':4,'巳':3,'羽':6,'虎头':4,'虍头':4,'虍':6,'𦥑':7,    '𠃍':1,'㇂':1,'𠃊':1,'舟底':5,'匸':2,'𠘨':2,'亻':2,'㐅':2,'朩':4,'爫':4,'𰀁':3,'乃':2,'馬':10,'𠃜':4,'镸':7,'了':2,'鱼头':7,'㣺':4,'':2,
        '囟':6,'比':4,'丙':5,'𡆧':6,'𠘧':2,'𠂊':2,'彡':3,'丂':2,'羊后':4,'龵':4,'𫶧':3,'𭕄':3,'𠤎':2,'式':6,'𬼖框':3,'巟':6,'㦮':6,'丅':2,'祭头':6,'辛':7,'県头':6,'艹':4,'巜':2,'㠯':5,'𩵋':10,
-      '婁头':8, '虛底头':5,'𣶒外':8,'齒下':11,'艮':6,'豸':7,'臧左':3,'朗左':6,'鹿上':7,'甘':5,'鳥前':7,
+      '婁头':8, '虛底头':5,'𣶒外':8,'齒下':11,'艮':6,'豸':7,'臧左':3,'朗左':6,'鹿上':7,'甘':5,'鳥前':7,'烏前':6,'岛前':4,
     '亞中':6,
     '釒':8,
     '𰀁':3,
@@ -2051,12 +2051,13 @@ async function setWubiVersion(ver) {
 
 // 全局常量：需要非连续笔画分配的字（万、母、那）
 // 注：含'匚'字根的字（区、欧、沤等）由 roots.includes('匚') 自动检测，无需列入
-const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','嗇','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁','垂','喪','噩','爾','畿','帶','齊','樂','盥','韋','甴','㠯','燕','翰','犮','巫','豐','彧','豳','齑','眾','豖','奭','官']);
+const NON_CONTINUOUS_CHARS = new Set(['万','母','那','非','丧','啬','嗇','可','兆','乘','或','肃','尤','戊','酉','止','式','武','忒','甙','貳','贰','弒','來','戈','凸','戒','戎','戜','衰','爽','龙','䜌','必','婁','垂','喪','噩','爾','畿','帶','齊','樂','盥','韋','甴','㠯','燕','翰','犮','巫','豐','彧','豳','齑','豖','奭','官']);
 
 // 版本感知的非连续字判断：98/新世纪版中"尤/龙/犮"已拆为连续字根，不做非连续处理；
 // 86版仍为"尤前+…"（非连续），需保留。以拆分是否含"尤前"字根作为判断依据。
 function ncActive(ch) {
-    // 新世纪版"垂"专为 [丿,十,龷,一] 拆分，按连续字根分配颜色；86/98版维持非连续
+    // 新世纪版"垂"专为 [丿,十,龷,一] 拆分，按连续字根分配颜色；
+    // 86/98版为 [丿,一,艹,土]，走垂字非连续映射（土的首笔在艹之前，见 autoDetectNonContinuous 垂字模式）
     if (ch === '垂' && typeof currentWubiVersion !== 'undefined' && currentWubiVersion === '06') return false;
     const _w = (typeof WUBI !== 'undefined') ? WUBI[ch] : null;
     if (ch === '尤' || ch === '龙' || ch === '犮') {
@@ -2078,6 +2079,9 @@ function ncActive(ch) {
     // 豖字三版均按连续字根分配颜色：86版豕为原子字根(7笔)+丶=8笔连续；
     // 98/新世纪版豕拆为[一,𧰨]，展开 一+𧰨+丶 也连续
     if (ch === '豖') return false;
+    // 98/新世纪版"凸"拆分为 [丨,一,丨,𠄎,一]（五笔单笔根），走连续分配；
+    // 86版仍为 [丨,一,凸头,一] 非连续结构，维持原样（含 autoDetectNonContinuous 的凸字模式）
+    if (ch === '凸' && typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '86') return false;
     // 98/新世纪版"戊"拆分为成字字根报户口[戊]+[一,丿,㇂,丿,丶]，
     // 报户口(戊自身)不占笔画，仅后续一丿㇂丿丶五个单笔分配颜色，按连续分配；
     // 86版"戊"不拆成自身+单笔，维持非连续
@@ -2096,7 +2100,7 @@ function ncActive(ch) {
     // 不走非连续处理（鹵另由手工 CUSTOM_STROKE_ORDER 保证囗底横同色）；86版维持原非连续
     if (ch === '彧' && typeof currentWubiVersion !== 'undefined' && currentWubiVersion === '06') return false;  // 新世纪新拆分走连续分配
     if (ch === '忒' && typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '86') return false;  // 98/新世纪新拆分[𫠠,心,丶]走连续分配+remap
-    if (ch === '武' && typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '86') return false;  // 98/新世纪新拆分[一,𫠠,止,丶]走连续分配+remap
+    if (ch === '武' && typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '86') return false;  // 98 走连续分配+remap；新世纪 2026-10-16 改拆分[二,止,㇂,丶]走纯连续分配
     if (ch === '樂' && typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '86') return false;  // 98/新世纪新拆分[白,幺,幺,木]走连续分配
     if ((ch === '那' || ch === '鹵' || ch === '婁' || ch === '弒') && typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '86') return false;
     // 98/新世纪版"甴"拆分[冂,丨,二]按连续分配（冂红{1,2}丨橙{3}二绿{4,5}）；
@@ -3476,26 +3480,6 @@ function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset
         return result;
     }
 
-    // ===== 眾字特殊处理 =====
-    // 眾：r=['罒','人','人','亻']，11笔
-    // 前5笔→罒(0)，第8-9笔→人(1)，第10-11笔→人(2)，第6-7笔→亻(3)
-    if (currentChar === '眾' && roots.length === 4
-        && roots[0] === '罒' && roots[1] === '人' && roots[2] === '人' && roots[3] === '亻' && n === 11) {
-        const result = new Array(11);
-        result[0] = strokeOffset + 0;   // 第1笔 → 罒(0)
-        result[1] = strokeOffset + 0;   // 第2笔 → 罒(0)
-        result[2] = strokeOffset + 0;   // 第3笔 → 罒(0)
-        result[3] = strokeOffset + 0;   // 第4笔 → 罒(0)
-        result[4] = strokeOffset + 0;   // 第5笔 → 罒(0)
-        result[5] = strokeOffset + 3;   // 第6笔 → 亻(3)
-        result[6] = strokeOffset + 3;   // 第7笔 → 亻(3)
-        result[7] = strokeOffset + 1;   // 第8笔 → 人(1)
-        result[8] = strokeOffset + 1;   // 第9笔 → 人(1)
-        result[9] = strokeOffset + 2;   // 第10笔 → 人(2)
-        result[10] = strokeOffset + 2;  // 第11笔 → 人(2)
-        return result;
-    }
-
     // ===== 豖字特殊处理 =====
     // 豖：r=['豕','丶']，8笔
     // 第6笔(索引5)属于丶(1)，其余属于豕(0)
@@ -3682,9 +3666,13 @@ function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset
     // 十+戈模式中，十展开为一+丨后戈在索引2，需放宽到 geIdx <= 2
     // 戈非末字根模式（如職=耳+立头+戈+日）：戈在中间位置包裹后续字根，hasNCRoot触发
     // 注：hasNCRoot仅在戈不是首字根时才触发包裹逻辑，避免划(戈+刂)等左右结构误判
+    // 限值放宽到 4：殲=歹+韱，歹展开为[一,夕]把戈推到第5根(索引4)，而戈尾(斜钩/撇/点)
+    // 仍在字末三笔（几何核对 s9+末三笔），原限值3导致殲退回连续分配、戈尾错位。
+    // 全库扫描：戈索引≥5 且能进门控的字为 0；索引4 的字中 幟/蘵/饑 已走 prefix+base
+    // 基字复用、map 不受影响，实际仅修殲（86/98）。
     const geIdx = roots.indexOf('戈');
     const _geAsMiddle = hasNCRoot && geIdx >= 1;
-    if (geIdx >= 0 && geIdx <= ((hasShiGeOrig || _geAsMiddle) ? 3 : 1) && (ncActive(currentChar) || hasShiGeOrig || _geAsMiddle) && r >= 2 && currentChar !== '戈' && geIdx < r - 1) {
+    if (geIdx >= 0 && geIdx <= ((hasShiGeOrig || _geAsMiddle) ? 4 : 1) && (ncActive(currentChar) || hasShiGeOrig || _geAsMiddle) && r >= 2 && currentChar !== '戈' && geIdx < r - 1) {
         let pos = 0;
         for (let i = 0; i < geIdx; i++) {
             const sc = RADICAL_STROKES[roots[i]] || 1;
@@ -4892,11 +4880,16 @@ const CUSTOM_STROKE_ORDER = {
         swapLast: true
     },
     '夜': {
-        // 夜：标准笔顺 亠(点横)亻(撇竖)夂(撇横撇)丶(点)夂(捺)
-        // 连续分配 [0,0,1,1,2,2,2,3] 把第7笔(夂捺)分给root2、第8笔(丶)分给root3
-        // 但标准笔顺第7笔是丶(点)，第8笔是夂(捺)→ 需交换末两位root索引
+        // 夜=[亠,亻,夂,丶]：标准笔顺 亠(点横)亻(撇竖)夂(撇横撇)丶(点)夂(捺)
+        // 连续分配 [0,0,1,1,2,2,2,3] 把第7笔(丶)分给夂、第8笔(夂捺)分给丶
+        // → 交换末两位字根索引。结构条件：末根丶(1笔)被倒二根夂(3笔)的末捺隔开。
+        // 掖/液/腋 经 applyCsStrokeRootMapFix 继承本映射（同结构自动生效）。
         strokeRootMap: [0,0,1,1,2,2,3,2],
-        condition: (wubi) => wubi.c === 'YWTY'
+        condition: (wubi) => {
+            const r = wubi && wubi.r;
+            return Array.isArray(r) && r.length >= 2
+                && r[r.length-2] === '夂' && r[r.length-1] === '丶';
+        }
     },
     '鹵': {
         // 鹵：86拆[⺊,囗,乂,灬](c=HLQO)；98/新世纪拆[⺊,囗,𠂭](c=HLOU)
@@ -4950,22 +4943,13 @@ const CUSTOM_STROKE_ORDER = {
         },
         strokeRootMap: [0,1,1,1,1,0,0,0]
     },
-    '棗': {
-        // 棗=[朿,朿]（SMSM）上下两个夹心块，各块笔顺 [横,冂竖,冂折,竖,撇,捺]：
-        // 展开roots=[木,冂,木,冂]，块内 木={0,3,4,5}/冂={1,2}，第二块根索引+2
+    '柬': {
+        // 柬：98拆[木,罒]（SLD），木={0,6,7,8}包夹罒={1,2,3,4,5}；86/新世纪拆[一,罒,𡭔]天然连续不套用
         condition: (wubi) => {
             if (typeof currentWubiVersion === 'undefined' || currentWubiVersion !== '98') return false;
-            return wubi && wubi.c === 'SMSM';
+            return wubi && wubi.c === 'SLD';
         },
-        strokeRootMap: [0,1,1,0,0,0,2,3,3,2,2,2]
-    },
-    '棘': {
-        // 棘=[朿,朿]（SMSM）左右两个夹心块，映射同棗
-        condition: (wubi) => {
-            if (typeof currentWubiVersion === 'undefined' || currentWubiVersion !== '98') return false;
-            return wubi && wubi.c === 'SMSM';
-        },
-        strokeRootMap: [0,1,1,0,0,0,2,3,3,2,2,2]
+        strokeRootMap: [0,1,1,1,1,1,0,0,0]
     },
     '制': {
         // 制：98拆[丿,𰀁,冂,刂]（TGMJ）。bundle标准笔顺为 丿,𰀁横,𰀁横,冂竖,冂折,𰀁竖,刂竖,刂钩
@@ -5003,6 +4987,19 @@ const CUSTOM_STROKE_ORDER = {
         condition: (wubi) => wubi && (wubi.c === 'CDSK' || wubi.c === 'TDSK'),
         strokeRootMap: [0, 0, 0, 0, 1, 1, 1, 2, 3, 3, 3, 2],
     },
+    '逭': {
+        // 逭=[官,辶]：官展开为 [宀,㠯](98)/[宀,丨,コ,コ](06)。官字本身 roots 含㠯命中
+        // _ncExcluded 走纯连续分配正确；逭的分配引擎锚定错位（探针实测）：
+        // 98 srm=[0,1,1,1,1,1,1,0,2,2,2]（宀的垂点+横钩被并给㠯、辶点被归宀）；
+        // 06 srm=[0,0,0,2,1,1,3,3,4,4,4]（丨与第一个コ互换）→ 官部分颜色与官字不一致。
+        // 按笔序硬指定（逭11笔=官8+辶3，先内后外）：98 宀{s0-2} 㠯{s3-7} 辶{s8-10}；
+        // 06 宀{s0-2} 丨{s3} コ{s4,5} コ{s6,7} 辶{s8-10}。编码锚定 PNPD(98)/PHNP(06)
+        condition: (wubi) => wubi && (wubi.c === 'PNPD' || wubi.c === 'PHNP'),
+        strokeRootMap: function(ver) {
+            return ver === '98' ? [0,0,0,1,1,1,1,1,2,2,2]
+                                : [0,0,0,1,2,2,3,3,4,4,4];
+        }
+    },
     '饑': {
         // 饑=[飠,幾]：98拆[飠,𠆢,朗左,幺,幺,戈,人](WVXW)，20笔。幔块内戈={横s15,斜钩s18,
         // 撇s19,点s20}包裹人={撇s16,捺s17}（同幾本字的戈包裹NC处理）→ strokeRootMap 直指定：
@@ -5030,25 +5027,16 @@ const CUSTOM_STROKE_ORDER = {
         strokeRootMap: [0,0,0,1,1,2,3,3,3,3,3,4,3]
     },
     '臧': {
-        // 臧：98拆[戊,臧左,臣](AUAH=戊A 臧左U 臣A+识别H)。臣展开[匚,丨,コ,丨]；
-        // 物理序：戊横(s0) 臧左(s1-3) 戊丿(s4) 臣(s5-10) 戊㇂丿丶(s11-13)，
-        // 戊的笔画分散在首中尾，手工映射使 戊红 臧左橙 臣绿 等成块；86/06拆分不同不套用
+        // 臧：98拆[戈,爿,臣](AUAH=戈A 爿U 臣A+识别H)。臣展开[匚,丨,コ,丨]；
+        // 物理序：戈横(s0) 爿(s1-4) 臣(s5-10) 戈㇂丿丶(s11-13)。
+        // 臣内部为匚夹心：横(s5)+竖折(s10)属匚，竖(s6)+横折横(s7,8)属丨/コ+竖(s9)属丨
+        // （臣标准笔序：横竖横折横竖竖折 → 匚{1,6} 丨{2} コ{3,4} 丨{5}）。
+        // 戈=首笔+末三笔；复合字(臟藏贓)经 buildEmbeddedMap 继承。86/06拆分不同不套用
         condition: (wubi) => {
             if (typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '98') return false;
             return wubi && wubi.c === 'AUAH';
         },
-        strokeRootMap: [0,0,1,1,1,2,3,4,4,5,2,0,0,0]
-    },
-    '藏': {
-        // 藏=[艹,臧]：复用臧的笔划调整。艹3笔+臧14笔(戊=块内s0,s4,s11,s12,s13)，
-        // 块内映射 [0,0,1,1,1,2,3,4,4,5,2,0,0,0] 整体偏移1根
-        condition: (wubi) => wubi && wubi.c === 'AAUH',
-        strokeRootMap: [0,0,0,1,1,2,2,2,3,4,5,5,6,3,1,1,1]
-    },
-    '贓': {
-        // 贓=[貝,臧]：貝7笔+臧14笔，块内映射同藏
-        condition: (wubi) => wubi && wubi.c === 'MAUH',
-        strokeRootMap: [0,0,0,0,0,0,0,1,1,2,2,2,3,4,5,5,6,3,1,1,1]
+        strokeRootMap: [0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 2, 0, 0, 0]
     },
     '舆': {
         // 舆：98/新世纪拆[𦥑,车,一,八](c=ELGW)，14笔。𦥑七笔不连续：
@@ -5075,10 +5063,28 @@ const CUSTOM_STROKE_ORDER = {
         strokeRemap: [0, 1, 2, 3, 10, 11, 12, 4, 5, 6, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19],
     },
     '釁': {
-        // 釁：98/新世纪拆[𦥑,冂,二,丨,冖,酉,分](c=EMGV)，25笔。与舋同头部：
-        // 左手4(s0-3)+右手3(s9-11)提前，其余顺序不变 → 𦥑红7 余按根取码
-        condition: (wubi) => wubi && wubi.c === 'EMGV',
-        strokeRemap: [0, 1, 2, 3, 9, 10, 11, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+        // 釁（2026-10-16 新26笔数据）：86拆[亻,二,同,𠃍,二,冖,酉,分](WFMV)、98/新世纪拆[𦥑,同,冖,酉,分](EMGV)。
+        // 86展开根序 亻二[冂一口]𠃍二冖[西一][八刀] 恰26笔连续；
+        // 98/06 𦥑7笔(RADICAL_STROKES=7)=左4(s0-3)+右3(s10-12)非连续，同(s4-9)冖(s13-14)酉(s15-21)分(s22-25)。
+        // 手动 strokeRootMap 按展开根序号给色（getRootColor 取模循环）
+        condition: (wubi) => wubi && (wubi.c === 'WFMV' || wubi.c === 'EMGV'),
+        strokeRootMap: function (ver) {
+            if (ver === '86') return [0, 0, 1, 1, 2, 2, 3, 4, 4, 4, 5, 6, 6, 7, 7, 8, 8, 8, 8, 8, 8, 9, 10, 10, 11, 11];
+            return [0, 0, 0, 0, 1, 1, 2, 3, 3, 3, 0, 0, 0, 4, 4, 5, 5, 5, 5, 5, 5, 6, 7, 7, 8, 8];
+        },
+    },
+    '亹': {
+        // 亹（2026-10-16 新22笔数据）：86拆[亠,亻,二,同,𠃍,二,冖,且](YWFG)、98/新世纪拆[亠,𦥑,同,冖,且](YEMG)。
+        // 同→[冂,一,口]、且→[冃(4笔),一] 递归展开：86 roots 11根=亠亻二[冂一口]𠃍二冖冃一、
+        // 98/06 roots 8根=亠𦥑[冂一口]冖冃一，Σ恰22笔无冗笔。前3+末1规则下且的末展开根
+        // 「一」独占末码蓝、冃4笔灰（且分裂）→ 手动 strokeRootMap 合并且区{s17-21}一色：
+        // 86 亠红 亻橙 二绿 同𠃍二冖灰 且蓝；98/06 亠红 𦥑橙 冂绿(M) 一口冖灰 且蓝。
+        // 灰区拆组（86口b=9、98口b=6）仅为凑足 unique 连续索引，使且区压缩后指向末码位
+        condition: (wubi) => wubi && (wubi.c === 'YWFG' || wubi.c === 'YEMG'),
+        strokeRootMap: function (ver) {
+            if (ver === '86') return [0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 5, 9, 6, 7, 7, 8, 8, 10, 10, 10, 10, 10];
+            return [0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 4, 4, 6, 5, 5, 7, 7, 7, 7, 7];
+        },
     },
     '輿': {
         // 輿：98/新世纪拆[𦥑,車,一,八](c=ELGW)，17笔。𦥑右手3(s11-13)提前：
@@ -5087,12 +5093,66 @@ const CUSTOM_STROKE_ORDER = {
         condition: (wubi) => wubi && wubi.c === 'ELGW',
         strokeRemap: [0, 1, 2, 3, 11, 12, 13, 4, 5, 6, 7, 8, 9, 10, 14, 15, 16],
     },
+    '雈': {
+        // 雈：86拆[一,〢,一,隹](c=GJGY)与笔顺(竖横竖横+隹)错位——默认连续分配使 s0竖
+        // 着「一」红、s1横着「〢」橙，颜色与笔画语义颠倒。strokeRemap 调换前两笔着色：
+        // s1横→红(一)、s0竖→橙(〢)，其余不变。98/新世纪(HGHY 拆[丨,一,丨,一,隹])不触发
+        condition: (wubi) => wubi && wubi.c === 'GJGY',
+        strokeRemap: [1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    },
     '豐': {
         // 豐：98/新世纪拆[山,丰,丰,豆](c=MDHU)。着色由 autoDetectNC 豐分支全权（按物理序映射，
         // 版本门控），此处 relScope 仅向家族字 艷/豔/酆 传递恒等序（渲染序=物理序，笔顺不变）
         condition: (wubi) => wubi && wubi.c === 'MDHU',
         relScope: 'roots',
         strokeRemap: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
+    },
+    '辔': {
+        // 辔：98/新世纪拆[车,纟,纟,口](c=LXXK)，13笔。物理序=纟(s0-2)→车(s3-6)→纟(s7-9)→口(s10-12)，
+        // 车夹在中间被顺序分配错色 → 将第4-7笔(车)提前至最前，其余相对序不变：
+        // 渲染序 车红4 纟橙3 纟绿3 口蓝3。86(XLXK)拆分不同不触发
+        condition: (wubi) => wubi && wubi.c === 'LXXK',
+        strokeRemap: [3, 4, 5, 6, 0, 1, 2, 7, 8, 9, 10, 11, 12],
+    },
+    '轡': {
+        // 轡：新世纪拆[車,糹,糹,口](c=LXXK)，22笔。物理序=糹(s0-5)→車(s6-12)→糹(s13-18)→口(s19-21)，
+        // 車夹中间被顺序分配错色（与简体辔同构）→ 車七笔提前至最前：
+        // 渲染序 車红7 糹橙6 糹绿6 口蓝3。
+        // 86/98(c=XLXK)拆分为[糹,車,糹,口]与物理序一致，走连续分配，不触发（2026-10-24 98已对齐86）
+        condition: (wubi) => wubi && wubi.c === 'LXXK',
+        strokeRemap: [6, 7, 8, 9, 10, 11, 12, 0, 1, 2, 3, 4, 5, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+    },
+    '秉': {
+        // 秉：98拆[禾,彐](c=TVD) 8笔。物理序=丿(s0)一(s1)→彐(s2-4)→禾底丨丿丶(s5-7)，
+        // 禾被彐夹断 → 第6-8笔提前至第3-5笔：渲染序 禾红5 彐橙3。86/06(TGVI)拆分不同不触发
+        condition: (wubi) => wubi && wubi.c === 'TVD',
+        strokeRemap: [0, 1, 5, 6, 7, 2, 3, 4],
+    },
+    '憲': {
+        // 憲：98拆[宀,三,丨,罒,心](c=PDHN) 16笔。物理序=宀(s0-2)→横(s3)横(s4)竖(s5)长横(s6)→罒(s7-11)→心(s12-15)，
+        // 丨夹在三横中间 → 交换第6、7笔(竖s5↔长横s6)：三横连续橙3、竖绿1。86/06(PGLN)拆分不同不触发
+        condition: (wubi) => wubi && wubi.c === 'PDHN',
+        strokeRemap: [0, 1, 2, 3, 4, 6, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    },
+    '棄': {
+        // 棄：06拆[亠,厶,一,凵,木](c=YCGS) 12笔。此字形凵为左竖+右竖+底横三笔，
+        // RADICAL_STROKES['凵']=2 → 自动分配会少1笔（末笔落灰），故显式映射 2+2+1+3+4。
+        // 86/98(YCAS，廿)不走此条
+        condition: (wubi) => wubi && wubi.c === 'YCGS',
+        strokeRootMap: [0, 0, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4],
+    },
+    '尨': {
+        // 尨：86拆[尤,彡]→展开[尤前(横撇丶3笔),㇟(乚),彡(3笔)]，7笔。
+        // 数据/LONG_86 笔顺=横撇乚彡彡彡丶(点在末尾)，旧NC映射[0,0,1,0,2,2,2]按"点在第4笔"
+        // 设计 → 彡首撇误红、点误绿。调整一个笔划顺序：点(末笔)提前至第3笔
+        // → 渲染序 横撇丶乚彡彡彡，连续分配 尤前红3 ㇟橙1 彡蓝3。
+        // 98/新世纪(拆[𠂇,乚,彡,丶])数据序本就连续，不触发
+        condition: (wubi) => {
+            if (typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '86') return false;
+            return wubi && wubi.c === 'DNEE';
+        },
+        strokeRemap: [0, 1, 6, 2, 3, 4, 5],
+        strokeRootMap: [0, 0, 0, 1, 2, 2, 2],
     },
     '與': {
         // 與：98/新世纪拆[𦥑,一,𠃑,丨,八](c=EGNW)，13笔(长横s10为字形冗笔)
@@ -5152,10 +5212,11 @@ const CUSTOM_STROKE_ORDER = {
         strokeRemap: [0, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11],
     },
     '武': {
-        // 武 98/新世纪=[一,𫠠,止,丶](98 GAHY=一G 𫠠A 止H 丶Y；06 FHNY 同构)：字形8笔物理序=
+        // 武 98=[一,𫠠,止,丶](GAHY=一G 𫠠A 止H 丶Y)：字形8笔物理序=
         // 横(s0) 弋横(s1) 止竖(s2) 止横(s3) 止竖(s4) 止横(s5) 斜钩(s6 第7笔) 丶(s7)——
-        // 斜钩写晚，提前到第3笔使 𫠠(横+斜钩) 连续：remap 后 一红{s0} 𫠠橙{s1,s6} 止绿{s2-5} 丶蓝{s7}。86(GAHD [一,弋,止])不套用
-        condition: (wubi) => wubi && (wubi.c === 'GAHY' || wubi.c === 'FHNY'),
+        // 斜钩写晚，提前到第3笔使 𫠠(横+斜钩) 连续：remap 后 一红{s0} 𫠠橙{s1,s6} 止绿{s2-5} 丶蓝{s7}。
+        // 新世纪 2026-10-16 改拆分[二,止,㇂,丶](FHNY)根序=物理序，走连续分配不再套用 remap。86(GAHD [一,弋,止])不套用
+        condition: (wubi) => wubi && wubi.c === 'GAHY',
         relScope: 'roots',
         strokeRemap: [0, 1, 6, 2, 3, 4, 5, 7],
     },
@@ -5181,39 +5242,6 @@ const CUSTOM_STROKE_ORDER = {
             return [0,0,1,1,2,3,3,3,3,2,2,2];                     // 98: 亠红{s0,1} 丷橙{s2,3} 戈绿{s4,s9-11} 日蓝{s5-8}
         },
         condition: (wubi) => wubi && ['UJA', 'UAJD', 'YUAJ', 'UJXY'].includes(wubi.c),
-    },
-    '幟': {
-        // 幟=[巾,戠]：字形15笔 = 巾3(s0-2) + 立头/立4(s3-6) + 戈横(s7) + 日4(s8-11) + 戈尾3(s12-14)
-        // 86 拆[巾,立头,戈,日] 五根展开顺序分配正确，无需映射（condition 不含 MHUJ）。
-        // 98 拆[巾,亠,丷,戈,日](MHYJ)：巾红 冂/丨橙?? 亠绿{s3,4} 丷灰{s5,6} 戈灰{s7,s12-14} 日蓝{s8-11}
-        // 新世纪 拆[巾,立,日,𠤎,丶](MHUY)：立绿{s3-6} 日灰{s7,s12-14} 𠤎灰{s8-11} 丶蓝{s14} 戈横s7灰(冗)
-        get strokeRootMap() {
-            return (typeof currentWubiVersion !== 'undefined' && currentWubiVersion === '06')
-                ? [0,0,1,2,2,2,2,-1,3,3,3,3,4,4,5]
-                : [0,0,1,2,2,3,3,4,5,5,5,5,4,4,4];
-        },
-        condition: (wubi) => wubi && (wubi.c === 'MHYJ' || wubi.c === 'MHUY'),
-    },
-    '熾': {
-        // 熾=[火,戠]：字形16笔 = 火4(s1-4) + 戠块12(s5-16：亠2+丷2+戈横s9+日4+戈尾s14-16)。
-        // 98 拆[火,亠,丷,戈,日](OYUJ)：展开5根顺序分配会把戈切成s9-12 → 手工映射：
-        // 火红{s1-4} 亠橙{s5,6} 丷绿{s7,8} 戈灰{s9,s14-16}(不取码) 日蓝{s10-13}。
-        // 新世纪(OUJY)拆[火,立,日,𠤎,丶]：立底横=戈横合笔，恰好连续分配，无需映射不套用。
-        // 86(OUAJ)拆[火,立头,戈,日]由既有戈NC机制自动修正，不套用
-        condition: (wubi) => wubi && wubi.c === 'OYUJ',
-        strokeRootMap: [0, 0, 0, 0, 1, 1, 2, 2, 3, 4, 4, 4, 4, 3, 3, 3],
-    },
-    '臟': {
-        // 臟=[月,艹,臧]：复用臧的笔划调整。月4笔(s0-3)+艹4笔(两个十：s4竖s5横 s6竖s7横)+臧块14笔(s8-21)，
-        // 戊={s8,9,19,20,21}横撇+㇂丿丶 成块绿；臧左={s10,11,12}；臣盒同臧惯例：匚={s13顶,s16底} 丨左={s18} コ={s14,15} 丨内={s17}
-        condition: (wubi) => wubi && wubi.c === 'EAAH',
-        strokeRootMap: [0,0,0,0,1,1,1,1,2,2,3,3,3,4,6,6,4,7,5,2,2,2]
-    },
-    '戶': {
-        // 戶：86/新世纪拆[𠂆,コ](RND=𠂆R コN+识别D)。𠂆的撇分居首尾(s0顶丿+s3长撇)包住コ(s1,s2)，
-        // 顺序分配错位，手工映射 [0,1,1,0]；98版拆[丿,尸](TNE)不套用
-        condition: (wubi) => wubi && wubi.c === 'RND',
-        strokeRootMap: [0,1,1,0]
     },
     '學': _xueTouCompOrder(0, 3),
     '嚳': _xueTouCompOrder(0, 7),
@@ -5267,8 +5295,7 @@ const CUSTOM_STROKE_ORDER = {
             if (typeof currentWubiVersion !== 'undefined' && currentWubiVersion !== '98') return false;
             return wubi && wubi.c === 'JNHG';
         },
-        strokeRemap: [1, 2, 0, 3, 4],  // 新顺序第k笔 = 原第 strokeRemap[k] 笔
-        rootsRemap: [1, 0, 2, 3]       // 新字根顺序 = [〢, 𠃊, 丨, 一]
+        strokeRemap: [1, 2, 0, 3, 4]  // 新顺序第k笔 = 原第 strokeRemap[k] 笔（数据根序已改[〢,𠃊,丨,一]，rootsRemap 已删）
     },
     '毌': {
         // 毌：86版拆分[毌框,十]、98版[毌,𠃊,𠃍,一,丨]，均为4笔
@@ -5304,13 +5331,6 @@ const CUSTOM_STROKE_ORDER = {
             return Array.isArray(r) && r[0] === '卬左' && r.includes('白');
         },
         strokeRemap: [5, 6, 0, 1, 2, 3, 4, 7, 8, 9, 10],  // 86版从标准顺序还原为非标准顺序（卬左先）
-    },
-    '幟': {
-        // 幟 新世纪=[巾,戠](MHUY)：展开[冂,丨,立,日,𠤎,丶]，但立的底横与戈横合笔（数据只画一条长横），
-        // 顺序分配把立算4笔、长横标-1灰色 → strokeRootMap 把长横归回立：
-        // 冂红{1,2} 丨橙{3} 立绿{4-8} 日灰{9-12} 𠤎灰{13,14} 丶蓝{15}。98版(MHYJ)拆分不同不套用
-        condition: (wubi) => wubi && wubi.c === 'MHUY',
-        strokeRootMap: [0, 0, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5],
     },
     '篼': {
         // 篼 98/新世纪=[⺮,兜](TRQQ)：兜展开[白,卬左,コ,儿]，但字形物理笔序=⺮6、卬左2(s7,8)、
@@ -5372,13 +5392,6 @@ const CUSTOM_STROKE_ORDER = {
     // 字形=𧾷(s1-7:口3+止4)燮部(s8-24)，燮部内言(s12-18)夹在两火间 → 直指定：
     // 口→0红、止→1橙、左火→3灰(未编码)、言→2绿、右火→4灰(未编码)、又→5蓝。
     // 86版(KHOC)根序[口,止,火,言,火,又]恰与笔顺一致，不调整
-    '躞': {
-        condition: (wubi) => {
-            if (typeof currentWubiVersion !== 'undefined' && currentWubiVersion === '86') return false;
-            return wubi && wubi.c === 'KHYC';
-        },
-        strokeRootMap: [0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 5, 5],
-    },
     // 爨：98/新世纪拆[𦥑,同,冖,木,木,大,火](c=EMGO，取一三末=𦥑冖火→E G O + 同M)，30笔。
     // 字形笔顺=左手4(s1-4)+同6(s5-10)+右手3(s11-13)+冖2(s14-15)+木木8(s16-23)+大3(s24-26)+火4(s27-30)，
     // 𦥑=左手+右手被同隔开(同學頭) → 学头模式重排：左手+右手连成𦥑(7笔全红)，再同→冖→余部。
@@ -5465,6 +5478,19 @@ const CUSTOM_STROKE_ORDER = {
         strokeRemap: [0, 1, 2, 3, 9, 4, 5, 6, 7, 8, 10, 11, 12],
     },
     // 含肅字根的复合字：肅部13笔按相同相对顺序重排，前缀/后缀笔画保持原序
+    '齑': {
+        // 齑：98/新世纪拆[文,〢,非,一](c=YJHG)，15笔。物理笔序=文4(s0-3)、左竖(s4)、
+        // 非8(s5-12)、底横(s13)、右竖(s14)——〢=两根离散的竖(s4+s14)，右竖收笔在最后，
+        // 顺序分配会把底横错进非、右竖错进一；且展开后含「三」+「〢」会误触通用NC分支
+        // → 双保险：strokeRemap 把右竖提前到左竖后(渲染序=文→〢→非→一)，
+        //   strokeRootMap 按渲染位直接给展开根索引(虚字同款双字段方案，绕过NC)：
+        //   文红{0-3} 〢橙{4,14} 非左竖绿{5} 非左三横{6-8} 非右竖{9} 非右三横{10-12} 一蓝{13}
+        //   悬停字根高亮/取码位(文Y 〢J 丨H 一G)语义全对；86(YDJJ)不命中
+        condition: (wubi) => wubi && wubi.c === 'YJHG',
+        relScope: 'roots',
+        strokeRemap: [0, 1, 2, 3, 4, 14, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+        strokeRootMap: [0, 0, 0, 0, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6],
+    },
     '咸': {
         // 咸：98版拆[戊,一,口](c=DGKD)，9笔
         // 实际笔顺 s6,s7,s8(戊的斜钩/点/撇)提前至 s2(一) 之前 → s0,s1,s6,s7,s8,s2,s3,s4,s5，
@@ -5723,6 +5749,7 @@ function isCdnData(char) {
 async function getStrokeData(char, ver) {
     const data = await fetchCharData(char);
     let strokes = [...(data.strokes || [])];
+    let radStrokesOut = data.radStrokes || [];
 
     // ===== 字形修正层已烘焙进 data/stroke-bundle.js（2026-09-16）=====
     // 原 86 字运行时修补（部件替换/笔顺重排/笔数修正）的输出已写入 bundle，
@@ -5750,6 +5777,11 @@ async function getStrokeData(char, ver) {
             strokes = [...strokes.slice(0, prefix), ...newXiang];
         }
     }
+    // 尨：86 版沿用「点在第四笔」的旧笔顺（98/新世纪 用 data 中点在末尾的新笔顺）
+    if (_verForXiang === '86' && window.LONG_86_STROKES && char === '尨') {
+        strokes = [...window.LONG_86_STROKES];
+        radStrokesOut = [0, 1, 2, 3];
+    }
     // 鬮=鬥+縮小後的龜（龜置于鬥内部；_guiStrokeStart 标记用于加粗龜部笔画）
     // 必须调用getStrokeData('龜')：龜的修正笔划已烘焙进bundle
     if (char === '鬮') {
@@ -5764,7 +5796,7 @@ async function getStrokeData(char, ver) {
         }
         strokes._guiStrokeStart = guiStartIdx;
     }
-    return { strokes, radStrokes: data.radStrokes || [] };
+    return { strokes, radStrokes: radStrokesOut };
 }
 
 // ==================== 主渲染入口 ====================
@@ -6411,6 +6443,30 @@ function initStrokeRootMap() {
         strokeRootMap = [0, 0, 1, 1, 1, 2, 2, 2, 2, 2];
         strokeRootMapForDisplay = [...strokeRootMap];
         return;
+    }
+    // 98版"肃"=彐+丨+〢+八（VHJW）：四根连续分配（彐3、丨1、〢2、八2，共8笔）
+    if (currentChar === '肃' && currentWubiVersion === '98') {
+        strokeRootMap = [0, 0, 0, 1, 2, 2, 3, 3];
+        strokeRootMapForDisplay = [...strokeRootMap];
+        return;
+    }
+    // 98版含"肃"的字（肃拆为彐+丨+〢+八）：按展开后字根顺序连续分配，不走非连续映射
+    // 含间接引用需递归一层（潇=[氵,萧]、蟏=[虫,萧]——r 含萧、萧含肃）
+    if (currentWubiVersion === '98') {
+        const _ownR = WUBI[currentChar]?.r || [];
+        const _hasSu = _ownR.includes('肃') || _ownR.some(rr => {
+            const _rw = WUBI[rr];
+            return _rw && Array.isArray(_rw.r) && _rw.r.includes('肃');
+        });
+        if (_hasSu) {
+            const _suCounts = roots.map(r => RADICAL_STROKES[r] || 1);
+            if (_suCounts.reduce((a, b) => a + b, 0) === n) {
+                strokeRootMap = [];
+                _suCounts.forEach((c, ri) => { for (let k = 0; k < c; k++) strokeRootMap.push(ri); });
+                strokeRootMapForDisplay = [...strokeRootMap];
+                return;
+            }
+        }
     }
     // 如啬=土+丷+回、丧=土+丷+長下，虽然部分字根有包围/复合结构，
     // 但整体笔顺是非连续的，必须在复合检测之前处理，避免被囗检测或prefix+base拦截
@@ -7162,6 +7218,11 @@ function initStrokeRootMap() {
                             }
                         }
                         const actualCount = maxStroke - minStroke + 1;
+                        // 守卫：扫描出的笔画范围必须恰好等于子字根的笔画总和。
+                        // 若 strokeRootMap 是其它视图的遗留映射（如 98 式 map 遇 86 视图 roots），
+                        // 范围会被撑大（骑字 86 视图扫出 cnt=8 而丁+口仅 5 笔），此时修正必然出错
+                        const _ncExpectedStrokes = ncRoots.reduce((s, rr) => s + (RADICAL_STROKES[rr] || 1), 0);
+                        if (actualCount !== _ncExpectedStrokes) continue;
                         if (actualCount >= 2) {
                             const ncMap = autoDetectNonContinuous(ncChar, ncRoots, actualCount, ncWubi.sup || [], 0, false);
                             if (ncMap && ncMap.length === actualCount) {
@@ -7236,47 +7297,52 @@ function initStrokeRootMap() {
             const csWubi = WUBI[csChar];
             if (!csWubi || !csWubi.r) continue;
             if (!csEntry.condition(csWubi)) continue;
-            const csSubRoots = csWubi.r;
-            // 检查 csChar 的子字根是否出现在当前 roots 中
-            const csChildIndices = [];
-            for (let ci = 0; ci < rootCount; ci++) {
-                if (csSubRoots.includes(roots[ci])) {
-                    csChildIndices.push(ci);
-                }
-            }
-            if (csChildIndices.length < 2) continue; // 至少匹配2个子字根才算
-            // 确保这些子字根在 roots 中是连续的且与 csSubRoots 完全匹配
-            csChildIndices.sort((a, b) => a - b);
-            let isContiguous = true;
-            for (let i = 1; i < csChildIndices.length; i++) {
-                if (csChildIndices[i] !== csChildIndices[i-1] + 1) { isContiguous = false; break; }
-            }
-            if (!isContiguous) continue;
-            // 验证子字根序列与 csSubRoots 完全一致
-            const matchRoots = csChildIndices.map(ci => roots[ci]);
-            if (!csSubRoots.every((r, i) => r === matchRoots[i])) continue;
-            // 找出这些子字根在 strokeRootMap 中的笔画范围
-            let minStroke = n, maxStroke = -1;
-            for (const ci of csChildIndices) {
-                for (let si = 0; si < n; si++) {
-                    if (strokeRootMap[si] === ci) {
-                        if (si < minStroke) minStroke = si;
-                        if (si > maxStroke) maxStroke = si;
+            // 用一组子字根序列尝试匹配当前 roots 的连续段并套用映射
+            const tryApply = (csSubRoots) => {
+                // 检查 csChar 的子字根是否出现在当前 roots 中
+                const csChildIndices = [];
+                for (let ci = 0; ci < rootCount; ci++) {
+                    if (csSubRoots.includes(roots[ci])) {
+                        csChildIndices.push(ci);
                     }
                 }
-            }
-            const actualCount = maxStroke - minStroke + 1;
-            if (actualCount !== _csSRM.length) continue;
-            // 应用自定义 strokeRootMap，映射值为 csChildIndices[csEntry.strokeRootMap[i]]
-            const firstChildIdx = csChildIndices[0];
-            for (let i = 0; i < actualCount; i++) {
-                const mappedRootIdx = _csSRM[i];
-                const targetRootIdx = firstChildIdx + mappedRootIdx;
-                if (targetRootIdx >= 0 && targetRootIdx < rootCount) {
-                    strokeRootMap[minStroke + i] = targetRootIdx;
-                    strokeRootMapForDisplay[minStroke + i] = targetRootIdx;
+                if (csChildIndices.length < 2) return false; // 至少匹配2个子字根才算
+                // 确保这些子字根在 roots 中是连续的且与 csSubRoots 完全匹配
+                csChildIndices.sort((a, b) => a - b);
+                for (let i = 1; i < csChildIndices.length; i++) {
+                    if (csChildIndices[i] !== csChildIndices[i-1] + 1) return false;
                 }
-            }
+                const matchRoots = csChildIndices.map(ci => roots[ci]);
+                if (!csSubRoots.every((r, i) => r === matchRoots[i])) return false;
+                // 找出这些子字根在 strokeRootMap 中的笔画范围
+                let minStroke = n, maxStroke = -1;
+                for (const ci of csChildIndices) {
+                    for (let si = 0; si < n; si++) {
+                        if (strokeRootMap[si] === ci) {
+                            if (si < minStroke) minStroke = si;
+                            if (si > maxStroke) maxStroke = si;
+                        }
+                    }
+                }
+                const actualCount = maxStroke - minStroke + 1;
+                if (actualCount !== _csSRM.length) return false;
+                // 应用自定义 strokeRootMap，映射值为 csChildIndices[_csSRM[i]]
+                const firstChildIdx = csChildIndices[0];
+                for (let i = 0; i < actualCount; i++) {
+                    const mappedRootIdx = _csSRM[i];
+                    const targetRootIdx = firstChildIdx + mappedRootIdx;
+                    if (targetRootIdx >= 0 && targetRootIdx < rootCount) {
+                        strokeRootMap[minStroke + i] = targetRootIdx;
+                        strokeRootMapForDisplay[minStroke + i] = targetRootIdx;
+                    }
+                }
+                return true;
+            };
+            // 先按原始 r 匹配；r 含未展开复合根（如 臧 的 臣）时，
+            // 再用展开后的根序列重试，使 藏/贓 等父字能继承同一份映射
+            if (tryApply(csWubi.r)) continue;
+            const csExpandedRoots = recursivelyExpandRoots(csWubi.r.slice(), csChar);
+            if (csExpandedRoots.length > csWubi.r.length) tryApply(csExpandedRoots);
         }
     }
     } // end function applyCsStrokeRootMapFix
@@ -7545,6 +7611,13 @@ function renderSVG() {
             } else if (lastRootStrokes.length >= 2) {
                 // 其他末字根取最后一笔
                 actualEndStroke = lastRootStrokes[lastRootStrokes.length - 1];
+                // 86版「载」特例：86码表语义末字根"车"末笔为丨（车报户口LGNH末键H=丨，识别码K=竖·杂合），
+                // 但载字形数据按汉典笔顺1211521534，车部竖(第6笔,索引5)写在底横(第7笔,索引6)之前，
+                // 按索引取最后一笔会取到底横，86版强制改取车的竖。
+                // 98版FALD识别码D=横·杂合（末笔即底横），保持默认不覆盖；新世纪版末字根为丶不走此分支。
+                if (currentWubiVersion === '86' && currentChar === '载' && lastRootStrokes.includes(5)) {
+                    actualEndStroke = 5;
+                }
             } else if (lastRootStrokes.length === 1) {
                 actualEndStroke = lastRootStrokes[0];
             }
@@ -9849,6 +9922,10 @@ function computeMultiCardSupInfo(ch, strokeList) {
                 }
             } else if (lastRootStrokes.length >= 2) {
                 actualEndStroke = lastRootStrokes[lastRootStrokes.length - 1];
+                // 86版「载」特例（与 renderSVG 保持一致）：86语义末笔为丨，强制取车的竖(索引5)
+                if (currentWubiVersion === '86' && ch === '载' && lastRootStrokes.includes(5)) {
+                    actualEndStroke = 5;
+                }
             } else if (lastRootStrokes.length === 1) {
                 actualEndStroke = lastRootStrokes[0];
             }
@@ -9904,10 +9981,13 @@ function computeMultiCardColors(ch, strokeList) {
     if (!wubi || !wubi.r || strokeList.length === 0) return null;
 
     // 保存全局状态
+    // strokeRootMap/strokeRootMapForDisplay 必须深拷贝：initStrokeRootMap 的 NC 修正段
+    // 会原地修改数组（如骑字 86 卡渲染时改坏 98 大框的正确映射），浅引用恢复无效
     const _saved = {
-        currentChar, strokes, roots, rootCode,
-        strokeRootMap, strokeRootMapForDisplay,
-        highlightStroke, rootColorMap, strokeColorMap, radStrokes
+        currentChar, strokes: [...strokes], roots: [...roots], rootCode,
+        strokeRootMap: strokeRootMap ? [...strokeRootMap] : strokeRootMap,
+        strokeRootMapForDisplay: strokeRootMapForDisplay ? [...strokeRootMapForDisplay] : strokeRootMapForDisplay,
+        highlightStroke, rootColorMap, strokeColorMap: strokeColorMap ? [...strokeColorMap] : strokeColorMap, radStrokes
     };
 
     try {
@@ -10004,6 +10084,11 @@ function computeMultiCardColors(ch, strokeList) {
             strokeRootMapForDisplay = [...strokeRootMap];
             applyShaDianPieSwap();
         } else {
+            // 清空遗留映射，强制 initStrokeRootMap 按当前卡视图完整重建：
+            // 遗留的大框映射视图（如 98 式）与卡内 roots 视图不一致时，
+            // NC 修正段会在错误范围内扫描并产出错乱映射（骑字 86 卡）
+            strokeRootMap = null;
+            strokeRootMapForDisplay = null;
             initStrokeRootMap();
             applyYouNCFix(currentChar, WUBI[currentChar], roots, strokeRootMap, strokes.length);
             strokeRootMapForDisplay = [...strokeRootMap];
@@ -11831,12 +11916,30 @@ document.addEventListener('fullscreenchange', function () {
         ensureTip();
         tip.innerHTML = buildRuleHtml();
         tip.style.display = 'block';
+        tip.style.maxWidth = '440px';
         const r = anchor.getBoundingClientRect();
-        const tw = Math.min(440, window.innerWidth - 16);
-        tip.style.left = Math.max(8, Math.min(r.left, window.innerWidth - tw - 8)) + 'px';
-        tip.style.top = (r.bottom + 8) + 'px';
-        const th = tip.offsetHeight;
-        if (r.bottom + 8 + th > window.innerHeight - 8) tip.style.top = Math.max(8, r.top - th - 8) + 'px';
+        const spaceL = r.left - 20;                      // 大框左侧可用宽度（到视口左缘）
+        const spaceR = window.innerWidth - r.right - 20; // 大框右侧可用宽度
+        const wNat = tip.offsetWidth, hNat = tip.offsetHeight;
+        let left, top;
+        const fitW = Math.min(wNat, 300) + 8;            // 至少需要约 300px 宽才侧放
+        if (spaceL >= fitW) {                            // 优先：大框左侧
+            tip.style.maxWidth = Math.min(440, spaceL - 12) + 'px';
+            const w = tip.offsetWidth, h = tip.offsetHeight;
+            left = r.left - w - 12;
+            top = Math.max(8, Math.min(Math.round(r.top + (r.height - h) / 2), window.innerHeight - h - 8));
+        } else if (spaceR >= fitW) {                     // 左侧放不下：试右侧
+            tip.style.maxWidth = Math.min(440, spaceR - 12) + 'px';
+            const w = tip.offsetWidth, h = tip.offsetHeight;
+            left = r.right + 12;
+            top = Math.max(8, Math.min(Math.round(r.top + (r.height - h) / 2), window.innerHeight - h - 8));
+        } else {                                         // 两侧都放不下：退回下方/上方
+            left = Math.max(8, Math.min(r.left, window.innerWidth - wNat - 8));
+            top = r.bottom + 8;
+            if (top + hNat > window.innerHeight - 8) top = Math.max(8, r.top - hNat - 8);
+        }
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
     }
     function hideTip() {
         clearTimeout(hideTimer);
