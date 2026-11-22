@@ -1358,7 +1358,15 @@ defineSpecialCase('翰', function ({ currentChar, roots, n, strokeOffset, r, sup
         && roots[0] === '十' && roots[1] === '早' && roots[2] === '人' && roots[3] === '羽'
     const hehShape5 = roots.length === 5
         && roots[0] === '十' && roots[1] === '曰' && roots[2] === '十' && roots[3] === '人' && roots[4] === '羽'
-    if (currentChar === '翰' && (hehShape4 || hehShape5) && n === 16) {
+    // 新世纪版会把「早」展开成「曰+十」，于是出现 5 字根形式；
+    // 此时按 5 个字根分别着色：十(0) 日(1) 十(2) 人(3，不取码→灰) 羽(4)。
+    if (currentChar === '翰' && hehShape5 && n === 16) {
+        const five = [0, 0, 1, 1, 1, 1, 2, 2, 4, 4, 4, 3, 4, 4, 3, 4];
+        const out = new Array(16);
+        for (let i = 0; i < 16; i += 1) out[i] = strokeOffset + five[i];
+        return out;
+    }
+    if (currentChar === '翰' && hehShape4 && n === 16) {
         const result = new Array(16);
         result[0] = strokeOffset + 0;   // 第1笔 → 十
         result[1] = strokeOffset + 0;   // 第2笔 → 十
@@ -6302,13 +6310,7 @@ function renderInfo() {
         // 非报户口字：riRemap 将非连续的值压缩到从0开始的索引
         const ri2 = _isKeyNameRootSelf ? ri : (riRemap[ri] !== undefined ? riRemap[ri] : ri);
         const codeIdx = expandedRootToCodeIndex[ri2];
-        if (codeIdx === undefined || codeIdx < 0) {
-            // 「翰」在新世纪版把「早」展开成「曰+十」，编码位对不上会让「羽」整块变灰；
-            // 这里只在翰上兜底用字根图例色，其余字保持原来的灰色语义。
-            const displayRoots = (WUBI[currentChar]?.r) || [];
-            if (currentChar === '翰' && ri2 >= 0 && ri2 < displayRoots.length) return getRootColor(ri2);
-            return '#555'; // 跳过的字根灰色
-        }
+        if (codeIdx === undefined || codeIdx < 0) return '#555'; // 跳过的字根灰色
         // 直接从rootColorMap取颜色字符串，避免存索引导致0值falsy问题
         return rootColorMap[codeIdx] || '#555';
     });
