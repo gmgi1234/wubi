@@ -7,10 +7,9 @@
 /data/*.js
   Cache-Control: public, max-age=86400
 
-# 打包后的应用脚本：随页面发布更新，缓存一小时
+# 应用脚本与页面：改动要立刻可见，只缓存 60 秒
 /dist/app.js
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=60, must-revalidate
 
-# 页面本体：短缓存，保证改动立刻可见
 /*.html
-  Cache-Control: public, max-age=300
+  Cache-Control: public, max-age=60, must-revalidate
