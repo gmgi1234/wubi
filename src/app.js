@@ -1347,47 +1347,6 @@ defineSpecialCase('燕', function ({ currentChar, roots, n, strokeOffset, r, sup
     return null;
 });
 
-defineSpecialCase('翰', function ({ currentChar, roots, n, strokeOffset, r, supIndices, isEmbedded }) {
-    // ===== 翰字特殊处理 =====
-    // 翰：r=['十','早','人','羽']，16笔
-    // 前两字根连续：第1-2笔→十(0)，第3-8笔→早(1)
-    // 非连续：第12,15笔→人(2)，其余→羽(3)
-    // 新世纪版会把「早」展开成「曰+十」，于是出现 5 字根形式；两种形态共用同一套笔画分配。
-    // 返回的索引必须落在显示字根（十/早/人/羽，4 个）的范围内，否则颜色取不到、整字错色。
-    const hehShape4 = roots.length === 4
-        && roots[0] === '十' && roots[1] === '早' && roots[2] === '人' && roots[3] === '羽'
-    const hehShape5 = roots.length === 5
-        && roots[0] === '十' && roots[1] === '曰' && roots[2] === '十' && roots[3] === '人' && roots[4] === '羽'
-    // 新世纪版会把「早」展开成「曰+十」，于是出现 5 字根形式；
-    // 此时按 5 个字根分别着色：十(0) 日(1) 十(2) 人(3，不取码→灰) 羽(4)。
-    if (currentChar === '翰' && hehShape5 && n === 16) {
-        const five = [0, 0, 1, 1, 1, 1, 2, 2, 4, 4, 4, 3, 4, 4, 3, 4];
-        const out = new Array(16);
-        for (let i = 0; i < 16; i += 1) out[i] = strokeOffset + five[i];
-        return out;
-    }
-    if (currentChar === '翰' && hehShape4 && n === 16) {
-        const result = new Array(16);
-        result[0] = strokeOffset + 0;   // 第1笔 → 十
-        result[1] = strokeOffset + 0;   // 第2笔 → 十
-        result[2] = strokeOffset + 1;   // 第3笔 → 早
-        result[3] = strokeOffset + 1;   // 第4笔 → 早
-        result[4] = strokeOffset + 1;   // 第5笔 → 早
-        result[5] = strokeOffset + 1;   // 第6笔 → 早
-        result[6] = strokeOffset + 1;   // 第7笔 → 早
-        result[7] = strokeOffset + 1;   // 第8笔 → 早
-        result[8] = strokeOffset + 3;   // 第9笔 → 羽
-        result[9] = strokeOffset + 3;   // 第10笔 → 羽
-        result[10] = strokeOffset + 3;  // 第11笔 → 羽
-        result[11] = strokeOffset + 2;  // 第12笔 → 人
-        result[12] = strokeOffset + 3;  // 第13笔 → 羽
-        result[13] = strokeOffset + 3;  // 第14笔 → 羽
-        result[14] = strokeOffset + 2;  // 第15笔 → 人
-        result[15] = strokeOffset + 3;  // 第16笔 → 羽
-        return result;
-    }
-    return null;
-});
 
 defineSpecialCase('犮', function ({ currentChar, roots, n, strokeOffset, r, supIndices, isEmbedded }) {
     // ===== 犮字特殊处理 =====
@@ -1693,6 +1652,29 @@ defineSpecialCase('酉', function ({ currentChar, roots, n, strokeOffset, r, sup
     }
     return null;
 });
+
+defineSpecialCase('翰', function ({ currentChar, roots, n, strokeOffset }) {
+    // 数据已按标准笔顺重排：龺(8) → 人(2) → 羽(6)，人 的两笔相邻。
+    // 所以这里只需按字根笔画数顺序分配，不再逐笔手写。
+    if (currentChar !== '翰' || n !== 16) return null;
+    if (roots.length === 4 && roots[0] === '十' && roots[1] === '早' && roots[2] === '人' && roots[3] === '羽') {
+        const counts = [2, 6, 2, 6];
+        return spread(counts, strokeOffset);
+    }
+    if (roots.length === 5 && roots[0] === '十' && roots[1] === '曰' && roots[2] === '十' && roots[3] === '人' && roots[4] === '羽') {
+        const counts = [2, 4, 2, 2, 6];
+        return spread(counts, strokeOffset);
+    }
+    return null;
+});
+
+function spread(counts, offset) {
+    const out = [];
+    counts.forEach((count, rootIndex) => {
+        for (let i = 0; i < count; i += 1) out.push(offset + rootIndex);
+    });
+    return out;
+}
 
 function autoDetectNonContinuous(currentChar, roots, n, supIndices, strokeOffset, isEmbedded = false) {
     console.log(`[DEBUG NC入口] currentChar=${currentChar}, roots=${JSON.stringify(roots)}, n=${n}, isEmbedded=${isEmbedded}`);
