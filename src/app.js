@@ -4097,7 +4097,7 @@ async function getStrokeData(char, ver) {
         }
         strokes._guiStrokeStart = guiStartIdx;
     }
-    return { strokes, radStrokes: radStrokesOut };
+    return { strokes, radStrokes: radStrokesOut, boost: data.boost || 0 };
 }
 
 // ==================== 主渲染入口 ====================
@@ -4117,6 +4117,7 @@ async function loadAndRender(ch) {
         const strokeData = await getStrokeData(char);
         applyRenderCtx(_ctxMain);
         strokes = strokeData.strokes;
+        strokes._boost = strokeData.boost || 0; // 部件缩放后的笔画加粗补偿（像素，1024 坐标系）
         radStrokes = strokeData.radStrokes;
         if (char === '酱') console.log('[DEBUG酱] data.strokes.length=', strokes.length);
 
@@ -5743,8 +5744,15 @@ function renderSVG() {
 
         if (isHighlighted) {
             path.setAttribute('fill', color);
-            path.setAttribute('stroke', isNonRoot ? '#444' : '#333');
-            path.setAttribute('stroke-width', highlightStroke === -1 ? strokeWidth : 1.5);
+            if (strokes._boost > 0) {
+                // 部件整体缩放过，用同色描边把笔画补粗，避免比别的部件细
+                path.setAttribute('stroke', color);
+                path.setAttribute('stroke-width', strokes._boost);
+                path.setAttribute('stroke-linejoin', 'round');
+            } else {
+                path.setAttribute('stroke', isNonRoot ? '#444' : '#333');
+                path.setAttribute('stroke-width', highlightStroke === -1 ? strokeWidth : 1.5);
+            }
         } else {
             path.setAttribute('fill', isNonRoot ? '#777' : '#e8e8e8');
             path.setAttribute('stroke', isNonRoot ? '#666' : '#ccc');
