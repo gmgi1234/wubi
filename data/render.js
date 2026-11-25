@@ -67,7 +67,7 @@
   // ---------- 单字页 ----------
   function renderChar(rec) {
     const ch = rec.c;
-    const cards = ['86', '98', '06'].map((ver, i) => {
+    const cards = ['06', '86', '98'].map((ver, i) => {
       const d = rec.v[ver];
       if (!d) return '';
       const label = ver === '86' ? '86 版' : ver === '98' ? '98 版' : '新世纪';

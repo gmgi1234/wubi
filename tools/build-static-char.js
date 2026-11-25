@@ -81,7 +81,7 @@ let n = 0;
 for (const ch of candidates) {
   const md = meta[ch] || {};
   const py = pinyin[ch] || '';
-  const cards = ['86', '98', '06'].map((ver) => {
+  const cards = ['06', '86', '98'].map((ver) => {
     const e = tables[KEY_VER[ver]][ch];
     if (!e || !e.c) return '';
     const label = ver === '86' ? '86 版' : ver === '98' ? '98 版' : '新世纪';
