@@ -52,9 +52,11 @@
   // 复合字根（多字描述、扩展区字）：有字形就画成小图，不显示文字
   const isFragName = (n) => { const a = [...String(n)]; return a.length !== 1 || a[0].codePointAt(0) > 0xffff; };
   function rootHtml(name, color, size) {
-    const g = window.ROOT_GLYPHS && window.ROOT_GLYPHS[name];
-    if (isFragName(name) && g) {
-      return '<svg class="frag" viewBox="0 0 1024 1024" width="' + (size || 20) + '" height="' + (size || 20) + '" style="vertical-align:-4px"><g transform="translate(0,900) scale(1,-1)"><g transform="translate(512,512) scale(' + g.scale + ') translate(' + (-g.cx) + ',' + (-g.cy) + ')">' + g.paths.map(function (pp) { return '<path d="' + pp + '" fill="' + color + '"/>'; }).join('') + '</g></g></svg>';
+    const map = window.FRAG_MAP || {};
+    const i = map[name];
+    if (isFragName(name) && i !== undefined) {
+      const s = size || 20;
+      return '<svg class="frag" viewBox="0 0 1024 1024" width="' + s + '" height="' + s + '" style="color:' + color + ';vertical-align:-4px"><use href="data/frag-sprite.svg#frag-' + i + '"/></svg>';
     }
     return esc(name);
   }

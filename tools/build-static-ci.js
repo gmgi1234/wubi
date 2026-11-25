@@ -9,6 +9,7 @@ const tables = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'tables.json'
 const words = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'words.json'), 'utf8'));
 const keep = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'keep-words.json'), 'utf8'));
 const glyphLib = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'root-glyphs.json'), 'utf8'));
+const fragMap = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'frag-map.json'), 'utf8'));
 
 const PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
 const GRAY = '#cfc8bd';
@@ -56,9 +57,9 @@ function wordRootsOf(chars, v) {
 
 // 复合字根小图
 function fragIcon(name, color, size = 20) {
-  const g = glyphLib[name];
-  if (!isFrag(name) || !g) return esc(name);
-  return `<svg class="frag" viewBox="0 0 1024 1024" width="${size}" height="${size}" style="vertical-align:-4px"><g transform="translate(0,900) scale(1,-1)"><g transform="translate(512,512) scale(${g.scale}) translate(${-g.cx},${-g.cy})">${g.paths.map((p) => `<path d="${p}" fill="${color}"/>`).join('')}</g></g></svg>`;
+  const i = fragMap[name];
+  if (!isFrag(name) || i === undefined) return esc(name);
+  return `<svg class="frag" viewBox="0 0 1024 1024" width="${size}" height="${size}" style="color:${color};vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-${i}"/></svg>`;
 }
 
 // 单字彩色字形（去掉补码虚线）
