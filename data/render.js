@@ -48,6 +48,16 @@
       <footer>数据来源：Rime 五笔码表 · 五笔 Make Me a Hanzi（笔画）</footer>`;
   }
 
+
+  // 复合字根（多字描述、扩展区字）：有字形就画成小图，不显示文字
+  const isFragName = (n) => { const a = [...String(n)]; return a.length !== 1 || a[0].codePointAt(0) > 0xffff; };
+  function rootHtml(name, color, size) {
+    const g = window.ROOT_GLYPHS && window.ROOT_GLYPHS[name];
+    if (isFragName(name) && g) {
+      return '<svg class="frag" viewBox="0 0 1024 1024" width="' + (size || 20) + '" height="' + (size || 20) + '" style="vertical-align:-4px"><g transform="translate(0,900) scale(1,-1)"><g transform="translate(512,512) scale(' + g.scale + ') translate(' + (-g.cx) + ',' + (-g.cy) + ')">' + g.paths.map(function (pp) { return '<path d="' + pp + '" fill="' + color + '"/>'; }).join('') + '</g></g></svg>';
+    }
+    return esc(name);
+  }
   const svgWrap = (inner, size) => inner
     ? `<svg class="glyph" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="--gsize:${size || 96}px">${inner}</svg>`
     : '';
@@ -61,11 +71,11 @@
       const label = ver === '86' ? '86 版' : ver === '98' ? '98 版' : '新世纪';
       const supIdx = (d.sup || []).map((s) => s.i);
       const codeHtml = d.code.split('').map((L, k) => supIdx.includes(k) ? `<span class="supcode" style="color:#c0392b;border-bottom:2px solid currentColor">${esc(L)}</span>` : esc(L)).join('');
-      const chips = d.items.map((it, k) => `<span class="chip" style="color:${PALETTE[k % 4]};border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:15px">${esc(it.r)}</span>`).join(' ');
+      const chips = d.items.map((it, k) => `<span class="chip" style="color:${PALETTE[k % 4]};border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:15px">${rootHtml(it.r, PALETTE[k % 4], 20)}</span>`).join(' ');
       const supHtml = (d.sup || []).length
         ? `<div class="vsup" style="text-align:center;font-size:12px;color:var(--muted)">补码 ${d.sup.map((s) => `${esc(s.l)}（末笔${esc(s.last)} · ${esc(s.st)}结构）`).join('、')}</div>`
         : '<div class="vsup" style="text-align:center;font-size:12px;color:var(--muted)">无补码</div>';
-      const rootLine = d.items.map((it, k) => `<span style="color:${PALETTE[k % 4]}">${esc(it.r)}<span style="color:var(--muted);font-size:13px">（${esc(it.l)}）</span></span>`).join('<span class="plus">+</span>');
+      const rootLine = d.items.map((it, k) => `<span style="color:${PALETTE[k % 4]}">${rootHtml(it.r, PALETTE[k % 4], 18)}<span style="color:var(--muted);font-size:13px">（${esc(it.l)}）</span></span>`).join('<span class="plus">+</span>');
       return `<div class="vcard" style="flex:1;min-width:240px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff;margin-bottom:10px">
         <div class="vhead" style="display:flex;justify-content:space-between"><span class="vtag">${label}</span><span class="bcode">${codeHtml}</span></div>
         <div style="text-align:center;margin:8px 0" id="glyph-${ver}"></div>
@@ -132,9 +142,9 @@
           const isKey = (rec.keyIdx && rec.keyIdx[`${c}-${ver}`]);
           return svgWrap(isKey ? colorWhole(g, PALETTE[p % 4], cntOf(ci) >= 2 ? PALETTE[(p + 1) % 4] : null) : recolor(g, p, cntOf(ci)), 96);
         }).join('');
-        const rootHtml = roots.map((r, i) => `<span style="color:${PALETTE[i % 4]}">${esc(r)}</span>`).join('<span class="plus">+</span>');
+        const rootsHtml = roots.map((r, i) => `<span style="color:${PALETTE[i % 4]}">${rootHtml(r, PALETTE[i % 4], 20)}</span>`).join('<span class="plus">+</span>');
         const codeHtml = code.split('').map((L, i) => `<span style="color:${PALETTE[i % 4]}">${esc(L)}</span>`).join('');
-        return `<div class="brow"><span class="vtag">${label}</span><span class="bimgs">${imgs}</span><span class="broots">${rootHtml}</span><span class="bcode">${codeHtml}</span></div>`;
+        return `<div class="brow"><span class="vtag">${label}</span><span class="bimgs">${imgs}</span><span class="broots">${rootsHtml}</span><span class="bcode">${codeHtml}</span></div>`;
       }).join('');
 
     const rule = (n === 2 ? '双字词：每个字取前两码' : n === 3 ? '三字词：前两字各取首码，最后一字取前两码'
@@ -147,7 +157,7 @@
        <div class="bigbox" style="--gsize:96px">${rows}</div>
        <h2>怎么拆</h2>
        <div class="rule"><p>${esc(rec.w)} = ${rec.ch.map((c) => esc(c)).join(' + ')}</p>
-       <p>${rule}：${rec.r86.map((r, i) => `${esc(r)}（${esc(rec.c86[i] || '')}）`).join(' + ')} → <strong>${esc(rec.c86)}</strong></p></div>
+       <p>${rule}：${rec.r86.map((r, i) => rootHtml(r, PALETTE[i % 4], 18) + `（${esc(rec.c86[i] || '')}）`).join(' + ')} → <strong>${esc(rec.c86)}</strong></p></div>
        <h2>单字拆分</h2>
        <div class="chars">${rec.ch.map((c) => `<a class="ch" href="char.html?c=${encodeURIComponent(c)}">${esc(c)}</a>`).join('')}</div>
        <h2>相关词组</h2>
