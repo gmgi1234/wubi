@@ -74,11 +74,25 @@ if (fs.existsSync(pagesList)) {
     if (!wordSet.has(w)) wordSet.set(w, null);
   }
 }
+// 码表里的全部词组（2–12 字），保证长词也能查到
+const DICT = path.join(ROOT, 'qingfeng/WindInput/schemas/dicts/wubi_union.dict.yaml');
+if (fs.existsSync(DICT)) {
+  for (const line of fs.readFileSync(DICT, 'utf8').split('\n')) {
+    if (!line || line[0] === '#' || line[0] === '-' || line[0] === ' ') continue;
+    const w = line.split('\t')[0].trim();
+    if (!/^[\u3400-\u9fff\uf900-\ufaff]+$/.test(w)) continue;
+    const n = [...w].length;
+    if (n < 2 || n > 12) continue;
+    if (wordSet.has(w)) continue;
+    if (![...w].every((c) => (tables.v86[c] || {}).c && (tables.v06[c] || {}).c)) continue;
+    wordSet.set(w, null);
+  }
+}
 for (const md of Object.values(meta)) {
   for (const w of md.words || []) {
     if (wordSet.has(w)) continue;
     const chars = [...w];
-    if (chars.length < 2 || chars.length > 6) continue;
+    if (chars.length < 2 || chars.length > 12) continue;
     if (!chars.every((c) => (tables.v86[c] || {}).c && (tables.v06[c] || {}).c)) continue;
     wordSet.set(w, null);
   }

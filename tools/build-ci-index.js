@@ -6,6 +6,13 @@ const ROOT = 'D:/Users/10061/Downloads/wubi';
 const CI = path.join(ROOT, 'ci');
 const keep = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'keep-words.json'), 'utf8'));
 
+// 词条总数：直接数检索桶
+let totalWords = 0;
+for (const f of fs.readdirSync(path.join(ROOT, 'data')).filter((x) => x.startsWith('word-idx-') && x.endsWith('.js'))) {
+  const m = fs.readFileSync(path.join(ROOT, 'data', f), 'utf8').match(/=(\[[\s\S]*\]);?$/);
+  if (m) totalWords += JSON.parse(m[1]).length;
+}
+
 const groups = [[2, '双字词'], [3, '三字词'], [4, '四字词'], [5, '五字词'], [6, '六字词及更长']];
 const byLen = new Map(groups.map(([n]) => [n, []]));
 for (const w of keep) {
@@ -40,7 +47,7 @@ const html = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
  a.nav{color:#a33c2f;text-decoration:none}
 </style></head><body><main>
 <h1>全部词组页</h1>
-<div class="sub">共 112,205 条词组 · 检索全部 · 下面按字数列出 ${keep.length} 个静态页</div>
+<div class="sub">共 ${totalWords.toLocaleString()} 条词组 · 检索全部 · 下面按字数列出 ${keep.length} 个静态页</div>
 
 <div class="search">
   <input id="q" type="search" placeholder="输入词语或单字，例如：中国、天安门、良莠不齐" autocomplete="off">
