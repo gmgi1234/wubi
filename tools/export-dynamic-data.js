@@ -94,14 +94,23 @@ function wordCode(chars, v) {
   return codes[0][0] + codes[1][0] + codes[2][0] + codes[n - 1][0];
 }
 
+// 键名字（25 个）：编码是键位连按四下，词组里取两码就是「字、字」
+const KEY_NAMES = new Set('王土大木工目日口田山禾白月人金言立水火之已子女又纟'.split(''));
+
+function rootsTaken(c, v, k) {
+  const e = (tables[v] || {})[c] || {};
+  const ex = expandRoots(v, e.r || []);
+  if (!ex.length) return Array.from({ length: k }, () => c);
+  // 字根数少于取码数时（键名字、一 这类「报户口」的字），多出的码沿用最后一个字根
+  return Array.from({ length: k }, (_, i) => ex[Math.min(i, ex.length - 1)]);
+}
+
 function wordRootsOf(chars, v) {
-  const R = chars.map((c) => expandRoots(v, ((tables[v] || {})[c] || {}).r || []));
-  if (R.some((r) => !r.length)) return [];
   const n = chars.length;
-  if (n === 2) return [...R[0].slice(0, 2), ...R[1].slice(0, 2)];
-  if (n === 3) return [R[0][0], R[1][0], ...R[2].slice(0, 2)];
-  if (n === 4) return R.map((r) => r[0]);
-  return [R[0][0], R[1][0], R[2][0], R[n - 1][0]];
+  if (n === 2) return [...rootsTaken(chars[0], v, 2), ...rootsTaken(chars[1], v, 2)];
+  if (n === 3) return [...rootsTaken(chars[0], v, 1), ...rootsTaken(chars[1], v, 1), ...rootsTaken(chars[2], v, 2)];
+  if (n === 4) return chars.map((c) => rootsTaken(c, v, 1)[0]);
+  return [rootsTaken(chars[0], v, 1)[0], rootsTaken(chars[1], v, 1)[0], rootsTaken(chars[2], v, 1)[0], rootsTaken(chars[n - 1], v, 1)[0]];
 }
 
 // 相关词组：同首字的其他词（最多 10 个，短的优先）
@@ -127,6 +136,10 @@ for (const [w, base] of wordSet) {
     r98: wordRootsOf(chars, 'v98'),
     r06: wordRootsOf(chars, 'v06'),
   };
+  // 字根一律按「键名字重复」的规则重算，避免沿用旧数据
+  rec.r86 = wordRootsOf(chars, 'v86');
+  rec.r98 = wordRootsOf(chars, 'v98');
+  rec.r06 = wordRootsOf(chars, 'v06');
   if (!rec.c86 || !rec.c06) continue;
   const peers = (byFirst.get(chars[0]) || []).filter((x) => x !== w).slice(0, 10);
   wordBuckets[bucketOf(chars[0])][w] = {
