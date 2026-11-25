@@ -1,0 +1,57 @@
+[schema]
+id = "wubi06"
+name = "新世纪五笔"
+version = "1.0.0"
+author = "社区"
+description = "新世纪五笔输入方案"
+category = "wubi"
+min_app_version = "0.100.0"
+
+[[schema.variants]]
+id = "wubi06"
+name = "新世纪五笔"
+schema_file = "wubi06.schema.toml"
+default = true
+
+[engine]
+type = "codetable"
+
+[engine.codetable]
+max_code_length = 4
+auto_commit_unique = false
+top_code_commit = true
+punct_commit = true
+clear_on_empty_max = false
+show_code_hint = true
+single_code_input = false
+candidate_sort_mode = "frequency"
+z_key_repeat = true
+
+[[dictionaries]]
+id = "wubi06_main"
+label = "新世纪五笔主词库"
+description = "新世纪五笔基础词库"
+path = "dicts/wubi06.dict.yaml"
+default = true
+
+[encoder]
+max_word_length = 10
+
+[[encoder.rules]]
+length_equal = 2
+formula = "AaAbBaBb"
+
+[[encoder.rules]]
+length_equal = 3
+formula = "AaBaCaCb"
+
+[[encoder.rules]]
+length_in_range = [4, 10]
+formula = "AaBaCaZa"
+
+[learning.auto_learn]
+enabled = true
+
+[learning.freq]
+enabled = true
+protect_top_n = 3

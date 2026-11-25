@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汉字五笔编码查询 · 五笔字根</title>
+<meta name="description" content="输入任意汉字，查看 86/98/新世纪三版五笔编码、字根拆分与笔画着色。">
+</head>
+<body>
+<div id="app"></div>
+<script src="data/render.js"></script>
+<script>
+(async function () {
+  const ch = new URLSearchParams(location.search).get('c') || '狗';
+  document.title = ch + '字五笔怎么打？86/98/新世纪编码与拆分';
+  const b = ch.charCodeAt(0) % 64;
+  const load = (src) => new Promise((ok, bad) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = bad; document.head.appendChild(s);
+  });
+  try { await load('data/char-' + b + '.js'); } catch (e) {}
+  const rec = (window['CHAR_DATA_' + b] || {})[ch];
+  if (!rec) {
+    document.getElementById('app').innerHTML = '<div style="padding:60px;text-align:center;font-family:KaiTi,serif">没找到「' + ch + '」这个字<br><a href="/">回首页</a></div>';
+    return;
+  }
+  WubiRender.renderChar(rec);
+  for (const ver of ['86', '98', '06']) {
+    const el = document.getElementById('glyph-' + ver);
+    if (!el) continue;
+    try {
+      const r = await fetch('svg/' + encodeURIComponent(ch) + '-' + ver + '.svg');
+      if (!r.ok) continue;
+      const t = await r.text();
+      const inner = t.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+      el.innerHTML = WubiRender.svgWrap(inner, 200);
+    } catch (e) {}
+  }
+})();
+</script>
+</body></html>

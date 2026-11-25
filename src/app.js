@@ -2967,6 +2967,53 @@ function getCodeColor(codeIndex) {
     return ROOT_COLORS[codeIndex % ROOT_COLORS.length];
 }
 
+// 字根片段（如 犭前）：直接用这个字自己的笔画现画一个小图
+function isFragmentRootName(name) {
+    const chars = [...String(name)];
+    return chars.length !== 1 || chars[0].codePointAt(0) > 0xFFFF;
+}
+
+function buildFragmentSvg(rootIndex, color, name) {
+    const map = strokeRootMapForDisplay || strokeRootMap || [];
+    const paths = [];
+    for (let si = 0; si < map.length; si += 1) {
+        if (map[si] === rootIndex && strokes[si]) paths.push(strokes[si]);
+    }
+    if (paths.length) {
+        return '<svg class="frag" width="18" height="18" viewBox="0 0 1024 1024"><g transform="translate(0,900) scale(1,-1)">'
+            + paths.map((d) => '<path d="' + d + '" fill="' + color + '"/>').join('')
+            + '</g></svg>';
+    }
+    return rootGlyphFromLib(name);
+}
+
+// 用字形库画片段（当前字里没有这几笔时兜底），颜色跟随父元素
+function rootGlyphFromLib(name, size = 18) {
+    const lib = (typeof ROOT_GLYPHS !== 'undefined' && ROOT_GLYPHS) ? ROOT_GLYPHS : null;
+    const g = lib ? lib[name] : null;
+    if (!g) return '';
+    return '<svg class="frag" width="' + size + '" height="' + size + '" viewBox="0 0 1024 1024"><g transform="translate(0,900) scale(1,-1)">'
+        + '<g transform="translate(512,512) scale(' + g.scale + ') translate(' + (-g.cx) + ',' + (-g.cy) + ')">'
+        + g.paths.map((d) => '<path d="' + d + '" fill="currentColor"/>').join('')
+        + '</g></g></svg>';
+}
+
+// 复合字根：有字形就画，没有就退回文字
+function rootDisplayHtml(name) {
+    if (!isFragmentRootName(name)) return name;
+    return rootGlyphFromLib(name) || name;
+}
+
+// 字根表字符串里的 [犭前] 这类描述，换成字形；单字直接去掉方括号
+function formatRootTable(str, size = 18) {
+    return String(str).replace(/\[([^\[\]]+)\]/g, (m, name) => {
+        const glyph = rootGlyphFromLib(name, size);
+        if (glyph) return glyph;
+        if ([...name].length === 1) return name;
+        return m;
+    });
+}
+
 // 获取字根索引对应的颜色（与编码位置同步）
 function getRootColor(rootIndex) {
     return ROOT_COLORS[rootIndex % ROOT_COLORS.length];
@@ -6480,11 +6527,11 @@ function renderInfo() {
                 '<span class="root-letter-big" style="color:' + bgColor + '">' + keyLetter + '</span>' +
                 '<div class="root-content">' +
                 '<div class="root-row">' +
-                '<span class="root-name" style="color:' + bgColor + '">' + r + '</span>' +
+                '<span class="root-name" style="color:' + bgColor + '">' + (isFragmentRootName(r) ? (buildFragmentSvg(i, bgColor, r) || r) : r) + '</span>' +
                 '<span class="root-kouju" style="color:#ccc;font-size:14px;font-weight:bold;margin-left:10px">' + kouju + '</span>' +
                 '<span class="root-stroke-count">' + countText + '</span>' +
                 '</div>' +
-                (rootTable ? '<div class="root-table-line" style="color:' + bgColor + '">字根：' + rootTable + '</div>' : '') +
+                (rootTable ? '<div class="root-table-line" style="color:' + bgColor + '">字根：' + formatRootTable(rootTable) + '</div>' : '') +
                 '</div>' +
             '</li>';
         }).join('');
@@ -6537,7 +6584,7 @@ function renderInfo() {
                 '<span class="root-kouju" style="color:#ccc;font-size:14px;font-weight:bold;margin-left:10px">' + supKouju + '</span>' +
                 '<span class="root-stroke-count" style="color:#999">' + supStrokeText + '</span>' +
                 '</div>' +
-                (supRootTable ? '<div class="root-table-line" style="color:#00BCD4">字根：' + supRootTable + '</div>' : '') +
+                (supRootTable ? '<div class="root-table-line" style="color:#00BCD4">字根：' + formatRootTable(supRootTable) + '</div>' : '') +
                 '</div>' +
             '</li>';
         }
@@ -6550,7 +6597,7 @@ function renderInfo() {
                     '<span class="root-letter-big" style="color:#777">—</span>' +
                     '<div class="root-content">' +
                     '<div class="root-row">' +
-                    '<span class="root-name" style="color:#555">' + nr + '</span>' +
+                    '<span class="root-name" style="color:#555">' + rootDisplayHtml(nr) + '</span>' +
                     '<span class="root-kouju" style="color:#aaa;font-size:14px;font-weight:bold;margin-left:10px">未编码</span>' +
                     '<span class="root-stroke-count" style="color:#aaa">' + grayCount + '笔</span>' +
                     '</div>' +
@@ -6618,7 +6665,7 @@ function renderKeyboard() {
         const rowDiv = document.getElementById(`kb-row-${rowIdx + 1}`);
         rowDiv.innerHTML = row.map(key => {
             const info = codeColors[key];
-            const kouju = WUBI_ROOT_TABLE[key] || WUBI_KOuju[key] || '';
+            const kouju = formatRootTable(WUBI_ROOT_TABLE[key] || WUBI_KOuju[key] || '', 13);
             const jianma = YIJI_JIANMA[key] || '';
             const keyName = (keyNamesDisplay || KEY_NAMES)[key] || '';
             
