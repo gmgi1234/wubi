@@ -4,7 +4,8 @@ const path = require('node:path');
 
 const ROOT = 'D:/Users/10061/Downloads/wubi';
 const SITE = 'https://wubi.iqiusuo.cn';
-const ranking = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'char-ranking.json'), 'utf8'));
+const charIdxRaw = fs.readFileSync(path.join(ROOT, 'data', 'char-idx.js'), 'utf8').match(/=(\[[\s\S]*\]);?$/);
+const allChars = charIdxRaw ? JSON.parse(charIdxRaw[1]).map((x) => x[0]) : ranking;
 const words = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'words.json'), 'utf8'));
 const keepChars = new Set(JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'keep-chars.json'), 'utf8')));
 const keepWords = new Set(JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'keep-words.json'), 'utf8')));
@@ -15,8 +16,8 @@ ${urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n')}
 </urlset>
 `;
 
-const staticCharUrls = [...keepChars].map((c) => `${SITE}/char/${encodeURIComponent(c)}.html`);
-const dynCharUrls = ranking.filter((c) => !keepChars.has(c)).map((c) => `${SITE}/char.html?c=${encodeURIComponent(c)}`);
+const staticCharUrls = allChars.map((c) => `${SITE}/char/${encodeURIComponent(c)}.html`);
+const dynCharUrls = [];
 const staticWordUrls = [];
 const dynWordUrls = words.map((x) => `${SITE}/ci.html?w=${encodeURIComponent(x.w)}`);
 

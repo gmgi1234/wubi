@@ -37,7 +37,7 @@ const html = `<!DOCTYPE html><html lang="zh-CN"><head>
 <header><a href="../">五笔字根 · 笔画着色</a><span><a href="../char/">全部单字</a>　<a href="../ci/">全部词组</a></span></header>
 <main>
   <h1>全部单字页</h1>
-  <div class="sub">共 ${keep.length} 个字，按常用度排列；支持输入汉字或拼音检索（如 gou、zhong）</div>
+  <div class="sub">共 ${keep.length} 个字，按常用度排列；共 9,631 个字，全部有独立页面；支持输入汉字或拼音检索（如 gou、zhong）</div>
 
   <div class="search">
     <input id="q" type="search" placeholder="输入汉字或拼音，例如：狗、gou、zhong" autocomplete="off">
@@ -72,7 +72,7 @@ const html = `<!DOCTYPE html><html lang="zh-CN"><head>
       }
       out=out.slice(0,120);
       box.innerHTML=out.map(function(c){
-        return '<a href="../char.html?c='+encodeURIComponent(c)+'">'+c+'</a>';
+        return '<a href="'+encodeURIComponent(c)+'.html">'+c+'</a>';
       }).join('');
       hint.textContent = out.length ? ('找到 '+out.length+' 个（最多显示 120）') : '没有匹配的字';
     });
