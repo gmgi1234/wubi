@@ -28,6 +28,7 @@
 
   // 载入每个字的单字记录（判断成字字根）
   const keyIdx = {};
+  const keyNameIdx = {};
   await Promise.all(rec.ch.map(async (c) => {
     const b = c.charCodeAt(0) % 64;
     if (!window['CHAR_DATA_' + b]) {
@@ -38,9 +39,11 @@
     for (const ver of ['86', '98', '06']) {
       const d = cr.v[ver];
       if (d && d.split && d.split[0] === c) keyIdx[c + '-' + ver] = true;
+      if (d && d.split && d.split.length === 1 && d.split[0] === c) keyNameIdx[c + '-' + ver] = true;
     }
   }));
   rec.keyIdx = keyIdx;
+  rec.keyName = keyNameIdx;
 
   WubiRender.renderWord(rec, {}, {});
   // 字形按需 fetch

@@ -3,66 +3,198 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>接字五笔怎么打？86/98/新世纪编码与拆分 · 五笔字根</title>
-<meta name="description" content="「接」的五笔编码：86版 RUVG，98版 RUVG，新世纪 RUVG。字根拆分、笔画着色、取码规则。">
+<meta name="description" content="「接」的五笔编码：86版 RUVG，98版 RUVG，新世纪 RUVG。三版拆分：86 版 扌+妾、98 版 扌+妾、新世纪 扌+妾。附笔画着色图、取码规则、常用词组与相关字。">
 <link rel="canonical" href="https://wubi.iqiusuo.cn/char/%E6%8E%A5.html">
 <style>
- :root{--ink:#2a2320;--muted:#8a7b6c;--line:#e6dcc9;--bg:#fbf7ef;--accent:#a33c2f;--paper:#fffdf8}
- *{box-sizing:border-box}
- body{margin:0;background:var(--bg);color:var(--ink);font-family:'KaiTi','楷体','STKaiti',serif;line-height:1.7}
- header{border-bottom:1px solid var(--line);padding:12px 20px;display:flex;justify-content:space-between;font-size:15px}
- header a{color:var(--muted);text-decoration:none}
- main{max-width:900px;margin:18px auto 0;background:var(--paper);box-shadow:0 0 0 1px var(--line);border-radius:16px;padding:26px 22px 44px}
- h1{font-size:32px;margin:0 0 6px;letter-spacing:2px}
- .sub{color:var(--muted);font-size:16px;margin-bottom:20px}
- .vers{display:flex;gap:16px;flex-wrap:wrap}
- .vcard{flex:1;min-width:240px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
- .vhead{display:flex;justify-content:space-between;align-items:center}
- .vtag{color:var(--muted);font-size:15px}
- .bcode{font-family:ui-monospace,Consolas,monospace;font-size:20px;letter-spacing:2px}
- .glyphbox{text-align:center;margin:8px 0}
- svg.glyph{border:1px solid var(--line);border-radius:8px;background:#fff}
- .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
- .chip{border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:15px}
- .vsup{text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
- .rule{background:#faf6ee;border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:15px;margin-top:10px}
- .rule p{margin:5px 0}
- h2{font-size:20px;margin:26px 0 10px}
- .words{display:flex;flex-wrap:wrap;gap:10px}
- .word{border:1px solid var(--line);border-radius:8px;padding:7px 14px;font-size:18px;color:var(--accent);text-decoration:none;background:#fff}
- .cta{margin-top:28px;border:1px solid var(--line);border-radius:14px;padding:18px 22px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#fff}
- .cta a.primary{background:var(--accent);color:#fff;text-decoration:none;padding:10px 18px;border-radius:9px}
- footer{text-align:center;color:var(--muted);font-size:13px;padding:18px}
- @media (max-width:640px){h1{font-size:26px}main{padding:18px 14px 36px}}
+  :root { --ink:#1f2430; --muted:#6b7486; --line:#e3e7ee; --bg:#fff; --accent:#2f6f8f; --paper:#fff; }
+
+  :root { --ink:#2a2320; --muted:#8a7b6c; --line:#e6dcc9; --bg:#fbf7ef; --accent:#a33c2f; --paper:#fffdf8; }
+  body { background:var(--bg); }
+  main { background:var(--paper); box-shadow:0 0 0 1px var(--line); border-radius:16px; margin-top:18px; }
+  .art { position:relative; }
+  .art::before { content:''; position:absolute; inset:0; pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px, transparent 1px),linear-gradient(90deg,var(--line) 1px, transparent 1px);
+    background-size:25% 25%; opacity:.55; }
+  h1, h2 { letter-spacing:2px; }
+  
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'KaiTi','楷体','STKaiti',serif; line-height:1.7; }
+  header { border-bottom:1px solid var(--line); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; font-size:15px; }
+  header a { color:var(--muted); text-decoration:none; }
+  .navbar { display:flex; gap:18px; align-items:center; }
+  .navbar .nav { color:var(--accent); }
+  main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
+  h1 { font-size:34px; margin:0 0 6px; }
+  .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
+  .py { font-family:"Segoe UI",Arial,sans-serif; }
+  .hero { margin-bottom:26px; }
+  .vers { display:flex; gap:18px; flex-wrap:wrap; }
+  .vcard { flex:1; min-width:240px; border:1px solid var(--line); border-radius:14px; padding:12px 14px 14px; background:var(--paper); }
+  .vhead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .vhead .vtag { color:var(--muted); font-size:15px; }
+  .vhead .vcode { font-family:ui-monospace,Consolas,monospace; font-size:16px; color:var(--accent); }
+  .vhead .supcode { color:#c0392b; border-bottom:2px solid currentColor; }
+  .vsup { text-align:center; font-size:12px; color:var(--muted); margin:2px 0 6px; }
+  .art { width:100%; max-width:280px; aspect-ratio:1; margin:0 auto 10px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; }
+  .art svg { width:100%; height:100%; display:block; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; justify-content:center; }
+  .chip { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--line); border-radius:999px; padding:3px 9px; font-size:15px; white-space:nowrap; background:var(--paper); }
+  .chip i { width:13px; height:13px; border-radius:3px; display:inline-block; flex:0 0 auto; }
+  .chip.fragchip { padding:3px 8px; }
+  svg.frag { background:none; box-shadow:none; padding:0; vertical-align:-6px; margin-right:0; }
+  .rule-ver { margin-top:10px; text-align:left; background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:8px 12px; }
+  .rule-ver p { margin:4px 0; font-size:14px; }
+  .rlist { display:flex; flex-wrap:wrap; gap:4px 8px; margin-top:4px; align-items:center; }
+  .ritem { font-size:15px; display:inline-flex; align-items:center; gap:3px; }
+  .rplus { color:var(--muted); font-size:14px; }
+  .rletter { color:var(--muted); font-size:13px; }
+  h2 { font-size:21px; margin:32px 0 12px; }
+  p { margin:8px 0; }
+  .keys { display:flex; gap:12px; flex-wrap:wrap; align-items:stretch; }
+  .krow { flex:1 1 170px; min-width:170px; display:flex; flex-direction:column; gap:8px; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--paper); }
+  .kkey { width:36px; height:36px; flex:0 0 36px; border-radius:8px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; color:var(--accent); background:var(--paper); }
+  .kbody { flex:1; width:100%; }
+  .kv { border-top:1px dashed var(--line); padding-top:6px; margin-top:2px; }
+  .kv:first-child { border-top:0; padding-top:0; margin-top:0; }
+  .kv summary { cursor:pointer; list-style:none; display:flex; gap:6px; align-items:baseline; flex-wrap:wrap; font-size:14px; }
+  .kv summary::-webkit-details-marker { display:none; }
+  .kvtag { color:var(--muted); font-size:12px; border:1px solid var(--line); border-radius:4px; padding:0 5px; background:var(--paper); }
+  .kvname { font-weight:700; }
+  .kvkouju { color:var(--muted); font-size:13px; }
+  .kroots { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
+  .kroot { font-size:14px; border:1px solid var(--line); border-radius:6px; padding:0 5px; background:var(--paper); }
+  .kroot.diff { border-color:#e2a03f; background:#fff6e6; color:#a5680f; }
+  .kroot.kfrag { padding:2px 5px; }
+  .words, .rels { display:flex; flex-wrap:wrap; gap:10px; }
+  .word, .rel { border:1px solid var(--line); border-radius:8px; padding:7px 14px; font-size:18px; color:var(--accent); text-decoration:none; background:var(--paper); }
+  .rel { font-size:22px; padding:4px 12px; }
+  .muted { color:var(--muted); }
+  .links a { color:var(--accent); text-decoration:none; margin-right:14px; }
+  .cta { margin-top:34px; border:1px solid var(--line); border-radius:14px; padding:20px 24px; display:flex; gap:18px; align-items:center; justify-content:space-between; flex-wrap:wrap; background:var(--paper); }
+  .cta a.primary { background:var(--accent); color:#fff; text-decoration:none; padding:11px 20px; border-radius:9px; font-size:17px; white-space:nowrap; }
+  .cta a.secondary { color:var(--muted); text-decoration:none; padding:10px 16px; border-radius:9px; border:1px dashed var(--line); font-size:15px; }
+  footer { border-top:1px solid var(--line); padding:18px 20px; color:var(--muted); font-size:14px; text-align:center; }
+  @media (max-width: 640px) {
+    header { padding:10px 14px; font-size:13px; gap:8px; }
+    .navbar { gap:10px; }
+    main { padding:18px 14px 44px; }
+    h1 { font-size:26px; line-height:1.35; }
+    .sub { font-size:13px; margin-bottom:16px; }
+    .vcard { padding:10px 10px 12px; }
+    .vhead .vcode { font-size:15px; }
+    .rule-ver { padding:6px 10px; }
+    .rule-ver p, .rlist { font-size:13px; }
+    .krow { flex:1 1 100%; min-width:0; }
+    .kroot { font-size:13px; }
+    .word, .rel { font-size:16px; padding:6px 12px; }
+    .rel { font-size:20px; }
+    .cta { flex-direction:column; align-items:flex-start; }
+    .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
+  }
 </style>
 </head><body>
-<header><a href="../">五笔字根 · 笔画着色</a><span><a href="../char/">全部单字</a>　<a href="../ci/">全部词组</a></span></header>
+<header>
+  <a href="../">五笔字根 · 笔画着色</a>
+  <div class="navbar"><a class="nav" href="../char.html?c=%E8%84%9A">← 脚</a><a href="../">查其它字</a><a class="nav" href="../char.html?c=%E6%9C%A8">木 →</a></div>
+</header>
 <main>
   <h1>「接」的五笔编码与拆分</h1>
-  <div class="sub">读音 jiē · 三版编码对照 · 字根拆分 · 笔画着色</div>
-  <div class="vers"><div class="vcard">
-      <div class="vhead"><span class="vtag">新世纪</span><span class="bcode"><span style="color:#E74C3C">R</span><span style="color:#FF9800">U</span><span style="color:#27AE60">V</span><span style="color:#2980B9">G</span></span></div>
-      <div class="glyphbox"><svg class="glyph" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="width:200px;height:200px"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 336 561 Q 357 568 380 573 Q 416 583 420 589 Q 429 596 424 605 Q 417 615 388 621 Q 361 625 338 615 L 287 596 Q 197 569 143 561 Q 109 552 134 538 Q 174 520 240 536 Q 261 542 286 548 L 336 561 Z" fill="#E74C3C"/><path d="M 281 357 Q 280 263 277 143 Q 276 121 263 111 Q 257 108 197 121 Q 164 134 167 125 Q 168 118 187 102 Q 245 50 259 21 Q 275 -13 290 -15 Q 303 -16 320 18 Q 339 64 339 138 Q 332 268 332 397 L 332 428 Q 332 495 336 561 L 338 615 Q 338 690 358 756 Q 374 787 320 809 Q 286 828 267 821 Q 249 815 265 792 Q 287 765 287 731 Q 288 715 287 596 L 286 548 Q 285 485 282 398 L 281 357 Z" fill="#E74C3C"/><path d="M 282 398 Q 90 281 77 277 Q 65 271 64 264 Q 63 255 77 243 Q 95 230 115 223 Q 130 219 139 230 Q 187 282 281 357 L 332 397 Q 353 415 375 429 Q 394 442 405 457 Q 411 469 401 468 Q 389 468 332 428 L 282 398 Z" fill="#E74C3C"/><path d="M 597 767 Q 624 746 651 721 Q 666 708 682 710 Q 692 711 697 724 Q 701 740 690 769 Q 684 788 654 800 Q 581 821 568 815 Q 564 811 565 798 Q 569 788 597 767 Z" fill="#FF9800"/><path d="M 718 641 Q 742 648 771 653 Q 813 663 819 670 Q 828 677 823 685 Q 816 695 790 702 Q 765 706 662 672 Q 518 644 508 642 Q 474 636 499 621 Q 535 602 600 616 Q 640 625 684 634 L 718 641 Z" fill="#FF9800"/><path d="M 514 552 Q 544 491 564 485 Q 574 481 583 495 Q 587 505 582 524 Q 573 551 523 573 Q 516 576 513 567 Q 510 560 514 552 Z" fill="#FF9800"/><path d="M 680 465 Q 692 480 729 550 Q 736 566 751 587 Q 764 599 756 609 Q 746 624 718 641 C 693 657 673 662 684 634 Q 684 633 686 629 Q 696 599 658 485 Q 654 470 652 459 C 646 430 662 441 680 465 Z" fill="#FF9800"/><path d="M 594 416 Q 678 432 836 452 Q 845 451 853 462 Q 854 472 835 481 Q 802 497 742 480 Q 711 474 680 465 L 652 459 Q 622 455 456 432 Q 431 429 450 415 Q 480 394 505 399 Q 527 405 555 408 L 594 416 Z" fill="#FF9800"/><path d="M 585 301 Q 604 349 619 369 Q 628 376 624 386 Q 620 398 594 416 C 570 434 550 438 555 408 Q 562 389 556 366 Q 546 327 535 294 L 522 258 Q 509 227 495 204 Q 485 186 489 174 Q 492 164 509 161 Q 554 151 603 125 Q 604 125 604 124 L 649 100 Q 710 66 800 -3 Q 825 -22 843 -21 Q 864 -20 864 -1 Q 863 20 833 64 Q 820 91 682 140 L 636 156 Q 588 174 553 182 Q 531 186 542 207 Q 557 241 569 266 L 585 301 Z" fill="#27AE60"/><path d="M 764 328 Q 755 340 734 347 Q 718 357 700 354 Q 690 351 694 337 Q 698 330 700 317 L 698 280 Q 692 232 636 156 L 604 124 Q 544 76 411 39 Q 396 32 414 29 Q 537 16 649 100 L 682 140 Q 719 191 742 257 Q 746 273 751 283 C 762 311 768 325 764 328 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
-      <div class="chips"><span class="chip" style="color:#E74C3C">扌</span><span class="chip" style="color:#FF9800">立</span><span class="chip" style="color:#27AE60">女</span></div>
+  <div class="sub">读音 <span class="py">jiē</span> · 三版编码对照 · 字根拆分 · 笔画着色 · 三版编码在五笔大一统方案里都能出字</div>
+
+  <div class="hero"><div class="vers"><div class="vcard">
+      <div class="vhead"><span class="vtag">新世纪</span><span class="vcode">RUV<span class="supcode">G</span></span></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 336 561 Q 357 568 380 573 Q 416 583 420 589 Q 429 596 424 605 Q 417 615 388 621 Q 361 625 338 615 L 287 596 Q 197 569 143 561 Q 109 552 134 538 Q 174 520 240 536 Q 261 542 286 548 L 336 561 Z" fill="#E74C3C"/><path d="M 281 357 Q 280 263 277 143 Q 276 121 263 111 Q 257 108 197 121 Q 164 134 167 125 Q 168 118 187 102 Q 245 50 259 21 Q 275 -13 290 -15 Q 303 -16 320 18 Q 339 64 339 138 Q 332 268 332 397 L 332 428 Q 332 495 336 561 L 338 615 Q 338 690 358 756 Q 374 787 320 809 Q 286 828 267 821 Q 249 815 265 792 Q 287 765 287 731 Q 288 715 287 596 L 286 548 Q 285 485 282 398 L 281 357 Z" fill="#E74C3C"/><path d="M 282 398 Q 90 281 77 277 Q 65 271 64 264 Q 63 255 77 243 Q 95 230 115 223 Q 130 219 139 230 Q 187 282 281 357 L 332 397 Q 353 415 375 429 Q 394 442 405 457 Q 411 469 401 468 Q 389 468 332 428 L 282 398 Z" fill="#E74C3C"/><path d="M 597 767 Q 624 746 651 721 Q 666 708 682 710 Q 692 711 697 724 Q 701 740 690 769 Q 684 788 654 800 Q 581 821 568 815 Q 564 811 565 798 Q 569 788 597 767 Z" fill="#FF9800"/><path d="M 718 641 Q 742 648 771 653 Q 813 663 819 670 Q 828 677 823 685 Q 816 695 790 702 Q 765 706 662 672 Q 518 644 508 642 Q 474 636 499 621 Q 535 602 600 616 Q 640 625 684 634 L 718 641 Z" fill="#FF9800"/><path d="M 514 552 Q 544 491 564 485 Q 574 481 583 495 Q 587 505 582 524 Q 573 551 523 573 Q 516 576 513 567 Q 510 560 514 552 Z" fill="#FF9800"/><path d="M 680 465 Q 692 480 729 550 Q 736 566 751 587 Q 764 599 756 609 Q 746 624 718 641 C 693 657 673 662 684 634 Q 684 633 686 629 Q 696 599 658 485 Q 654 470 652 459 C 646 430 662 441 680 465 Z" fill="#FF9800"/><path d="M 594 416 Q 678 432 836 452 Q 845 451 853 462 Q 854 472 835 481 Q 802 497 742 480 Q 711 474 680 465 L 652 459 Q 622 455 456 432 Q 431 429 450 415 Q 480 394 505 399 Q 527 405 555 408 L 594 416 Z" fill="#FF9800"/><path d="M 585 301 Q 604 349 619 369 Q 628 376 624 386 Q 620 398 594 416 C 570 434 550 438 555 408 Q 562 389 556 366 Q 546 327 535 294 L 522 258 Q 509 227 495 204 Q 485 186 489 174 Q 492 164 509 161 Q 554 151 603 125 Q 604 125 604 124 L 649 100 Q 710 66 800 -3 Q 825 -22 843 -21 Q 864 -20 864 -1 Q 863 20 833 64 Q 820 91 682 140 L 636 156 Q 588 174 553 182 Q 531 186 542 207 Q 557 241 569 266 L 585 301 Z" fill="#27AE60"/><path d="M 764 328 Q 755 340 734 347 Q 718 357 700 354 Q 690 351 694 337 Q 698 330 700 317 L 698 280 Q 692 232 636 156 L 604 124 Q 544 76 411 39 Q 396 32 414 29 Q 537 16 649 100 L 682 140 Q 719 191 742 257 Q 746 273 751 283 C 762 311 768 325 764 328 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>扌</span><span class="chip"><i style="background:#FF9800"></i>立</span><span class="chip"><i style="background:#27AE60"></i>女</span></div>
       <div class="vsup">补码 G（末笔横 · 左右结构）</div>
-      <div class="rule"><p>展开后共 3 个字根：</p><div><span style="color:#E74C3C">扌<span style="color:var(--muted);font-size:13px">（R）</span></span><span style="color:var(--muted);font-size:14px"> + </span><span style="color:#FF9800">立<span style="color:var(--muted);font-size:13px">（U）</span></span><span style="color:var(--muted);font-size:14px"> + </span><span style="color:#27AE60">女<span style="color:var(--muted);font-size:13px">（V）</span></span></div></div>
+      <div class="rule-ver">
+        <p>展开后共 3 个字根：</p>
+        <div class="rlist"><span class="ritem" style="color:#E74C3C">扌<span class="rletter">（R）</span></span><span class="rplus">+</span><span class="ritem" style="color:#FF9800">立<span class="rletter">（U）</span></span><span class="rplus">+</span><span class="ritem" style="color:#27AE60">女<span class="rletter">（V）</span></span></div>
+        <p>其中 妾 → 立 + 女，继续展开。</p>
+      </div>
     </div><div class="vcard">
-      <div class="vhead"><span class="vtag">86 版</span><span class="bcode"><span style="color:#E74C3C">R</span><span style="color:#FF9800">U</span><span style="color:#27AE60">V</span><span style="color:#2980B9">G</span></span></div>
-      <div class="glyphbox"><svg class="glyph" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="width:200px;height:200px"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 336 561 Q 357 568 380 573 Q 416 583 420 589 Q 429 596 424 605 Q 417 615 388 621 Q 361 625 338 615 L 287 596 Q 197 569 143 561 Q 109 552 134 538 Q 174 520 240 536 Q 261 542 286 548 L 336 561 Z" fill="#E74C3C"/><path d="M 281 357 Q 280 263 277 143 Q 276 121 263 111 Q 257 108 197 121 Q 164 134 167 125 Q 168 118 187 102 Q 245 50 259 21 Q 275 -13 290 -15 Q 303 -16 320 18 Q 339 64 339 138 Q 332 268 332 397 L 332 428 Q 332 495 336 561 L 338 615 Q 338 690 358 756 Q 374 787 320 809 Q 286 828 267 821 Q 249 815 265 792 Q 287 765 287 731 Q 288 715 287 596 L 286 548 Q 285 485 282 398 L 281 357 Z" fill="#E74C3C"/><path d="M 282 398 Q 90 281 77 277 Q 65 271 64 264 Q 63 255 77 243 Q 95 230 115 223 Q 130 219 139 230 Q 187 282 281 357 L 332 397 Q 353 415 375 429 Q 394 442 405 457 Q 411 469 401 468 Q 389 468 332 428 L 282 398 Z" fill="#E74C3C"/><path d="M 597 767 Q 624 746 651 721 Q 666 708 682 710 Q 692 711 697 724 Q 701 740 690 769 Q 684 788 654 800 Q 581 821 568 815 Q 564 811 565 798 Q 569 788 597 767 Z" fill="#FF9800"/><path d="M 718 641 Q 742 648 771 653 Q 813 663 819 670 Q 828 677 823 685 Q 816 695 790 702 Q 765 706 662 672 Q 518 644 508 642 Q 474 636 499 621 Q 535 602 600 616 Q 640 625 684 634 L 718 641 Z" fill="#FF9800"/><path d="M 514 552 Q 544 491 564 485 Q 574 481 583 495 Q 587 505 582 524 Q 573 551 523 573 Q 516 576 513 567 Q 510 560 514 552 Z" fill="#FF9800"/><path d="M 680 465 Q 692 480 729 550 Q 736 566 751 587 Q 764 599 756 609 Q 746 624 718 641 C 693 657 673 662 684 634 Q 684 633 686 629 Q 696 599 658 485 Q 654 470 652 459 C 646 430 662 441 680 465 Z" fill="#FF9800"/><path d="M 594 416 Q 678 432 836 452 Q 845 451 853 462 Q 854 472 835 481 Q 802 497 742 480 Q 711 474 680 465 L 652 459 Q 622 455 456 432 Q 431 429 450 415 Q 480 394 505 399 Q 527 405 555 408 L 594 416 Z" fill="#FF9800"/><path d="M 585 301 Q 604 349 619 369 Q 628 376 624 386 Q 620 398 594 416 C 570 434 550 438 555 408 Q 562 389 556 366 Q 546 327 535 294 L 522 258 Q 509 227 495 204 Q 485 186 489 174 Q 492 164 509 161 Q 554 151 603 125 Q 604 125 604 124 L 649 100 Q 710 66 800 -3 Q 825 -22 843 -21 Q 864 -20 864 -1 Q 863 20 833 64 Q 820 91 682 140 L 636 156 Q 588 174 553 182 Q 531 186 542 207 Q 557 241 569 266 L 585 301 Z" fill="#27AE60"/><path d="M 764 328 Q 755 340 734 347 Q 718 357 700 354 Q 690 351 694 337 Q 698 330 700 317 L 698 280 Q 692 232 636 156 L 604 124 Q 544 76 411 39 Q 396 32 414 29 Q 537 16 649 100 L 682 140 Q 719 191 742 257 Q 746 273 751 283 C 762 311 768 325 764 328 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
-      <div class="chips"><span class="chip" style="color:#E74C3C">扌</span><span class="chip" style="color:#FF9800">立</span><span class="chip" style="color:#27AE60">女</span></div>
+      <div class="vhead"><span class="vtag">86 版</span><span class="vcode">RUV<span class="supcode">G</span></span></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 336 561 Q 357 568 380 573 Q 416 583 420 589 Q 429 596 424 605 Q 417 615 388 621 Q 361 625 338 615 L 287 596 Q 197 569 143 561 Q 109 552 134 538 Q 174 520 240 536 Q 261 542 286 548 L 336 561 Z" fill="#E74C3C"/><path d="M 281 357 Q 280 263 277 143 Q 276 121 263 111 Q 257 108 197 121 Q 164 134 167 125 Q 168 118 187 102 Q 245 50 259 21 Q 275 -13 290 -15 Q 303 -16 320 18 Q 339 64 339 138 Q 332 268 332 397 L 332 428 Q 332 495 336 561 L 338 615 Q 338 690 358 756 Q 374 787 320 809 Q 286 828 267 821 Q 249 815 265 792 Q 287 765 287 731 Q 288 715 287 596 L 286 548 Q 285 485 282 398 L 281 357 Z" fill="#E74C3C"/><path d="M 282 398 Q 90 281 77 277 Q 65 271 64 264 Q 63 255 77 243 Q 95 230 115 223 Q 130 219 139 230 Q 187 282 281 357 L 332 397 Q 353 415 375 429 Q 394 442 405 457 Q 411 469 401 468 Q 389 468 332 428 L 282 398 Z" fill="#E74C3C"/><path d="M 597 767 Q 624 746 651 721 Q 666 708 682 710 Q 692 711 697 724 Q 701 740 690 769 Q 684 788 654 800 Q 581 821 568 815 Q 564 811 565 798 Q 569 788 597 767 Z" fill="#FF9800"/><path d="M 718 641 Q 742 648 771 653 Q 813 663 819 670 Q 828 677 823 685 Q 816 695 790 702 Q 765 706 662 672 Q 518 644 508 642 Q 474 636 499 621 Q 535 602 600 616 Q 640 625 684 634 L 718 641 Z" fill="#FF9800"/><path d="M 514 552 Q 544 491 564 485 Q 574 481 583 495 Q 587 505 582 524 Q 573 551 523 573 Q 516 576 513 567 Q 510 560 514 552 Z" fill="#FF9800"/><path d="M 680 465 Q 692 480 729 550 Q 736 566 751 587 Q 764 599 756 609 Q 746 624 718 641 C 693 657 673 662 684 634 Q 684 633 686 629 Q 696 599 658 485 Q 654 470 652 459 C 646 430 662 441 680 465 Z" fill="#FF9800"/><path d="M 594 416 Q 678 432 836 452 Q 845 451 853 462 Q 854 472 835 481 Q 802 497 742 480 Q 711 474 680 465 L 652 459 Q 622 455 456 432 Q 431 429 450 415 Q 480 394 505 399 Q 527 405 555 408 L 594 416 Z" fill="#FF9800"/><path d="M 585 301 Q 604 349 619 369 Q 628 376 624 386 Q 620 398 594 416 C 570 434 550 438 555 408 Q 562 389 556 366 Q 546 327 535 294 L 522 258 Q 509 227 495 204 Q 485 186 489 174 Q 492 164 509 161 Q 554 151 603 125 Q 604 125 604 124 L 649 100 Q 710 66 800 -3 Q 825 -22 843 -21 Q 864 -20 864 -1 Q 863 20 833 64 Q 820 91 682 140 L 636 156 Q 588 174 553 182 Q 531 186 542 207 Q 557 241 569 266 L 585 301 Z" fill="#27AE60"/><path d="M 764 328 Q 755 340 734 347 Q 718 357 700 354 Q 690 351 694 337 Q 698 330 700 317 L 698 280 Q 692 232 636 156 L 604 124 Q 544 76 411 39 Q 396 32 414 29 Q 537 16 649 100 L 682 140 Q 719 191 742 257 Q 746 273 751 283 C 762 311 768 325 764 328 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>扌</span><span class="chip"><i style="background:#FF9800"></i>立</span><span class="chip"><i style="background:#27AE60"></i>女</span></div>
       <div class="vsup">补码 G（末笔横 · 左右结构）</div>
-      <div class="rule"><p>展开后共 3 个字根：</p><div><span style="color:#E74C3C">扌<span style="color:var(--muted);font-size:13px">（R）</span></span><span style="color:var(--muted);font-size:14px"> + </span><span style="color:#FF9800">立<span style="color:var(--muted);font-size:13px">（U）</span></span><span style="color:var(--muted);font-size:14px"> + </span><span style="color:#27AE60">女<span style="color:var(--muted);font-size:13px">（V）</span></span></div></div>
+      <div class="rule-ver">
+        <p>展开后共 3 个字根：</p>
+        <div class="rlist"><span class="ritem" style="color:#E74C3C">扌<span class="rletter">（R）</span></span><span class="rplus">+</span><span class="ritem" style="color:#FF9800">立<span class="rletter">（U）</span></span><span class="rplus">+</span><span class="ritem" style="color:#27AE60">女<span class="rletter">（V）</span></span></div>
+        <p>其中 妾 → 立 + 女，继续展开。</p>
+      </div>
     </div><div class="vcard">
-      <div class="vhead"><span class="vtag">98 版</span><span class="bcode"><span style="color:#E74C3C">R</span><span style="color:#FF9800">U</span><span style="color:#27AE60">V</span><span style="color:#2980B9">G</span></span></div>
-      <div class="glyphbox"><svg class="glyph" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="width:200px;height:200px"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 336 561 Q 357 568 380 573 Q 416 583 420 589 Q 429 596 424 605 Q 417 615 388 621 Q 361 625 338 615 L 287 596 Q 197 569 143 561 Q 109 552 134 538 Q 174 520 240 536 Q 261 542 286 548 L 336 561 Z" fill="#E74C3C"/><path d="M 281 357 Q 280 263 277 143 Q 276 121 263 111 Q 257 108 197 121 Q 164 134 167 125 Q 168 118 187 102 Q 245 50 259 21 Q 275 -13 290 -15 Q 303 -16 320 18 Q 339 64 339 138 Q 332 268 332 397 L 332 428 Q 332 495 336 561 L 338 615 Q 338 690 358 756 Q 374 787 320 809 Q 286 828 267 821 Q 249 815 265 792 Q 287 765 287 731 Q 288 715 287 596 L 286 548 Q 285 485 282 398 L 281 357 Z" fill="#E74C3C"/><path d="M 282 398 Q 90 281 77 277 Q 65 271 64 264 Q 63 255 77 243 Q 95 230 115 223 Q 130 219 139 230 Q 187 282 281 357 L 332 397 Q 353 415 375 429 Q 394 442 405 457 Q 411 469 401 468 Q 389 468 332 428 L 282 398 Z" fill="#E74C3C"/><path d="M 597 767 Q 624 746 651 721 Q 666 708 682 710 Q 692 711 697 724 Q 701 740 690 769 Q 684 788 654 800 Q 581 821 568 815 Q 564 811 565 798 Q 569 788 597 767 Z" fill="#FF9800"/><path d="M 718 641 Q 742 648 771 653 Q 813 663 819 670 Q 828 677 823 685 Q 816 695 790 702 Q 765 706 662 672 Q 518 644 508 642 Q 474 636 499 621 Q 535 602 600 616 Q 640 625 684 634 L 718 641 Z" fill="#FF9800"/><path d="M 514 552 Q 544 491 564 485 Q 574 481 583 495 Q 587 505 582 524 Q 573 551 523 573 Q 516 576 513 567 Q 510 560 514 552 Z" fill="#FF9800"/><path d="M 680 465 Q 692 480 729 550 Q 736 566 751 587 Q 764 599 756 609 Q 746 624 718 641 C 693 657 673 662 684 634 Q 684 633 686 629 Q 696 599 658 485 Q 654 470 652 459 C 646 430 662 441 680 465 Z" fill="#FF9800"/><path d="M 594 416 Q 678 432 836 452 Q 845 451 853 462 Q 854 472 835 481 Q 802 497 742 480 Q 711 474 680 465 L 652 459 Q 622 455 456 432 Q 431 429 450 415 Q 480 394 505 399 Q 527 405 555 408 L 594 416 Z" fill="#FF9800"/><path d="M 585 301 Q 604 349 619 369 Q 628 376 624 386 Q 620 398 594 416 C 570 434 550 438 555 408 Q 562 389 556 366 Q 546 327 535 294 L 522 258 Q 509 227 495 204 Q 485 186 489 174 Q 492 164 509 161 Q 554 151 603 125 Q 604 125 604 124 L 649 100 Q 710 66 800 -3 Q 825 -22 843 -21 Q 864 -20 864 -1 Q 863 20 833 64 Q 820 91 682 140 L 636 156 Q 588 174 553 182 Q 531 186 542 207 Q 557 241 569 266 L 585 301 Z" fill="#27AE60"/><path d="M 764 328 Q 755 340 734 347 Q 718 357 700 354 Q 690 351 694 337 Q 698 330 700 317 L 698 280 Q 692 232 636 156 L 604 124 Q 544 76 411 39 Q 396 32 414 29 Q 537 16 649 100 L 682 140 Q 719 191 742 257 Q 746 273 751 283 C 762 311 768 325 764 328 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
-      <div class="chips"><span class="chip" style="color:#E74C3C">扌</span><span class="chip" style="color:#FF9800">立</span><span class="chip" style="color:#27AE60">女</span></div>
+      <div class="vhead"><span class="vtag">98 版</span><span class="vcode">RUV<span class="supcode">G</span></span></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 336 561 Q 357 568 380 573 Q 416 583 420 589 Q 429 596 424 605 Q 417 615 388 621 Q 361 625 338 615 L 287 596 Q 197 569 143 561 Q 109 552 134 538 Q 174 520 240 536 Q 261 542 286 548 L 336 561 Z" fill="#E74C3C"/><path d="M 281 357 Q 280 263 277 143 Q 276 121 263 111 Q 257 108 197 121 Q 164 134 167 125 Q 168 118 187 102 Q 245 50 259 21 Q 275 -13 290 -15 Q 303 -16 320 18 Q 339 64 339 138 Q 332 268 332 397 L 332 428 Q 332 495 336 561 L 338 615 Q 338 690 358 756 Q 374 787 320 809 Q 286 828 267 821 Q 249 815 265 792 Q 287 765 287 731 Q 288 715 287 596 L 286 548 Q 285 485 282 398 L 281 357 Z" fill="#E74C3C"/><path d="M 282 398 Q 90 281 77 277 Q 65 271 64 264 Q 63 255 77 243 Q 95 230 115 223 Q 130 219 139 230 Q 187 282 281 357 L 332 397 Q 353 415 375 429 Q 394 442 405 457 Q 411 469 401 468 Q 389 468 332 428 L 282 398 Z" fill="#E74C3C"/><path d="M 597 767 Q 624 746 651 721 Q 666 708 682 710 Q 692 711 697 724 Q 701 740 690 769 Q 684 788 654 800 Q 581 821 568 815 Q 564 811 565 798 Q 569 788 597 767 Z" fill="#FF9800"/><path d="M 718 641 Q 742 648 771 653 Q 813 663 819 670 Q 828 677 823 685 Q 816 695 790 702 Q 765 706 662 672 Q 518 644 508 642 Q 474 636 499 621 Q 535 602 600 616 Q 640 625 684 634 L 718 641 Z" fill="#FF9800"/><path d="M 514 552 Q 544 491 564 485 Q 574 481 583 495 Q 587 505 582 524 Q 573 551 523 573 Q 516 576 513 567 Q 510 560 514 552 Z" fill="#FF9800"/><path d="M 680 465 Q 692 480 729 550 Q 736 566 751 587 Q 764 599 756 609 Q 746 624 718 641 C 693 657 673 662 684 634 Q 684 633 686 629 Q 696 599 658 485 Q 654 470 652 459 C 646 430 662 441 680 465 Z" fill="#FF9800"/><path d="M 594 416 Q 678 432 836 452 Q 845 451 853 462 Q 854 472 835 481 Q 802 497 742 480 Q 711 474 680 465 L 652 459 Q 622 455 456 432 Q 431 429 450 415 Q 480 394 505 399 Q 527 405 555 408 L 594 416 Z" fill="#FF9800"/><path d="M 585 301 Q 604 349 619 369 Q 628 376 624 386 Q 620 398 594 416 C 570 434 550 438 555 408 Q 562 389 556 366 Q 546 327 535 294 L 522 258 Q 509 227 495 204 Q 485 186 489 174 Q 492 164 509 161 Q 554 151 603 125 Q 604 125 604 124 L 649 100 Q 710 66 800 -3 Q 825 -22 843 -21 Q 864 -20 864 -1 Q 863 20 833 64 Q 820 91 682 140 L 636 156 Q 588 174 553 182 Q 531 186 542 207 Q 557 241 569 266 L 585 301 Z" fill="#27AE60"/><path d="M 764 328 Q 755 340 734 347 Q 718 357 700 354 Q 690 351 694 337 Q 698 330 700 317 L 698 280 Q 692 232 636 156 L 604 124 Q 544 76 411 39 Q 396 32 414 29 Q 537 16 649 100 L 682 140 Q 719 191 742 257 Q 746 273 751 283 C 762 311 768 325 764 328 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="#27AE60"/><path d="M 751 283 Q 802 286 928 287 Q 947 287 951 295 Q 955 305 941 319 Q 887 358 817 339 Q 792 335 764 328 L 700 317 Q 640 313 585 301 L 535 294 Q 451 285 363 273 Q 344 270 358 255 Q 371 242 388 237 Q 407 233 423 236 Q 469 249 522 258 L 569 266 Q 587 270 607 271 Q 647 278 698 280 L 751 283 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>扌</span><span class="chip"><i style="background:#FF9800"></i>立</span><span class="chip"><i style="background:#27AE60"></i>女</span></div>
       <div class="vsup">补码 G（末笔横 · 左右结构）</div>
-      <div class="rule"><p>展开后共 3 个字根：</p><div><span style="color:#E74C3C">扌<span style="color:var(--muted);font-size:13px">（R）</span></span><span style="color:var(--muted);font-size:14px"> + </span><span style="color:#FF9800">立<span style="color:var(--muted);font-size:13px">（U）</span></span><span style="color:var(--muted);font-size:14px"> + </span><span style="color:#27AE60">女<span style="color:var(--muted);font-size:13px">（V）</span></span></div></div>
-    </div></div>
+      <div class="rule-ver">
+        <p>展开后共 3 个字根：</p>
+        <div class="rlist"><span class="ritem" style="color:#E74C3C">扌<span class="rletter">（R）</span></span><span class="rplus">+</span><span class="ritem" style="color:#FF9800">立<span class="rletter">（U）</span></span><span class="rplus">+</span><span class="ritem" style="color:#27AE60">女<span class="rletter">（V）</span></span></div>
+        <p>其中 妾 → 立 + 女，继续展开。</p>
+      </div>
+    </div></div></div>
+
+  <h2>涉及的键位</h2>
+  <div class="keys"><div class="krow"><div class="kkey">R</div><div class="kbody"><details class="kv" open>
+        <summary><span class="kvtag">86 版</span><span class="kvname">白</span><span class="kvkouju">白手看头三二斤</span></summary>
+        <div class="kroots"><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-92"/></svg></span><span class="kroot">白</span><span class="kroot">斤</span><span class="kroot">扌</span><span class="kroot">手</span><span class="kroot">龵</span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-55"/></svg></span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-24"/></svg></span></div>
+      </details><details class="kv" open>
+        <summary><span class="kvtag">98 版</span><span class="kvname">白</span><span class="kvkouju">白斤气丘叉手提</span></summary>
+        <div class="kroots"><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-92"/></svg></span><span class="kroot">白</span><span class="kroot">斤</span><span class="kroot">扌</span><span class="kroot">龵</span><span class="kroot">手</span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-55"/></svg></span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-24"/></svg></span><span class="kroot diff">丘</span><span class="kroot diff">气</span><span class="kroot diff">乂</span><span class="kroot diff">㐅</span></div>
+      </details><details class="kv" open>
+        <summary><span class="kvtag">新世纪</span><span class="kvname">白</span><span class="kvkouju">白斤气头叉手提</span></summary>
+        <div class="kroots"><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-92"/></svg></span><span class="kroot">白</span><span class="kroot">斤</span><span class="kroot">扌</span><span class="kroot">龵</span><span class="kroot">手</span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-55"/></svg></span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-24"/></svg></span><span class="kroot diff">乂</span><span class="kroot diff">㐅</span></div>
+      </details></div></div><div class="krow"><div class="kkey">U</div><div class="kbody"><details class="kv" open>
+        <summary><span class="kvtag">86 版</span><span class="kvname">立</span><span class="kvkouju">立辛两点六门病</span></summary>
+        <div class="kroots"><span class="kroot">冫</span><span class="kroot">⺀</span><span class="kroot">丷</span><span class="kroot">立</span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-29"/></svg></span><span class="kroot diff">辛</span><span class="kroot">䒑</span><span class="kroot">丬</span><span class="kroot diff">六</span><span class="kroot">门</span><span class="kroot">門</span><span class="kroot">疒</span></div>
+      </details><details class="kv" open>
+        <summary><span class="kvtag">98 版</span><span class="kvname">立</span><span class="kvkouju">立辛六羊病门里</span></summary>
+        <div class="kroots"><span class="kroot">冫</span><span class="kroot">⺀</span><span class="kroot">丷</span><span class="kroot">立</span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-29"/></svg></span><span class="kroot diff">辛</span><span class="kroot">䒑</span><span class="kroot">丬</span><span class="kroot diff">爿</span><span class="kroot diff">六</span><span class="kroot">门</span><span class="kroot">門</span><span class="kroot">疒</span><span class="kroot diff">羊</span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-31"/></svg></span></div>
+      </details><details class="kv" open>
+        <summary><span class="kvtag">新世纪</span><span class="kvname">立</span><span class="kvkouju">立带两点病门里</span></summary>
+        <div class="kroots"><span class="kroot">冫</span><span class="kroot">⺀</span><span class="kroot">丷</span><span class="kroot">立</span><span class="kroot">䒑</span><span class="kroot">丬</span><span class="kroot">门</span><span class="kroot">疒</span><span class="kroot">門</span></div>
+      </details></div></div><div class="krow"><div class="kkey">V</div><div class="kbody"><details class="kv" open>
+        <summary><span class="kvtag">86 版</span><span class="kvname">女</span><span class="kvkouju">女刀九臼山向西</span></summary>
+        <div class="kroots"><span class="kroot">巛</span><span class="kroot">刀</span><span class="kroot">彐</span><span class="kroot">女</span><span class="kroot diff">臼</span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-82"/></svg></span><span class="kroot">九</span></div>
+      </details><details class="kv" open>
+        <summary><span class="kvtag">98 版</span><span class="kvname">女</span><span class="kvkouju">女刀九艮山西倒</span></summary>
+        <div class="kroots"><span class="kroot">巛</span><span class="kroot">刀</span><span class="kroot">彐</span><span class="kroot">女</span><span class="kroot">九</span><span class="kroot diff">艮</span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-12"/></svg></span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-18"/></svg></span></div>
+      </details><details class="kv" open>
+        <summary><span class="kvtag">新世纪</span><span class="kvname">女</span><span class="kvkouju">女刀九巡录无水</span></summary>
+        <div class="kroots"><span class="kroot">巛</span><span class="kroot">刀</span><span class="kroot">彐</span><span class="kroot">女</span><span class="kroot">九</span></div>
+      </details></div></div><div class="krow"><div class="kkey">G</div><div class="kbody"><details class="kv" open>
+        <summary><span class="kvtag">86 版</span><span class="kvname">王</span><span class="kvkouju">王旁青头戋五一</span></summary>
+        <div class="kroots"><span class="kroot">一</span><span class="kroot">㇀</span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-81"/></svg></span><span class="kroot">王</span><span class="kroot">龶</span><span class="kroot">戋</span><span class="kroot">五</span></div>
+      </details><details class="kv" open>
+        <summary><span class="kvtag">98 版</span><span class="kvname">王</span><span class="kvkouju">王旁青头五夫一</span></summary>
+        <div class="kroots"><span class="kroot">一</span><span class="kroot">㇀</span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-81"/></svg></span><span class="kroot">王</span><span class="kroot">龶</span><span class="kroot">戋</span><span class="kroot">五</span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-91"/></svg></span><span class="kroot diff">夫</span><span class="kroot diff">㐄</span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-17"/></svg></span></div>
+      </details><details class="kv" open>
+        <summary><span class="kvtag">新世纪</span><span class="kvname">王</span><span class="kvkouju">王旁青头五一提</span></summary>
+        <div class="kroots"><span class="kroot">一</span><span class="kroot">㇀</span><span class="kroot kfrag"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#5a6270;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-81"/></svg></span><span class="kroot">王</span><span class="kroot">龶</span><span class="kroot">戋</span><span class="kroot">五</span><span class="kroot kfrag diff"><svg class="frag" viewBox="0 0 1024 1024" width="26" height="26" style="color:#a5680f;vertical-align:-4px"><use href="../data/frag-sprite.svg#frag-91"/></svg></span></div>
+      </details></div></div></div>
+
   <h2>常用词组</h2>
-  <div class="words"><a class="word" href="../ci.html?w=%E6%8E%A5%E4%B8%8B%E6%9D%A5">接下来</a><a class="word" href="../ci.html?w=%E6%8E%A5%E7%9D%80">接着</a><a class="word" href="../ci.html?w=%E4%BA%A4%E6%8E%A5">交接</a><a class="word" href="../ci.html?w=%E6%8E%A5%E5%BA%94">接应</a><a class="word" href="../ci.html?w=%E6%8E%A5%E6%9B%BF">接替</a><a class="word" href="../ci.html?w=%E6%9D%A5%E6%8E%A5">来接</a><a class="word" href="../ci.html?w=%E6%8E%A5%E5%8A%9B">接力</a><a class="word" href="../ci.html?w=%E9%9D%92%E9%BB%84%E4%B8%8D%E6%8E%A5">青黄不接</a></div>
+  <div class="words"><a class="word" href="../ci.html?w=%E6%8E%A5%E4%B8%8B%E6%9D%A5" title="查看「接下来」的词组编码与拆分">接下来</a><a class="word" href="../ci.html?w=%E6%8E%A5%E7%9D%80" title="查看「接着」的词组编码与拆分">接着</a><a class="word" href="../ci.html?w=%E4%BA%A4%E6%8E%A5" title="查看「交接」的词组编码与拆分">交接</a><a class="word" href="../ci.html?w=%E6%8E%A5%E5%BA%94" title="查看「接应」的词组编码与拆分">接应</a><a class="word" href="../ci.html?w=%E6%8E%A5%E6%9B%BF" title="查看「接替」的词组编码与拆分">接替</a><a class="word" href="../ci.html?w=%E6%9D%A5%E6%8E%A5" title="查看「来接」的词组编码与拆分">来接</a><a class="word" href="../ci.html?w=%E6%8E%A5%E5%8A%9B" title="查看「接力」的词组编码与拆分">接力</a><a class="word" href="../ci.html?w=%E9%9D%92%E9%BB%84%E4%B8%8D%E6%8E%A5" title="查看「青黄不接」的词组编码与拆分">青黄不接</a></div>
+
   <h2>相关字</h2>
-  <div class="words"><a class="word" href="../char.html?c=%E6%8A%8A">把</a><a class="word" href="../char.html?c=%E6%89%8C">扌</a><a class="word" href="../char.html?c=%E6%89%A7">执</a><a class="word" href="../char.html?c=%E6%8E%92">排</a><a class="word" href="../char.html?c=%E6%89%8E">扎</a><a class="word" href="../char.html?c=%E6%89%91">扑</a><a class="word" href="../char.html?c=%E6%89%92">扒</a><a class="word" href="../char.html?c=%E6%89%93">打</a></div>
-  <div class="cta"><div><strong>想边看边学？</strong><br>在网页版里输入任意汉字，可以看到笔画着色、字根高亮和笔顺演示。</div><a class="primary" href="../">打开五笔查询 →</a></div>
+  <div class="rels"><a class="rel" href="../char.html?c=%E6%8A%8A" title="查看「把」的编码与拆分">把</a><a class="rel" href="../char.html?c=%E6%89%8C" title="查看「扌」的编码与拆分">扌</a><a class="rel" href="../char.html?c=%E6%89%A7" title="查看「执」的编码与拆分">执</a><a class="rel" href="../char.html?c=%E6%8E%92" title="查看「排」的编码与拆分">排</a><a class="rel" href="../char.html?c=%E6%89%8E" title="查看「扎」的编码与拆分">扎</a><a class="rel" href="../char.html?c=%E6%89%91" title="查看「扑」的编码与拆分">扑</a><a class="rel" href="../char.html?c=%E6%89%92" title="查看「扒」的编码与拆分">扒</a><a class="rel" href="../char.html?c=%E6%89%93" title="查看「打」的编码与拆分">打</a></div>
+
+  <h2>相关</h2>
+  <p class="links">
+    <a href="../">查其它字</a>
+    <a href="../">三版编码对照</a>
+    <a href="../">字根速查表</a>
+  </p>
+
+  <div class="cta">
+    <div>
+      <strong>想边看边学？</strong><br>
+      在网页版里输入任意汉字，可以看到笔画着色、字根高亮、笔顺演示和三版对比。
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="secondary" href="#" title="即将上线">下载练习册（即将上线）</a>
+      <a class="primary" href="https://wubi.iqiusuo.cn/">打开 wubi.iqiusuo.cn →</a>
+    </div>
+  </div>
 </main>
-<footer>数据来源：Rime 五笔码表 · 五笔 Make Me a Hanzi（笔画）</footer>
+<footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
 </body></html>

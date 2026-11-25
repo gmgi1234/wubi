@@ -101,6 +101,16 @@
   }
 
   // ---------- 词组页 ----------
+  function dashOnly(inner, color) {
+    return inner.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
+      const f = fill.toUpperCase();
+      if (f === '#FFF' || f === '#FFFFFF') return '';
+      const dMatch = (pre + post).match(/d="([^"]*)"/);
+      if (!dMatch) return '';
+      return '<path d="' + dMatch[1] + '" fill="none" stroke="' + color + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+  }
+
   function colorWhole(inner, color, nextColor) {
     let matchedSecondary = false;
     const out = inner.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
@@ -156,7 +166,11 @@
           const p = posOf(ci);
           if (p < 0) return svgWrap(recolor(g, 0, 0), 96);
           const isKey = (rec.keyIdx && rec.keyIdx[`${c}-${ver}`]);
-          return svgWrap(isKey ? colorWhole(g, PALETTE[p % 4], cntOf(ci) >= 2 ? PALETTE[(p + 1) % 4] : null) : recolor(g, p, cntOf(ci)), 96);
+          const isKeyName = (rec.keyName && rec.keyName[`${c}-${ver}`]);
+          if (isKeyName && cntOf(ci) >= 2) {
+            return svgWrap(colorWhole(g, PALETTE[p % 4], null), 96) + svgWrap(dashOnly(g, PALETTE[(p + 1) % 4]), 96);
+          }
+          return svgWrap(isKey ? colorWhole(g, PALETTE[p % 4], null) : recolor(g, p, cntOf(ci)), 96);
         }).join('');
         const rootsHtml = roots.map((r, i) => `<span style="color:${PALETTE[i % 4]}">${rootHtml(r, PALETTE[i % 4], 20)}</span>`).join('<span class="plus">+</span>');
         const codeHtml = code.split('').map((L, i) => `<span style="color:${PALETTE[i % 4]}">${esc(L)}</span>`).join('');

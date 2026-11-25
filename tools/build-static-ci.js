@@ -89,6 +89,17 @@ function recolor(svg, startPos, count) {
   });
 }
 
+function dashOnly(svg, color) {
+  if (!svg) return '';
+  return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
+    const f = fill.toUpperCase();
+    if (f === '#FFF' || f === '#FFFFFF') return '';
+    const dMatch = (pre + post).match(/d="([^"]*)"/);
+    if (!dMatch) return '';
+    return '<path d="' + dMatch[1] + '" fill="none" stroke="' + color + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
+  });
+}
+
 function colorWhole(svg, color, nextColor) {
   if (!svg) return '';
   let matchedSecondary = false;
@@ -148,6 +159,9 @@ const CSS = `
   .word { border:1px solid var(--line); border-radius:8px; padding:7px 14px; font-size:18px; color:var(--accent); text-decoration:none; background:#fff; }
   .cta { margin-top:30px; border:1px solid var(--line); border-radius:14px; padding:18px 22px; display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; background:#fff; }
   .cta a.primary { background:var(--accent); color:#fff; text-decoration:none; padding:10px 18px; border-radius:9px; }
+  .word-nav { display:flex; gap:14px; align-items:center; }
+  .word-nav a { color:var(--accent); text-decoration:none; }
+  .word-nav .dim { color:#cfc8bd; }
   footer { text-align:center; color:var(--muted); font-size:13px; padding:18px; }
   @media (max-width:640px){ h1{font-size:26px} main{padding:18px 14px 36px} svg.glyph{width:70px;height:70px} .vtag{width:44px} }
 `;
@@ -156,7 +170,10 @@ const ruleText = (n) => (n === 2 ? '双字词：每个字取前两码' : n === 3
   : n === 4 ? '四字词：每个字取首码' : '五字及以上：前三字各取首码，最后一字取首码');
 
 let n = 0;
-for (const w of keep) {
+for (let wi = 0; wi < keep.length; wi += 1) {
+  const w = keep[wi];
+  const prevW = keep[wi - 1] || null;
+  const nextW = keep[wi + 1] || null;
   const rec = byWord.get(w);
   if (!rec) continue;
   const chars = rec.chars;
@@ -171,8 +188,13 @@ for (const w of keep) {
         const p = posOf(ci);
         const g = glyph(c, ver);
         if (p < 0) return recolor(g, 0, 0);
-        const isKey = (tables[KEY_VER[ver]][c] || {}).r && (tables[KEY_VER[ver]][c].r[0] === c);
-        return isKey ? colorWhole(g, PALETTE[p % 4], cntOf(ci) >= 2 ? PALETTE[(p + 1) % 4] : null) : recolor(g, p, cntOf(ci));
+        const rArr = (tables[KEY_VER[ver]][c] || {}).r || [];
+        const isKeyName = rArr.length === 1 && rArr[0] === c;
+        const isKey = rArr[0] === c;
+        if (isKeyName && cntOf(ci) >= 2) {
+          return colorWhole(g, PALETTE[p % 4], null) + dashOnly(g, PALETTE[(p + 1) % 4]);
+        }
+        return isKey ? colorWhole(g, PALETTE[p % 4], null) : recolor(g, p, cntOf(ci));
       }).join('');
       const rootHtml = roots.map((r, i) => `<span style="color:${PALETTE[i % 4]}">${fragIcon(r, PALETTE[i % 4], 20)}</span>`).join('<span class="plus">+</span>');
       const codeHtml = code.split('').map((L, i) => `<span style="color:${PALETTE[i % 4]}">${esc(L)}</span>`).join('');
@@ -191,7 +213,7 @@ for (const w of keep) {
 <link rel="canonical" href="https://wubi.iqiusuo.cn/ci/${encodeURIComponent(w)}.html">
 <style>${CSS}</style>
 </head><body>
-<header><a href="../">五笔字根 · 笔画着色</a><span><a href="../char/">全部单字</a>　<a href="../ci/">全部词组</a></span></header>
+<header><a href="../">五笔字根 · 笔画着色</a><div class="word-nav">${prevW ? `<a class="nav" href="${encodeURIComponent(prevW)}.html">← ${esc(prevW)}</a>` : '<span class="nav dim">←</span>'}<a href="../ci/">全部词组</a>${nextW ? `<a class="nav" href="${encodeURIComponent(nextW)}.html">${esc(nextW)} →</a>` : '<span class="nav dim">→</span>'}</div></header>
 <main>
   <h1>「${esc(w)}」的五笔编码与拆分</h1>
   <div class="sub">${len} 字词 · 三版编码对照</div>
