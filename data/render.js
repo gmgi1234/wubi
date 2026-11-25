@@ -150,6 +150,8 @@
        <p>${rule}：${rec.r86.map((r, i) => `${esc(r)}（${esc(rec.c86[i] || '')}）`).join(' + ')} → <strong>${esc(rec.c86)}</strong></p></div>
        <h2>单字拆分</h2>
        <div class="chars">${rec.ch.map((c) => `<a class="ch" href="char.html?c=${encodeURIComponent(c)}">${esc(c)}</a>`).join('')}</div>
+       <h2>相关词组</h2>
+       <div class="words">${(rec.rel || []).length ? rec.rel.map((w) => `<a class="word" href="ci.html?w=${encodeURIComponent(w)}">${esc(w)}</a>`).join('') : '<span style="color:var(--muted)">暂无</span>'}</div>
        <div class="cta"><div><strong>想边看边学？</strong><br>在网页版里输入任意汉字，可以看到笔画着色、字根高亮和笔顺演示。</div><a class="primary" href="./">打开五笔查询 →</a></div>`);
   }
 

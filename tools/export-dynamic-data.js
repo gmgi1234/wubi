@@ -103,6 +103,17 @@ function wordRootsOf(chars, v) {
   return [R[0][0], R[1][0], R[2][0], R[n - 1][0]];
 }
 
+// 相关词组：同首字的其他词（最多 10 个，短的优先）
+const byFirst = new Map();
+for (const w of wordSet.keys()) {
+  const k = [...w][0];
+  if (!byFirst.has(k)) byFirst.set(k, []);
+  byFirst.get(k).push(w);
+}
+for (const arr of byFirst.values()) {
+  arr.sort((a, b) => [...a].length - [...b].length || a.localeCompare(b));
+}
+
 for (const [w, base] of wordSet) {
   const chars = [...w];
   const rec = base || {
@@ -116,10 +127,12 @@ for (const [w, base] of wordSet) {
     r06: wordRootsOf(chars, 'v06'),
   };
   if (!rec.c86 || !rec.c06) continue;
+  const peers = (byFirst.get(chars[0]) || []).filter((x) => x !== w).slice(0, 10);
   wordBuckets[bucketOf(chars[0])][w] = {
     w, ch: rec.chars,
     c86: rec.c86, c98: rec.c98, c06: rec.c06,
     r86: rec.r86, r98: rec.r98, r06: rec.r06,
+    rel: peers,
   };
 }
 
