@@ -13,6 +13,7 @@ const tables = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'tables.json'
 const meta = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'char-meta.json'), 'utf8'));
 const words = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'words.json'), 'utf8'));
 const pinyin = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'pinyin-map.json'), 'utf8'));
+const ranking = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'char-ranking.json'), 'utf8'));
 
 const VER = { '86': 'v86', '98': 'v98', '06': 'v06' };
 const BUCKETS = 64;
@@ -151,6 +152,21 @@ for (let b = 0; b < BUCKETS; b++) {
 // 兼容：整包索引（不推荐加载，保留给离线/调试）
 fs.writeFileSync(path.join(OUT, 'word-index.js'), 'window.WORD_INDEX=' + JSON.stringify(allWords) + ';', 'utf8');
 console.log('word index:', allWords.length, '| buckets:', BUCKETS);
+
+// 单字检索索引：[字, 拼音] 全量，约 100 KB，一次加载即可
+const rankOf = new Map(ranking.map((c, i) => [c, i]));
+const charIdx = [];
+for (const b of charBuckets) {
+  for (const [c, rec] of Object.entries(b)) {
+    const plain = String(rec.py || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    charIdx.push([c, plain]);
+  }
+}
+// 按常用度排序，检索结果里常用字优先
+charIdx.sort((a, b) => (rankOf.has(a[0]) ? rankOf.get(a[0]) : 1e6) - (rankOf.has(b[0]) ? rankOf.get(b[0]) : 1e6));
+fs.writeFileSync(path.join(OUT, 'char-idx.js'), 'window.CHAR_IDX=' + JSON.stringify(charIdx) + ';', 'utf8');
+console.log('char index:', charIdx.length, '| KB:', Math.round(fs.statSync(path.join(OUT, 'char-idx.js')).size / 1024));
+
 let chars = 0;
 let ws = 0;
 for (let b = 0; b < BUCKETS; b++) {
