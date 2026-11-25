@@ -1303,6 +1303,26 @@ html.theme-light .wubi-version-btn.active {
     border-color: #4caf50 !important;
 }
 
+/* 无法直接打出的字根：用字根字体的私用区字形显示 */
+@font-face {
+    font-family: 'ZiGen';
+    src: url('fonts/zigen.ttf') format('truetype');
+    font-display: swap;
+}
+.zigen { font-family: 'ZiGen', 'KaiTi', '楷体', serif; font-size: 1.2em; line-height: 1; }
+/* 字根片段：用这个字自己的笔画现画 */
+.root-name svg.frag {
+    width: 30px; height: 30px; vertical-align: -7px; margin-right: 6px;
+    background: transparent; border-radius: 5px; box-shadow: none;
+    padding: 2px;
+}
+/* 行内小图（「字根：」行、键盘提示）统一按字号缩放并垂直对齐，避免高低不平 */
+.root-table-line svg.frag, .key-hint svg.frag, .root-kouju svg.frag {
+    width: 1.05em; height: 1.05em; vertical-align: -0.2em; margin: 0 1px;
+    display: inline-block; flex: none;
+}
+.key-hint svg.frag { vertical-align: -0.16em; }
+
 </style>
 </head>
 <body>
@@ -1621,6 +1641,8 @@ html.theme-light .wubi-version-btn.active {
 </div>
 
 
+<script src="data/root-glyphs.js"></script>
+<script src="data/root-pua.js"></script>
 <script src="dist/app.js"></script>
 </div>
 <!-- ==================== 打印涂色卡片模块（左：字根着色参考 / 右：轮廓涂色） ==================== -->
