@@ -1,0 +1,13 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const ROOT = 'D:/Users/10061/Downloads/wubi';
+const tables = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'tables.json'), 'utf8'));
+const w = '良莠不齐';
+const chars = [...w];
+console.log('chars:', chars, 'len', chars.length);
+for (const c of chars) console.log(c, (tables.v86[c] || {}).c, (tables.v06[c] || {}).c);
+const codes = chars.map((c) => ((tables.v86[c] || {}).c) || '');
+console.log('codes:', codes);
+const n = chars.length;
+const c86 = n === 4 ? codes.map((x) => x[0]).join('') : 'n/a';
+console.log('c86:', c86, '| bucket:', chars[0].charCodeAt(0) % 64);

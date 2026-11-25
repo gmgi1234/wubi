@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const ROOT = 'D:/Users/10061/Downloads/wubi';
-const OUT = path.join(ROOT, 'site', 'data');
+const OUT = path.join(ROOT, 'data');
 fs.mkdirSync(OUT, { recursive: true });
 
 const tables = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'tables.json'), 'utf8'));
@@ -65,11 +65,61 @@ for (const ch of Object.keys(tables.v86)) {
   charBuckets[bucketOf(ch)][ch] = rec;
 }
 
-for (const it of words) {
-  wordBuckets[bucketOf(it.chars[0])][it.w] = {
-    w: it.w, ch: it.chars,
-    c86: it.c86, c98: it.c98, c06: it.c06,
-    r86: it.r86, r98: it.r98, r06: it.r06,
+// 词组：常用词 + 单字页上出现的所有词 + 之前生成过的全部词组页
+const wordSet = new Map(words.map((x) => [x.w, x]));
+const pagesList = path.join(ROOT, 'tools', 'word-pages.json');
+if (fs.existsSync(pagesList)) {
+  for (const w of JSON.parse(fs.readFileSync(pagesList, 'utf8'))) {
+    if (!wordSet.has(w)) wordSet.set(w, null);
+  }
+}
+for (const md of Object.values(meta)) {
+  for (const w of md.words || []) {
+    if (wordSet.has(w)) continue;
+    const chars = [...w];
+    if (chars.length < 2 || chars.length > 6) continue;
+    if (!chars.every((c) => (tables.v86[c] || {}).c && (tables.v06[c] || {}).c)) continue;
+    wordSet.set(w, null);
+  }
+}
+
+function wordCode(chars, v) {
+  const codes = chars.map((c) => ((tables[v] || {})[c] || {}).c || '');
+  if (codes.some((x) => !x)) return '';
+  const n = chars.length;
+  if (n === 2) return codes[0].slice(0, 2) + codes[1].slice(0, 2);
+  if (n === 3) return codes[0][0] + codes[1][0] + codes[2].slice(0, 2);
+  if (n === 4) return codes.map((x) => x[0]).join('');
+  return codes[0][0] + codes[1][0] + codes[2][0] + codes[n - 1][0];
+}
+
+function wordRootsOf(chars, v) {
+  const R = chars.map((c) => expandRoots(v, ((tables[v] || {})[c] || {}).r || []));
+  if (R.some((r) => !r.length)) return [];
+  const n = chars.length;
+  if (n === 2) return [...R[0].slice(0, 2), ...R[1].slice(0, 2)];
+  if (n === 3) return [R[0][0], R[1][0], ...R[2].slice(0, 2)];
+  if (n === 4) return R.map((r) => r[0]);
+  return [R[0][0], R[1][0], R[2][0], R[n - 1][0]];
+}
+
+for (const [w, base] of wordSet) {
+  const chars = [...w];
+  const rec = base || {
+    w,
+    chars,
+    c86: wordCode(chars, 'v86'),
+    c98: wordCode(chars, 'v98'),
+    c06: wordCode(chars, 'v06'),
+    r86: wordRootsOf(chars, 'v86'),
+    r98: wordRootsOf(chars, 'v98'),
+    r06: wordRootsOf(chars, 'v06'),
+  };
+  if (!rec.c86 || !rec.c06) continue;
+  wordBuckets[bucketOf(chars[0])][w] = {
+    w, ch: rec.chars,
+    c86: rec.c86, c98: rec.c98, c06: rec.c06,
+    r86: rec.r86, r98: rec.r98, r06: rec.r06,
   };
 }
 
