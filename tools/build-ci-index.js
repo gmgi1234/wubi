@@ -12,6 +12,9 @@ for (const f of fs.readdirSync(DATA).filter((x) => x.startsWith('word-idx-') && 
   if (m) totalWords += JSON.parse(m[1]).length;
 }
 
+const staticWords = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'keep-words.json'), 'utf8'));
+const STATIC_SET = JSON.stringify(staticWords);
+
 const counts = {};
 for (const f of fs.readdirSync(DATA).filter((x) => /^word-len-\d+\.js$/.test(x))) {
   const n = Number(f.match(/\d+/)[0]);
@@ -68,6 +71,7 @@ const html = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
   var input=document.getElementById('q'), box=document.getElementById('results'), hint=document.getElementById('hint');
   var moreBtn=document.getElementById('more'), tabs=document.getElementById('tabs');
   var cache={}, list=[], shown=0, mode='len', PAGE=300, curN=2;
+  var STATIC=new Set(${STATIC_SET});
 
   function load(res){
     if(cache[res]){ onload(res); return; }
@@ -100,7 +104,7 @@ const html = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
     if(reset){ box.innerHTML=''; shown=0; }
     var slice=list.slice(shown, shown+PAGE);
     box.insertAdjacentHTML('beforeend', slice.map(function(w){
-      return '<a href="../ci.html?w='+encodeURIComponent(w)+'">'+w+'</a>';
+      return '<a href="'+(STATIC.has(w)?encodeURIComponent(w)+'.html':'../ci.html?w='+encodeURIComponent(w))+'">'+w+'</a>';
     }).join(''));
     shown += slice.length;
     moreBtn.style.display = shown < list.length ? 'block' : 'none';
