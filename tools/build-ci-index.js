@@ -1,83 +1,136 @@
-// 生成词组目录页：带检索（加载 1MB 词条索引），下面按字数列静态页
+// 生成词组目录页：分类浏览（按字数）+ 检索
 const fs = require('node:fs');
 const path = require('node:path');
 
 const ROOT = 'D:/Users/10061/Downloads/wubi';
 const CI = path.join(ROOT, 'ci');
-const keep = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'keep-words.json'), 'utf8'));
+const DATA = path.join(ROOT, 'data');
 
-// 词条总数：直接数检索桶
 let totalWords = 0;
-for (const f of fs.readdirSync(path.join(ROOT, 'data')).filter((x) => x.startsWith('word-idx-') && x.endsWith('.js'))) {
-  const m = fs.readFileSync(path.join(ROOT, 'data', f), 'utf8').match(/=(\[[\s\S]*\]);?$/);
+for (const f of fs.readdirSync(DATA).filter((x) => x.startsWith('word-idx-') && x.endsWith('.js'))) {
+  const m = fs.readFileSync(path.join(DATA, f), 'utf8').match(/=(\[[\s\S]*\]);?$/);
   if (m) totalWords += JSON.parse(m[1]).length;
 }
 
-const groups = [[2, '双字词'], [3, '三字词'], [4, '四字词'], [5, '五字词'], [6, '六字词及更长']];
-const byLen = new Map(groups.map(([n]) => [n, []]));
-for (const w of keep) {
-  const n = Math.min([...w].length, 6);
-  if (byLen.has(n)) byLen.get(n).push(w);
+const counts = {};
+for (const f of fs.readdirSync(DATA).filter((x) => /^word-len-\d+\.js$/.test(x))) {
+  const n = Number(f.match(/\d+/)[0]);
+  const m = fs.readFileSync(path.join(DATA, f), 'utf8').match(/=(\[[\s\S]*\]);?$/);
+  counts[n] = m ? JSON.parse(m[1]).length : 0;
 }
-
-const sections = groups.map(([n, label]) => {
-  const list = byLen.get(n) || [];
-  if (!list.length) return '';
-  return `<h2>${label}（${list.length}）</h2>
-  <div class="grid">${list.map((w) => `<a href="${encodeURIComponent(w)}.html">${w}</a>`).join('')}</div>`;
-}).join('\n');
+const longCount = Object.entries(counts).filter(([n]) => Number(n) >= 6).reduce((s, [, c]) => s + c, 0);
 
 const html = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>全部词组页 · 五笔编码与拆分 · 五笔字根</title>
-<meta name="description" content="按字数分类的五笔词组页，包含 86/98/新世纪三版编码与字根拆分；支持输入检索。">
+<meta name="description" content="五笔词组按字数分类浏览：双字词、三字词、四字词、五字词及更长；支持输入检索，每页含 86/98/新世纪三版编码与字根拆分。">
 <style>
  body{margin:0;background:#fbf7ef;color:#2a2320;font-family:'KaiTi','楷体',serif}
  main{max-width:1000px;margin:0 auto;padding:24px 18px 60px}
  h1{font-size:28px;margin:0 0 6px} .sub{color:#8a7b6c;margin-bottom:14px}
- h2{font-size:18px;margin:26px 0 10px;color:#a33c2f}
+ h2{font-size:18px;margin:24px 0 10px;color:#a33c2f}
+ .search{display:flex;gap:10px;margin:14px 0 6px}
+ .search input{flex:1;font-size:18px;padding:10px 14px;border:1px solid #e6dcc9;border-radius:10px;background:#fffdf8;font-family:inherit}
+ .hint{color:#8a7b6c;font-size:14px;margin-bottom:10px}
+ .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 12px}
+ .tabs button{font-family:inherit;font-size:16px;padding:8px 16px;border:1px solid #e6dcc9;border-radius:999px;background:#fffdf8;color:#2a2320;cursor:pointer}
+ .tabs button.on{background:#a33c2f;color:#fff;border-color:#a33c2f}
  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
  .grid a{display:block;text-align:center;padding:8px 6px;border:1px solid #e6dcc9;border-radius:8px;background:#fffdf8;color:#2a2320;text-decoration:none;font-size:17px}
  .grid a:hover{border-color:#a33c2f;color:#a33c2f}
- .search{display:flex;gap:10px;margin:16px 0 8px}
- .search input{flex:1;font-size:18px;padding:10px 14px;border:1px solid #e6dcc9;border-radius:10px;background:#fffdf8;font-family:inherit}
- .search button{font-size:16px;padding:10px 18px;border:0;border-radius:10px;background:#a33c2f;color:#fff;cursor:pointer}
- .hint{color:#8a7b6c;font-size:14px;margin-bottom:10px}
- .note{background:#fff;border:1px solid #e6dcc9;border-radius:10px;padding:12px 16px;font-size:14px;color:#6b5c4c}
+ .more{margin:18px auto;display:block;font-family:inherit;font-size:16px;padding:9px 22px;border:1px solid #a33c2f;border-radius:999px;background:#fff;color:#a33c2f;cursor:pointer}
+ .note{background:#fff;border:1px solid #e6dcc9;border-radius:10px;padding:12px 16px;font-size:14px;color:#6b5c4c;margin-top:16px}
  a.nav{color:#a33c2f;text-decoration:none}
 </style></head><body><main>
 <h1>全部词组页</h1>
-<div class="sub">共 ${totalWords.toLocaleString()} 条词组 · 检索全部 · 下面按字数列出 ${keep.length} 个静态页</div>
+<div class="sub">共 ${totalWords.toLocaleString()} 条词组 · 可按字数分类浏览 · 也能直接输入检索</div>
 
 <div class="search">
   <input id="q" type="search" placeholder="输入词语或单字，例如：中国、天安门、良莠不齐" autocomplete="off">
 </div>
-<div class="hint" id="hint">输入即检索，结果显示在下方</div>
+<div class="hint" id="hint">输入即检索；不输入就按下面的字数分类浏览</div>
+
+<div class="tabs" id="tabs">
+  <button data-n="2" class="on">双字词 ${counts[2] || 0}</button>
+  <button data-n="3">三字词 ${counts[3] || 0}</button>
+  <button data-n="4">四字词 ${counts[4] || 0}</button>
+  <button data-n="5">五字词 ${counts[5] || 0}</button>
+  <button data-n="6">六字及以上 ${longCount}</button>
+</div>
+
 <div class="grid" id="results"></div>
+<button class="more" id="more" style="display:none">加载更多</button>
 
 <div class="note">找不到的词，回 <a class="nav" href="../">查询页</a> 输入，或直接访问 <code>ci.html?w=词</code>。</div>
-${sections}
 </main>
 <script>
 (function(){
   var input=document.getElementById('q'), box=document.getElementById('results'), hint=document.getElementById('hint');
-  var waiting={};
+  var moreBtn=document.getElementById('more'), tabs=document.getElementById('tabs');
+  var cache={}, list=[], shown=0, mode='len', PAGE=300, curN=2;
+
+  function load(res){
+    if(cache[res]){ onload(res); return; }
+    if(res.busy){ setTimeout(function(){load(res)},120); return; }
+    res.busy=true;
+    hint.textContent='正在加载词条…';
+    var s=document.createElement('script'); s.src=res.src;
+    s.onload=function(){ res.busy=false; onload(res); };
+    s.onerror=function(){ hint.textContent='词库加载失败，请刷新重试'; };
+    document.head.appendChild(s);
+  }
+  function onload(res){ res.cb(res.data()); }
+
+  function fetchLen(n, cb){
+    if(n<6){
+      load({ key:'len'+n, src:'../data/word-len-'+n+'.js', data:function(){ return window['WORD_LEN_'+n]||[] }, cb:cb });
+      return;
+    }
+    var nums=[6,7,8,9,10,11,12], out=[], pending=nums.length;
+    nums.forEach(function(k){
+      load({ key:'len'+k, src:'../data/word-len-'+k+'.js', data:function(){ return window['WORD_LEN_'+k]||[] }, cb:function(arr){
+        out=out.concat(arr);
+        pending-=1;
+        if(pending===0){ out.sort(function(a,b){return a.localeCompare(b)}); cb(out); }
+      }});
+    });
+  }
+
+  function paint(reset){
+    if(reset){ box.innerHTML=''; shown=0; }
+    var slice=list.slice(shown, shown+PAGE);
+    box.insertAdjacentHTML('beforeend', slice.map(function(w){
+      return '<a href="../ci.html?w='+encodeURIComponent(w)+'">'+w+'</a>';
+    }).join(''));
+    shown += slice.length;
+    moreBtn.style.display = shown < list.length ? 'block' : 'none';
+    hint.textContent = '共 ' + list.length + ' 条，已显示 ' + shown + ' 条';
+  }
+
+  function showLen(n){
+    mode='len'; curN=n; list=[]; shown=0; box.innerHTML=''; moreBtn.style.display='none';
+    fetchLen(n, function(arr){ list=arr; paint(true); });
+  }
+
+  moreBtn.onclick=function(){ paint(false) };
+
+  tabs.addEventListener('click', function(e){
+    var t=e.target.closest('button'); if(!t) return;
+    [].forEach.call(tabs.children, function(b){ b.classList.toggle('on', b===t) });
+    input.value='';
+    showLen(Number(t.getAttribute('data-n')));
+  });
+
+  // 检索：按首字分桶
   function loadBucket(ch, cb){
     var b=ch.charCodeAt(0)%64, key='WORD_IDX_'+b;
     if(window[key]){cb(window[key]);return}
-    if(waiting[b]){waiting[b].push(cb);return}
-    waiting[b]=[cb];
-    hint.textContent='正在加载「'+ch+'」开头的词…';
-    var s=document.createElement('script'); s.src='../data/word-idx-'+b+'.js';
-    s.onload=function(){
-      var arr=window[key]||[];
-      waiting[b].forEach(function(f){f(arr)}); waiting[b]=null;
-    };
-    s.onerror=function(){ hint.textContent='词库加载失败，请刷新重试'; waiting[b]=null; };
-    document.head.appendChild(s);
+    load({ key:'idx'+b, src:'../data/word-idx-'+b+'.js', data:function(){ return window[key]||[] }, cb:function(arr){ setIdx(b,arr); cb(arr); } });
   }
-  function render(q){
-    if(!q){ box.innerHTML=''; hint.textContent='输入即检索，结果显示在下方'; return; }
+  function setIdx(b,arr){ window['WORD_IDX_'+b]=arr; }
+
+  function search(q){
+    mode='search';
     loadBucket(q[0], function(arr){
       var starts=[], has=[];
       for(var i=0;i<arr.length;i++){
@@ -85,21 +138,23 @@ ${sections}
         if(w.indexOf(q)===0) starts.push(w);
         else if(w.indexOf(q)>0) has.push(w);
       }
-      var list=starts.concat(has).slice(0,120);
-      box.innerHTML=list.map(function(w){
-        return '<a href="../ci.html?w='+encodeURIComponent(w)+'">'+w+'</a>';
-      }).join('');
-      hint.textContent = list.length ? ('找到 '+list.length+' 个（最多显示 120）') : ('没有以「'+q[0]+'」开头并匹配的词');
+      list=starts.concat(has).slice(0,200);
+      paint(true);
+      if(!list.length) hint.textContent='没有以「'+q[0]+'」开头并匹配的词';
     });
   }
+
   var t=null;
-  input.addEventListener('input',function(){
+  input.addEventListener('input', function(){
     var q=input.value.trim();
-    clearTimeout(t); t=setTimeout(function(){render(q)},150);
+    clearTimeout(t);
+    t=setTimeout(function(){ if(!q){ showLen(curN); } else { search(q); } }, 180);
   });
+
+  showLen(2);
 })();
 </script>
 </body></html>`;
 
 fs.writeFileSync(path.join(CI, 'index.html'), html, 'utf8');
-console.log('ci/index.html written with search, static words:', keep.length);
+console.log('ci/index.html written (tabs + search). counts:', JSON.stringify(counts));

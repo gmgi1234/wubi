@@ -192,6 +192,25 @@ for (const b of charBuckets) {
 // 按常用度排序，检索结果里常用字优先
 charIdx.sort((a, b) => (rankOf.has(a[0]) ? rankOf.get(a[0]) : 1e6) - (rankOf.has(b[0]) ? rankOf.get(b[0]) : 1e6));
 fs.writeFileSync(path.join(OUT, 'char-idx.js'), 'window.CHAR_IDX=' + JSON.stringify(charIdx) + ';', 'utf8');
+
+const wordRank = new Map(words.map((x, i) => [x.w, i]));
+const freqRank = (w) => (wordRank.has(w) ? wordRank.get(w) : 1e6);
+
+// 按字数分类的词表：word-len-<n>.js（n = 2..12）
+const byLen = new Map();
+for (const w of allWords) {
+  const n = [...w].length;
+  if (!byLen.has(n)) byLen.set(n, []);
+  byLen.get(n).push(w);
+}
+const lenSummary = [];
+for (const [n, arr] of [...byLen.entries()].sort((a, b) => a[0] - b[0])) {
+  arr.sort((x, y) => freqRank(x) - freqRank(y) || x.localeCompare(y));
+  fs.writeFileSync(path.join(OUT, `word-len-${n}.js`), `window.WORD_LEN_${n}=` + JSON.stringify(arr) + ';', 'utf8');
+  lenSummary.push(n + ':' + arr.length);
+}
+console.log('word lengths:', lenSummary.join(' | '));
+
 console.log('char index:', charIdx.length, '| KB:', Math.round(fs.statSync(path.join(OUT, 'char-idx.js')).size / 1024));
 
 let chars = 0;
