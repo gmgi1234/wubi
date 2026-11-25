@@ -43,7 +43,7 @@
     if (md) md.setAttribute('content', desc);
     const app = document.getElementById('app');
     app.innerHTML = `<style>${CSS}</style>
-      <header><a href="./">五笔字根 · 笔画着色</a><a href="char/">全部单字</a></header>
+      <header><a href="./">五笔字根 · 笔画着色</a><span><a href="char/">全部单字</a>　<a href="ci/">全部词组</a></span></header>
       <main>${body}</main>
       <footer>数据来源：Rime 五笔码表 · 五笔 Make Me a Hanzi（笔画）</footer>`;
   }
