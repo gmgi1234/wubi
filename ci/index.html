@@ -37,38 +37,41 @@
 <script>
 (function(){
   var input=document.getElementById('q'), box=document.getElementById('results'), hint=document.getElementById('hint');
-  var data=null, loading=false, pending='';
-  function load(cb){
-    if(data){cb();return}
-    if(loading){setTimeout(function(){load(cb)},120);return}
-    loading=true; hint.textContent='正在加载词库…';
-    var s=document.createElement('script'); s.src='../data/word-index.js';
-    s.onload=function(){ data=window.WORD_INDEX||[]; hint.textContent='词库已就绪，共 '+data.length+' 条'; cb(); };
-    s.onerror=function(){ hint.textContent='词库加载失败，请刷新重试'; };
+  var waiting={};
+  function loadBucket(ch, cb){
+    var b=ch.charCodeAt(0)%64, key='WORD_IDX_'+b;
+    if(window[key]){cb(window[key]);return}
+    if(waiting[b]){waiting[b].push(cb);return}
+    waiting[b]=[cb];
+    hint.textContent='正在加载「'+ch+'」开头的词…';
+    var s=document.createElement('script'); s.src='../data/word-idx-'+b+'.js';
+    s.onload=function(){
+      var arr=window[key]||[];
+      waiting[b].forEach(function(f){f(arr)}); waiting[b]=null;
+    };
+    s.onerror=function(){ hint.textContent='词库加载失败，请刷新重试'; waiting[b]=null; };
     document.head.appendChild(s);
   }
   function render(q){
     if(!q){ box.innerHTML=''; hint.textContent='输入即检索，结果显示在下方'; return; }
-    load(function(){
-      var starts=[], contains=[];
-      for(var i=0;i<data.length;i++){
-        var w=data[i];
-        if(w===q) starts.unshift(w);
-        else if(w.indexOf(q)===0) starts.push(w);
-        else if(w.indexOf(q)>0) contains.push(w);
-        if(starts.length>=120) break;
+    loadBucket(q[0], function(arr){
+      var starts=[], has=[];
+      for(var i=0;i<arr.length;i++){
+        var w=arr[i];
+        if(w.indexOf(q)===0) starts.push(w);
+        else if(w.indexOf(q)>0) has.push(w);
       }
-      var list=starts.concat(contains).slice(0,120);
+      var list=starts.concat(has).slice(0,120);
       box.innerHTML=list.map(function(w){
         return '<a href="../ci.html?w='+encodeURIComponent(w)+'">'+w+'</a>';
       }).join('');
-      hint.textContent = list.length ? ('找到 '+list.length+' 个（最多显示 120）') : '没有匹配的词，试试别的';
+      hint.textContent = list.length ? ('找到 '+list.length+' 个（最多显示 120）') : ('没有以「'+q[0]+'」开头并匹配的词');
     });
   }
   var t=null;
   input.addEventListener('input',function(){
-    pending=input.value.trim();
-    clearTimeout(t); t=setTimeout(function(){render(pending)},180);
+    var q=input.value.trim();
+    clearTimeout(t); t=setTimeout(function(){render(q)},150);
   });
 })();
 </script>

@@ -137,13 +137,20 @@ for (const [w, base] of wordSet) {
 }
 
 let total = 0;
-// 检索索引：只存词条本身，体积小、可整包加载
+// 检索索引：按首字分 64 桶，每个桶只有词条，页面按需加载（每桶约 15 KB）
+const idxBuckets = Array.from({ length: BUCKETS }, () => []);
 const allWords = [...wordSet.keys()].filter((w) => {
   const b = bucketOf([...w][0]);
   return !!wordBuckets[b][w];
 });
+for (const w of allWords) idxBuckets[bucketOf([...w][0])].push(w);
+for (let b = 0; b < BUCKETS; b++) {
+  idxBuckets[b].sort((a, c) => a.localeCompare(c));
+  fs.writeFileSync(path.join(OUT, `word-idx-${b}.js`), `window.WORD_IDX_${b}=` + JSON.stringify(idxBuckets[b]) + ';', 'utf8');
+}
+// 兼容：整包索引（不推荐加载，保留给离线/调试）
 fs.writeFileSync(path.join(OUT, 'word-index.js'), 'window.WORD_INDEX=' + JSON.stringify(allWords) + ';', 'utf8');
-console.log('word index:', allWords.length, '| MB:', (fs.statSync(path.join(OUT, 'word-index.js')).size / 1048576).toFixed(1));
+console.log('word index:', allWords.length, '| buckets:', BUCKETS);
 let chars = 0;
 let ws = 0;
 for (let b = 0; b < BUCKETS; b++) {
