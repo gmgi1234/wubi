@@ -22,16 +22,21 @@ const staticWordUrls = [...keepWords].map((w) => `${SITE}/ci/${encodeURIComponen
 const dynWordUrls = words.filter((x) => !keepWords.has(x.w)).map((x) => `${SITE}/ci.html?w=${encodeURIComponent(x.w)}`);
 
 fs.writeFileSync(path.join(ROOT, 'char/sitemap-char-static.xml'), urlset(staticCharUrls), 'utf8');
-fs.writeFileSync(path.join(ROOT, 'char/sitemap-char-dyn.xml'), urlset(dynCharUrls), 'utf8');
 fs.writeFileSync(path.join(ROOT, 'ci/sitemap-ci-static.xml'), urlset(staticWordUrls), 'utf8');
-fs.writeFileSync(path.join(ROOT, 'ci/sitemap-ci-dyn.xml'), urlset(dynWordUrls), 'utf8');
+// 动态词组超过 5 万条，按 45,000 条切分（百度单文件上限）
+const CHUNK = 45000;
+const dynParts = [];
+for (let i = 0; i < Math.max(1, Math.ceil(dynWordUrls.length / CHUNK)); i += 1) {
+  const part = path.join(ROOT, `ci/sitemap-ci-dyn-${i + 1}.xml`);
+  fs.writeFileSync(part, urlset(dynWordUrls.slice(i * CHUNK, (i + 1) * CHUNK)), 'utf8');
+  dynParts.push(`${SITE}/ci/sitemap-ci-dyn-${i + 1}.xml`);
+}
 
 const index = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap><loc>${SITE}/char/sitemap-char-static.xml</loc></sitemap>
-  <sitemap><loc>${SITE}/char/sitemap-char-dyn.xml</loc></sitemap>
   <sitemap><loc>${SITE}/ci/sitemap-ci-static.xml</loc></sitemap>
-  <sitemap><loc>${SITE}/ci/sitemap-ci-dyn.xml</loc></sitemap>
+${dynParts.map((u) => `  <sitemap><loc>${u}</loc></sitemap>`).join('\n')}
 </sitemapindex>
 `;
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), index, 'utf8');
