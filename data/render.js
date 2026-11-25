@@ -149,7 +149,7 @@
     const cntOf = (i) => (n === 2 ? 2 : n === 3 ? (i === 2 ? 2 : 1) : 1);
     const same = (a, b) => a === b;
 
-    const rows = [['86', '86 版', rec.c86, rec.r86], ['98', '98 版', rec.c98, rec.r98], ['06', '新世纪', rec.c06, rec.r06]]
+    const rows = [['06', '新世纪', rec.c06, rec.r06], ['86', '86 版', rec.c86, rec.r86], ['98', '98 版', rec.c98, rec.r98]]
       .map(([ver, label, code, roots]) => {
         const imgs = rec.ch.map((c, ci) => {
           const g = glyphs[`${c}-${ver}`] || '';

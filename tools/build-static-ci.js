@@ -165,7 +165,7 @@ for (const w of keep) {
   const posOf = (i) => (len === 2 ? i * 2 : len === 3 ? (i < 2 ? i : 2) : len === 4 ? i : (i < 3 ? i : (i === len - 1 ? 3 : -1)));
   const cntOf = (i) => (len === 2 ? 2 : len === 3 ? (i === 2 ? 2 : 1) : 1);
 
-  const rows = [['86', '86 版', rec.c86, wordRootsOf(chars, 'v86')], ['98', '98 版', rec.c98, wordRootsOf(chars, 'v98')], ['06', '新世纪', rec.c06, wordRootsOf(chars, 'v06')]]
+  const rows = [['06', '新世纪', rec.c06, wordRootsOf(chars, 'v06')], ['86', '86 版', rec.c86, wordRootsOf(chars, 'v86')], ['98', '98 版', rec.c98, wordRootsOf(chars, 'v98')]]
     .map(([ver, label, code, roots]) => {
       const imgs = chars.map((c, ci) => {
         const p = posOf(ci);
