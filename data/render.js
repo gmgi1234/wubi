@@ -102,7 +102,8 @@
 
   // ---------- 词组页 ----------
   function colorWhole(inner, color, nextColor) {
-    return inner.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
+    let matchedSecondary = false;
+    const out = inner.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
       let f = fill.toUpperCase();
       if (f === '#FFF' || f === '#FFFFFF') return m;
       if (f.length === 4) f = '#' + f[1] + f[1] + f[2] + f[2] + f[3] + f[3];
@@ -111,12 +112,25 @@
       const dAttr = dMatch ? `d="${dMatch[1]}"` : '';
       const base = `<path${pre}fill="${color}"${post}/>`;
       if (nextColor && f === '#FF9800') {
+        matchedSecondary = true;
         return base
           + `<path ${dAttr} fill="none" stroke="#ffffff" stroke-width="26" stroke-linejoin="round" stroke-linecap="round"/>`
           + `<path ${dAttr} fill="none" stroke="${nextColor}" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>`;
       }
       return base;
     });
+    if (nextColor && !matchedSecondary) {
+                  const dashSrc = inner.replace(/<rect[^>]*>/g, '');
+      const dash = dashSrc.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
+        const f = fill.toUpperCase();
+        if (f === '#FFF' || f === '#FFFFFF') return '';
+        const dMatch = (pre + post).match(/d="([^"]*)"/);
+        if (!dMatch) return '';
+        return `<path d="${dMatch[1]}" fill="none" stroke="${nextColor}" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>`;
+      });
+      return out + dash;
+    }
+    return out;
   }
 
   function recolor(inner, startPos, count) {
