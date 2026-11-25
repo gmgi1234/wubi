@@ -55,7 +55,7 @@
     hint.textContent='正在加载词条…';
     var s=document.createElement('script'); s.src=res.src;
     s.onload=function(){ res.busy=false; onload(res); };
-    s.onerror=function(){ hint.textContent='词库加载失败，请刷新重试'; };
+    s.onerror=function(){ res.busy=false; res.data=function(){ return [] }; onload(res); };
     document.head.appendChild(s);
   }
   function onload(res){ res.cb(res.data()); }
