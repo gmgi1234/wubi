@@ -137,6 +137,13 @@ for (const [w, base] of wordSet) {
 }
 
 let total = 0;
+// 检索索引：只存词条本身，体积小、可整包加载
+const allWords = [...wordSet.keys()].filter((w) => {
+  const b = bucketOf([...w][0]);
+  return !!wordBuckets[b][w];
+});
+fs.writeFileSync(path.join(OUT, 'word-index.js'), 'window.WORD_INDEX=' + JSON.stringify(allWords) + ';', 'utf8');
+console.log('word index:', allWords.length, '| MB:', (fs.statSync(path.join(OUT, 'word-index.js')).size / 1048576).toFixed(1));
 let chars = 0;
 let ws = 0;
 for (let b = 0; b < BUCKETS; b++) {
