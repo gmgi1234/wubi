@@ -52,7 +52,10 @@
           const r = await fetch('svg/' + encodeURIComponent(c) + '-' + ver + '.svg');
           if (!r.ok) return;
           const t = await r.text();
-          glyphs[c + '-' + ver] = t.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+          glyphs[c + '-' + ver] = t
+            .replace(/<path[^>]*stroke="#c0392b"[^>]*\/>/g, '') // 去掉单字页的补码虚线
+            .replace(/^[\s\S]*?<svg[^>]*>/, '')
+            .replace(/<\/svg>\s*$/, '');
         } catch (e) {}
       })());
     }
