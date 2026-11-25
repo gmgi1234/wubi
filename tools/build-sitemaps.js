@@ -17,19 +17,17 @@ ${urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n')}
 
 const staticCharUrls = [...keepChars].map((c) => `${SITE}/char/${encodeURIComponent(c)}.html`);
 const dynCharUrls = ranking.filter((c) => !keepChars.has(c)).map((c) => `${SITE}/char.html?c=${encodeURIComponent(c)}`);
-const staticWordUrls = [...keepWords].map((w) => `${SITE}/ci/${encodeURIComponent(w)}.html`);
-const dynWordUrls = words.filter((x) => !keepWords.has(x.w)).map((x) => `${SITE}/ci.html?w=${encodeURIComponent(x.w)}`);
+const staticWordUrls = [];
+const dynWordUrls = words.map((x) => `${SITE}/ci.html?w=${encodeURIComponent(x.w)}`);
 
 fs.writeFileSync(path.join(ROOT, 'char/sitemap-char-static.xml'), urlset(staticCharUrls), 'utf8');
 fs.writeFileSync(path.join(ROOT, 'char/sitemap-char-dyn.xml'), urlset(dynCharUrls), 'utf8');
-fs.writeFileSync(path.join(ROOT, 'ci/sitemap-ci-static.xml'), urlset(staticWordUrls), 'utf8');
 fs.writeFileSync(path.join(ROOT, 'ci/sitemap-ci-dyn.xml'), urlset(dynWordUrls), 'utf8');
 
 const index = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap><loc>${SITE}/char/sitemap-char-static.xml</loc></sitemap>
   <sitemap><loc>${SITE}/char/sitemap-char-dyn.xml</loc></sitemap>
-  <sitemap><loc>${SITE}/ci/sitemap-ci-static.xml</loc></sitemap>
   <sitemap><loc>${SITE}/ci/sitemap-ci-dyn.xml</loc></sitemap>
 </sitemapindex>
 `;
