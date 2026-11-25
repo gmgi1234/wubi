@@ -204,7 +204,9 @@ for (const w of allWords) {
   byLen.get(n).push(w);
 }
 const lenSummary = [];
-for (const [n, arr] of [...byLen.entries()].sort((a, b) => a[0] - b[0])) {
+const LEN_ALL = Array.from({ length: 11 }, (_, i) => i + 2);
+for (const n of LEN_ALL) {
+  const arr = byLen.get(n) || [];
   arr.sort((x, y) => freqRank(x) - freqRank(y) || x.localeCompare(y));
   fs.writeFileSync(path.join(OUT, `word-len-${n}.js`), `window.WORD_LEN_${n}=` + JSON.stringify(arr) + ';', 'utf8');
   lenSummary.push(n + ':' + arr.length);

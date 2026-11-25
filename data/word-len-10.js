@@ -1,0 +1,1 @@
+window.WORD_LEN_10=[];
