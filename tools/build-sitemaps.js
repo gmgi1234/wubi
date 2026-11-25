@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const ROOT = 'D:/Users/10061/Downloads/wubi';
-const SITE = 'https://gmgi1234.github.io/wubi';
+const SITE = 'https://wubi.iqiusuo.cn';
 const ranking = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'char-ranking.json'), 'utf8'));
 const words = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'words.json'), 'utf8'));
 const keepChars = new Set(JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'keep-chars.json'), 'utf8')));
