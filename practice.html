@@ -91,6 +91,12 @@
  .kb-key.hl { border-color: currentColor; box-shadow: 0 0 0 1px currentColor inset; }
  .kb-key.hl .kl, .kb-key.hl .kj { font-weight: 700; }
  .kb-key.multi .kb-pill { background: var(--split); }
+ @font-face {
+   font-family: 'ZiGen';
+   src: url('fonts/zigen.ttf') format('truetype');
+ }
+ .kb-roots, .kb-roots * { font-family: 'ZiGen', 'KaiTi', '楷体', serif; }
+ .kb-roots .rg { width: 20px; height: 20px; vertical-align: -4px; fill: currentColor; }
 </style>
 </head><body>
 <header><a href="./">五笔字根 · 笔画着色</a><span><a href="char/">全部单字</a>　<a href="ci/">全部词组</a>　<a href="./">回首页</a></span></header>
@@ -185,6 +191,7 @@
 <script src="data/wubi_roots_all.js"></script>
 <script src="data/root-glyphs.js"></script>
 <script src="data/char-flags.js"></script>
+<script src="data/kb-root-glyphs.js"></script>
 <script>
 (function () {
   var PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
@@ -277,8 +284,12 @@
     return { keys: keys, cheng: cheng };
   }
 
-  function codeOf(w) { return state.ver === '86' ? w.c86 : state.ver === '98' ? w.c98 : w.c6; }
-  function rootsOf(w) { return (state.ver === '86' ? w.r86 : state.ver === '98' ? w.r98 : w.r6).split(' ').filter(Boolean); }
+  function verOf() {
+    return state.ver === '8' ? '86' : state.ver === '9' ? '98' : '06';
+  }
+
+  function codeOf(w) { var v = verOf(); return v === '86' ? w.c86 : v === '98' ? w.c98 : w.c6; }
+  function rootsOf(w) { var v = verOf(); return (v === '86' ? w.r86 : v === '98' ? w.r98 : w.r6).split(' ').filter(Boolean); }
 
   // 按字分组：2 字 → 2+2；3 字 → 1+1+2；4 字 → 1+1+1+1；5+ → 前 3 字各 1，末字 1
   function groupCount(n) {
@@ -445,7 +456,7 @@
     });
   }
 
-  var VER_FILE = { '86': '86', '98': '98', '6': '06' };
+  var VER_FILE = { '86': '86', '98': '98', '06': '06', '6': '06', '8': '86', '9': '98' };
   var GRAY = '#cfc8bd';
 
   function recolorSvg(svg, start, k) {
@@ -520,6 +531,10 @@
     return [WUBI_ROOT_TABLE_06, KEY_NAMES_06];
   }
   function rootHtml(tok) {
+    var kb = (window.KB_ROOT_GLYPHS || {})[tok];
+    if (kb) {
+      return '<svg class="rg" viewBox="0 0 1024 1024" aria-hidden="true">' + kb + '</svg>';
+    }
     var g = (window.ROOT_GLYPHS || {})[tok];
     if (!g || !g.paths) return tok;
     var ps = g.paths.map(function (d) { return '<path d="' + d + '" fill="currentColor"/>'; }).join('');
@@ -537,7 +552,7 @@
       } else if (t[i] === ']') { i += 1; }
       else {
         var ch = t[i];
-        out += (ch.charCodeAt(0) >= 0xE000 && ch.charCodeAt(0) <= 0xF8FF) || ROOT_GLYPHS_SAFE(ch) ? rootHtml(ch) : ch;
+        out += rootHtml(ch);
         i += 1;
       }
     }
@@ -583,7 +598,7 @@
     var kb = $('kb');
     if (!kb) return;
     var d = kbData(), table = d[0] || {}, names = d[1] || {};
-    var verName = state.ver === '86' ? '86 版' : state.ver === '98' ? '98 版' : '新世纪';
+    var verName = verOf() === '86' ? '86 版' : verOf() === '98' ? '98 版' : '新世纪';
     var html = '<div class="kb-title">' + verName + '五笔键盘</div>';
     KB_LAYOUT.forEach(function (row, ri) {
       html += '<div class="kb-row' + (ri === 1 ? ' r2' : ri === 2 ? ' r3' : '') + '">';
