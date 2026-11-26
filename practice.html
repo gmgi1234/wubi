@@ -90,6 +90,7 @@
  }
  .kb-key.hl { border-color: currentColor; box-shadow: 0 0 0 1px currentColor inset; }
  .kb-key.hl .kl, .kb-key.hl .kj { font-weight: 700; }
+ .kb-key.multi .kb-pill { background: var(--split); }
 </style>
 </head><body>
 <header><a href="./">五笔字根 · 笔画着色</a><span><a href="char/">全部单字</a>　<a href="ci/">全部词组</a>　<a href="./">回首页</a></span></header>
@@ -448,18 +449,35 @@
 
   function markKeyboard(code) {
     var keys = document.querySelectorAll('.kb-key');
-    [].forEach.call(keys, function (b) { b.classList.remove('hl'); b.style.borderColor = ''; b.style.color = ''; });
+    [].forEach.call(keys, function (b) {
+      b.classList.remove('hl', 'multi');
+      b.style.borderColor = '';
+      b.style.color = '';
+      b.style.removeProperty('--split');
+    });
     if (!code) return;
-    var doneKeys = {};
+    var pos = {};
     code.split('').forEach(function (L, i) {
-      if (doneKeys[L]) return;
-      doneKeys[L] = 1;
-      var el = document.querySelector('.kb-key[data-k="' + L.toUpperCase() + '"]');
+      var k = L.toUpperCase();
+      if (!pos[k]) pos[k] = [];
+      pos[k].push(PALETTE[i % 4]);
+    });
+    Object.keys(pos).forEach(function (k) {
+      var el = document.querySelector('.kb-key[data-k="' + k + '"]');
       if (!el) return;
-      var c = PALETTE[i % 4];
+      var colors = pos[k];
       el.classList.add('hl');
-      el.style.borderColor = c;
-      el.style.color = c;
+      el.style.borderColor = colors[0];
+      el.style.color = colors[0];
+      if (colors.length > 1) {
+        // 两种颜色平分键帽背景
+        el.classList.add('multi');
+        el.style.setProperty('--split', 'linear-gradient(90deg, ' + colors.map(function (c, i) {
+          var a = Math.round((i / colors.length) * 100);
+          var b = Math.round(((i + 1) / colors.length) * 100);
+          return c + ' ' + a + '% ' + b + '%';
+        }).join(', ') + ')');
+      }
     });
   }
 
