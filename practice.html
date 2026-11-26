@@ -39,12 +39,20 @@
  .zicap .none { color:#b3a99a; font-size:15px; }
  .rule { text-align:center; font-size:13px; color:var(--muted); margin:2px 0 0; }
  .kbwrap { margin:10px 0 2px; }
- .kb { display:flex; flex-direction:column; gap:4px; }
+ .kbbox { overflow-x:auto; padding-bottom:4px; }
+ .kb { display:flex; flex-direction:column; gap:4px; min-width:632px; }
+ .kb-title { text-align:center; font-size:12px; color:var(--muted); margin-bottom:2px; }
  .kb-row { display:flex; justify-content:center; gap:4px; }
- .kb-key { flex:1 1 0; min-width:0; background:#fff; border:1px solid var(--line); border-radius:7px; padding:3px 1px 2px; cursor:pointer; font-family:inherit; color:var(--ink); text-align:center; line-height:1.15; }
- .kb-key:active { background:#f3ece0; }
- .kb-key .kl { display:block; font-family:ui-monospace,Consolas,monospace; font-size:12px; color:var(--accent); }
- .kb-key .kr { display:block; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; }
+ .kb-row.r2 { padding-left:31px; }
+ .kb-row.r3 { padding-left:93px; }
+ .kb-key { flex:0 0 auto; width:58px; background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px 2px 4px; cursor:pointer; font-family:inherit; color:var(--ink); text-align:center; }
+ .kb-key.on { border-color:var(--accent); box-shadow:0 0 0 2px rgba(163,60,47,.13); }
+ .kb-pill { display:flex; align-items:center; justify-content:center; gap:1px; border:1px solid var(--line); border-radius:999px; background:#fdfbf6; padding:1px 2px; }
+ .kb-pill .kj { font-size:10px; color:var(--muted); }
+ .kb-pill .kl { font-size:13px; color:var(--accent); font-family:ui-monospace,Consolas,monospace; }
+ .kb-pill .kn { font-size:10px; color:var(--muted); }
+ .kb-roots { display:block; margin-top:2px; font-size:8px; line-height:1.15; color:#9b9184; word-break:break-all; }
+ .kbhint { text-align:center; font-size:11px; color:var(--muted); margin-top:2px; }
  .charcell { text-align:center; }
  .zislot { display:inline-block; border:1px solid var(--line); border-radius:10px; background:#fff; padding:6px; width:var(--zi,150px); height:var(--zi,150px); flex:0 0 auto; }
  .zi-svg { width:100%; height:100%; display:block; }
@@ -144,7 +152,7 @@
 
     <div class="inputwrap"><input id="typeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="在这里打出词组"></div>
     <div class="msg" id="msg">输入上面的词组</div>
-    <div class="kbwrap"><div class="kb" id="kb"></div></div>
+    <div class="kbwrap"><div class="kbbox"><div class="kb" id="kb"></div></div><div class="kbhint">左右滑动看全键盘 · 点键输入该码</div></div>
 
     <div class="actions">
       <button id="skipBtn">跳过（看答案）</button>
@@ -168,6 +176,7 @@
 </div>
 <footer>数据来源：Rime 五笔码表 · 五笔大一统方案</footer>
 
+<script src="data/wubi_roots_all.js"></script>
 <script>
 (function () {
   var PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
@@ -185,7 +194,7 @@
     b.onclick = function () { document.querySelectorAll('[data-len]').forEach(function (x) { x.classList.remove('on'); }); b.classList.add('on'); state.len = Number(b.dataset.len); restart(); };
   });
   document.querySelectorAll('[data-ver]').forEach(function (b) {
-    b.onclick = function () { document.querySelectorAll('[data-ver]').forEach(function (x) { x.classList.remove('on'); }); b.classList.add('on'); state.ver = b.dataset.ver; redraw(); };
+    b.onclick = function () { document.querySelectorAll('[data-ver]').forEach(function (x) { x.classList.remove('on'); }); b.classList.add('on'); state.ver = b.dataset.ver; buildKeyboard(); redraw(); };
   });
   document.querySelectorAll('[data-count]').forEach(function (b) {
     b.onclick = function () { document.querySelectorAll('[data-count]').forEach(function (x) { x.classList.remove('on'); }); b.classList.add('on'); state.count = Number(b.dataset.count); restart(); };
@@ -344,29 +353,40 @@
     return '五字及以上：前三字各取首码，末字取首码，中间字不参与编码';
   }
 
-  // 复用首页的字根键盘：点键 = 输入该字母
-  var KB_ROWS = [
-    [['Q', '金儿'], ['W', '人八'], ['E', '月乃'], ['R', '白手'], ['T', '禾竹'], ['Y', '言文'], ['U', '立辛'], ['I', '水兴'], ['O', '火米'], ['P', '之宀']],
-    [['A', '工七'], ['S', '木西'], ['D', '大石'], ['F', '土雨'], ['G', '王五'], ['H', '目止'], ['J', '日虫'], ['K', '口川'], ['L', '田车']],
-    [['Z', '万能'], ['X', '弓匕'], ['C', '又马'], ['V', '女九'], ['B', '子了'], ['N', '已尸'], ['M', '山贝']]
-  ];
+  // 字根键盘：数据取自 data/wubi_roots_all.js，随版本切换
+  var JIANMA = { G: '一', F: '地', D: '在', S: '要', A: '工', H: '上', J: '是', K: '中', L: '国', M: '同', T: '和', R: '的', E: '有', W: '人', Q: '我', Y: '主', U: '产', I: '不', O: '为', P: '这', N: '民', B: '了', V: '发', C: '以', X: '经' };
+  var KB_LAYOUT = [['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], ['Z', 'X', 'C', 'V', 'B', 'N', 'M']];
+  function kbData() {
+    if (typeof WUBI_ROOT_TABLE_06 === 'undefined') return [{}, {}];
+    if (state.ver === '86') return [WUBI_ROOT_TABLE_86, KEY_NAMES];
+    if (state.ver === '98') return [WUBI_ROOT_TABLE_98, KEY_NAMES_98];
+    return [WUBI_ROOT_TABLE_06, KEY_NAMES_06];
+  }
   function buildKeyboard() {
     var kb = $('kb');
-    if (!kb || kb.dataset.done) return;
-    kb.innerHTML = KB_ROWS.map(function (row) {
-      return '<div class="kb-row">' + row.map(function (it) {
-        return '<button class="kb-key" data-k="' + it[0] + '"><span class="kl">' + it[0] + '</span><span class="kr">' + it[1] + '</span></button>';
-      }).join('') + '</div>';
-    }).join('');
-    kb.dataset.done = '1';
-    kb.addEventListener('click', function (e) {
-      var b = e.target.closest ? e.target.closest('.kb-key') : null;
-      if (!b || state.locked) return;
-      $('typeInput').value += b.dataset.k.toLowerCase();
-      judge();
+    if (!kb) return;
+    var d = kbData(), table = d[0] || {}, names = d[1] || {};
+    var verName = state.ver === '86' ? '86 版' : state.ver === '98' ? '98 版' : '新世纪';
+    var html = '<div class="kb-title">' + verName + '五笔键盘</div>';
+    KB_LAYOUT.forEach(function (row, ri) {
+      html += '<div class="kb-row' + (ri === 1 ? ' r2' : ri === 2 ? ' r3' : '') + '">';
+      row.forEach(function (L) {
+        var roots = (table[L] || '').replace(/[\[\]]/g, '');
+        html += '<button class="kb-key" data-k="' + L + '">' +
+          '<span class="kb-pill"><span class="kj">' + (JIANMA[L] || '') + '</span><span class="kl">' + L + '</span><span class="kn">' + (names[L] || (L === 'Z' ? '万能' : '')) + '</span></span>' +
+          '<span class="kb-roots">' + roots + '</span></button>';
+      });
+      html += '</div>';
     });
+    kb.innerHTML = html;
   }
   buildKeyboard();
+  $('kb').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.kb-key') : null;
+    if (!b || state.locked) return;
+    $('typeInput').value += b.dataset.k.toLowerCase();
+    judge();
+  });
 
   // 词组始终单行：按字数把每个字格缩到一行放得下，不折行
   function fitWordbox() {
@@ -455,6 +475,11 @@
           slot.innerHTML = '<svg class="zi-svg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">' + out + '</svg>';
         })
         .catch(function () {});
+    });
+
+    var usedKeys = codeStr.split('');
+    document.querySelectorAll('.kb-key').forEach(function (b) {
+      b.classList.toggle('on', usedKeys.indexOf(b.dataset.k) >= 0);
     });
 
     if (state.hint === 2) {
