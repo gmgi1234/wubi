@@ -139,7 +139,7 @@ server.listen(0, '127.0.0.1', async () => {
     await page.waitForTimeout(450);
 
     const dom = await page.evaluate(() => [...document.querySelectorAll('.zislot')].map((s) => ({
-      dashes: s.querySelectorAll('path[stroke-dasharray]').length,
+      dashes: s.querySelectorAll('path[stroke-dasharray], rect[stroke-dasharray]').length,
       fills: [...new Set([...s.querySelectorAll('path')].map((p) => p.getAttribute('fill')).filter((f) => f && f !== '#fff'))],
     })));
 
