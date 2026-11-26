@@ -131,8 +131,12 @@
       var f = fill.toUpperCase();
       if (f === '#FFF' || f === '#FFFFFF') return m;
       var d = (pre + post).match(/d="([^"]*)"/);
-      return '<path' + pre + 'fill="' + fillColor + '"' + post + '/>';
-    }) + '<rect x="64" y="64" width="896" height="896" rx="64" fill="none" stroke="' + dashColor + '" stroke-width="18" stroke-dasharray="40 24"/>';
+      var base = '<path' + pre + 'fill="' + fillColor + '"' + post + '/>';
+      if (!d) return base;
+      return base
+        + '<path d="' + d[1] + '" fill="none" stroke="#ffffff" stroke-width="30" stroke-linejoin="round" stroke-linecap="round"/>'
+        + '<path d="' + d[1] + '" fill="none" stroke="' + dashColor + '" stroke-width="14" stroke-dasharray="30 18" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
   }
 
   function colorWhole(inner, color, nextColor) {
