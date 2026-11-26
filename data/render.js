@@ -1,6 +1,6 @@
 // 动态页面渲染：一个模板 + 数据，地址栏传参
 (function () {
-  const PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
+  const PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#3498DB'];
   const GRAY = '#cfc8bd';
   const KEY_VER = { '86': 'v86', '98': 'v98', '06': 'v06' };
   const esc = (s) => String(s).replace(/[&<>"]/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
@@ -148,7 +148,7 @@
       let f = fill.toUpperCase();
       if (f === '#FFF' || f === '#FFFFFF') return m;
       if (f.length === 4) f = '#' + f[1] + f[1] + f[2] + f[2] + f[3] + f[3];
-      const ok = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'].includes(f);
+      const ok = ['#E74C3C', '#FF9800', '#27AE60', '#3498DB'].includes(f);
       const dMatch = (pre + post).match(/d="([^"]*)"/);
       const dAttr = dMatch ? `d="${dMatch[1]}"` : '';
       const base = `<path${pre}fill="${color}"${post}/>`;
@@ -178,7 +178,7 @@
     return inner.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, (m, fill) => {
       const up = fill.toUpperCase();
       if (up === '#FFF' || up === '#FFFFFF') return m;
-      const idx = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'].indexOf(up);
+      const idx = ['#E74C3C', '#FF9800', '#27AE60', '#3498DB'].indexOf(up);
       if (idx >= 0 && idx < count) return `fill="${PALETTE[(startPos + idx) % 4]}"`;
       return `fill="${GRAY}"`;
     });

@@ -12,7 +12,7 @@ const glyphLib = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'root-glyph
 const fragMap = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'frag-map.json'), 'utf8'));
 const wordMeanings = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'word-meanings.json'), 'utf8'));
 
-const PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
+const PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#3498DB'];
 const GRAY = '#cfc8bd';
 const KEY_VER = { '86': 'v86', '98': 'v98', '06': 'v06' };
 const KEY_NAMES = new Set('王土大木工目日口田山禾白月人金言立水火之已子女又纟'.split(''));

@@ -38,6 +38,8 @@ function glyphSvg(ch, ver, size) {
   const p = path.join(SVG, `${ch}-${ver}.svg`);
   if (!fs.existsSync(p)) return '';
   let t = fs.readFileSync(p, 'utf8').replace(/<\?xml[^>]*\?>/g, '').trim();
+  // 补码笔画：把红色虚线换成青色实心（对齐主站）
+  t = t.replace(/<path([^>]*?)d="([^"]*)"([^>]*?)stroke="#c0392b"([^>]*?)\/>/g, (m, pre, d, mid, post) => '<path d="' + d + '" fill="#00BCD4"/>');
   t = t.replace(/<svg([^>]*)>/, (m, attrs) => `<svg class="glyph"${attrs.replace(/\s*xmlns="[^"]*"/g, '')} xmlns="http://www.w3.org/2000/svg" style="width:${size}px;height:${size}px">`);
   return t;
 }

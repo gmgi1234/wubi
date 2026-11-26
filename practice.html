@@ -197,7 +197,7 @@
 <script src="data/kb-root-glyphs.js"></script>
 <script>
 (function () {
-  var PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
+  var PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#3498DB'];
   var state = { len: 2, ver: '6', hint: 2, count: 10, stats: true, pool: [], idx: 0, right: 0, streak: 0, best: 0, startAt: 0, wrong: [], locked: false, running: false };
   window.__pstate = state;
   var $ = function (id) { return document.getElementById(id); };
@@ -463,7 +463,7 @@
   var GRAY = '#cfc8bd';
 
   function recolorSvg(svg, start, k) {
-    var MAP = { '#E74C3C': 0, '#FF9800': 1, '#27AE60': 2, '#2980B9': 3, '#3498DB': 3 };
+    var MAP = { '#E74C3C': 0, '#FF9800': 1, '#27AE60': 2, '#3498DB': 3, '#3498DB': 3 };
     return svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, function (m, f) {
       var u = f.toUpperCase();
       if (u === '#FFF' || u === '#FFFFFF') return m;
