@@ -159,6 +159,7 @@ const CSS = `
   .word { border:1px solid var(--line); border-radius:8px; padding:7px 14px; font-size:18px; color:var(--accent); text-decoration:none; background:#fff; }
   .cta { margin-top:30px; border:1px solid var(--line); border-radius:14px; padding:18px 22px; display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; background:#fff; }
   .cta a.primary { background:var(--accent); color:#fff; text-decoration:none; padding:10px 18px; border-radius:9px; }
+  .wsearch { font-family:inherit; font-size:14px; padding:5px 10px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; width:220px; }
   .word-nav { display:flex; gap:14px; align-items:center; }
   .word-nav a { color:var(--accent); text-decoration:none; }
   .word-nav .dim { color:#cfc8bd; }
@@ -213,7 +214,7 @@ for (let wi = 0; wi < keep.length; wi += 1) {
 <link rel="canonical" href="https://wubi.iqiusuo.cn/ci/${encodeURIComponent(w)}.html">
 <style>${CSS}</style>
 </head><body>
-<header><a href="../">五笔字根 · 笔画着色</a><div class="word-nav">${prevW ? `<a class="nav" href="${encodeURIComponent(prevW)}.html">← ${esc(prevW)}</a>` : '<span class="nav dim">←</span>'}<a href="../ci/">全部词组</a>${nextW ? `<a class="nav" href="${encodeURIComponent(nextW)}.html">${esc(nextW)} →</a>` : '<span class="nav dim">→</span>'}</div></header>
+<header><a href="../">五笔字根 · 笔画着色</a><input id="wsearch" class="wsearch" placeholder="搜索词组，回车跳转" autocomplete="off"><div class="word-nav">${prevW ? `<a class="nav" href="${encodeURIComponent(prevW)}.html">← ${esc(prevW)}</a>` : '<span class="nav dim">←</span>'}<a href="../ci/">全部词组</a>${nextW ? `<a class="nav" href="${encodeURIComponent(nextW)}.html">${esc(nextW)} →</a>` : '<span class="nav dim">→</span>'}</div></header>
 <main>
   <h1>「${esc(w)}」的五笔编码与拆分</h1>
   <div class="sub">${len} 字词 · 三版编码对照</div>
@@ -230,6 +231,7 @@ for (let wi = 0; wi < keep.length; wi += 1) {
   <div class="cta"><div><strong>想边看边学？</strong><br>在网页版里输入任意汉字，可以看到笔画着色、字根高亮和笔顺演示。</div><a class="primary" href="../">打开五笔查询 →</a></div>
 </main>
 <footer>数据来源：Rime 五笔码表 · 五笔大一统方案</footer>
+<script>(function(){var q=document.getElementById('wsearch');if(!q)return;q.addEventListener('keydown',function(e){if(e.key!=='Enter')return;var v=q.value.trim();if(!v)return;location.href='../ci.html?w='+encodeURIComponent(v);});})();</script>
 </body></html>`;
 
   fs.writeFileSync(path.join(OUT, `${w}.html`), html, 'utf8');

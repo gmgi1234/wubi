@@ -11,6 +11,7 @@
   body { margin:0; background:var(--bg); color:var(--ink); font-family:'KaiTi','楷体','STKaiti',serif; line-height:1.7; }
   header { border-bottom:1px solid var(--line); padding:12px 20px; display:flex; justify-content:space-between; font-size:15px; }
   header a { color:var(--muted); text-decoration:none; }
+  .wsearch { font-family:inherit; font-size:14px; padding:5px 10px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; width:220px; }
   main { max-width:900px; margin:18px auto 0; background:var(--paper); box-shadow:0 0 0 1px var(--line); border-radius:16px; padding:26px 22px 44px; }
   h1 { font-size:32px; margin:0 0 6px; letter-spacing:2px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:22px; }
@@ -43,9 +44,10 @@
     if (md) md.setAttribute('content', desc);
     const app = document.getElementById('app');
     app.innerHTML = `<style>${CSS}</style>
-      <header><a href="./">五笔字根 · 笔画着色</a><span><a href="char/">全部单字</a>　<a href="ci/">全部词组</a></span></header>
+      <header><a href="./">五笔字根 · 笔画着色</a><input id="wsearch" class="wsearch" placeholder="搜索词组，回车跳转" autocomplete="off"><span><a href="char/">全部单字</a>　<a href="ci/">全部词组</a></span></header>
       <main>${body}</main>
       <footer>数据来源：Rime 五笔码表 · 五笔 Make Me a Hanzi（笔画）</footer>`;
+    wireSearch();
   }
 
 
@@ -60,6 +62,18 @@
     }
     return esc(name);
   }
+  function wireSearch() {
+    const q = document.getElementById('wsearch');
+    if (!q || q.dataset.wired) return;
+    q.dataset.wired = '1';
+    q.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const v = q.value.trim();
+      if (!v) return;
+      location.href = 'ci.html?w=' + encodeURIComponent(v);
+    });
+  }
+
   const svgWrap = (inner, size) => inner
     ? `<svg class="glyph" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="--gsize:${size || 96}px">${inner}</svg>`
     : '';
