@@ -619,16 +619,6 @@
     if (state.stats && state.running) $('qTime').textContent = Math.round((Date.now() - state.startAt) / 1000) + 's';
   }, 500);
 
-    if (!state.locked) {
-      var w = state.pool[state.idx];
-      state.locked = true; state.streak = 0;
-      $('qStreak').textContent = 0;
-      $('typeInput').disabled = true;
-      $('msg').textContent = '正确是「' + w.w + '」（按空格继续）';
-      state.wrong.push({ w: w.w, code: codeOf(w), typed: '', len: w.len });
-      addWrong(w); refreshWrongCount();
-    } else { state.idx += 1; nextQuestion(); }
-  };
   $('endBtn').onclick = function () { finish(); };
   $('againBtn').onclick = function () { restart(); };
   $('retryWrongBtn').onclick = function () { startWrong(); };
