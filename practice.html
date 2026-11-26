@@ -88,6 +88,8 @@
    .zi-svg { width:100%; height:100%; }
    .wordbox { --zi:110px; --zgap:10px; }
  }
+ .kb-key.hl { border-color: currentColor; box-shadow: 0 0 0 1px currentColor inset; }
+ .kb-key.hl .kl, .kb-key.hl .kj { font-weight: 700; }
 </style>
 </head><body>
 <header><a href="./">五笔字根 · 笔画着色</a><span><a href="char/">全部单字</a>　<a href="ci/">全部词组</a>　<a href="./">回首页</a></span></header>
@@ -444,6 +446,23 @@
   }
   function ROOT_GLYPHS_SAFE(ch) { return !!(window.ROOT_GLYPHS && window.ROOT_GLYPHS[ch]); }
 
+  function markKeyboard(code) {
+    var keys = document.querySelectorAll('.kb-key');
+    [].forEach.call(keys, function (b) { b.classList.remove('hl'); b.style.borderColor = ''; b.style.color = ''; });
+    if (!code) return;
+    var doneKeys = {};
+    code.split('').forEach(function (L, i) {
+      if (doneKeys[L]) return;
+      doneKeys[L] = 1;
+      var el = document.querySelector('.kb-key[data-k="' + L.toUpperCase() + '"]');
+      if (!el) return;
+      var c = PALETTE[i % 4];
+      el.classList.add('hl');
+      el.style.borderColor = c;
+      el.style.color = c;
+    });
+  }
+
   function buildKeyboard() {
     var kb = $('kb');
     if (!kb) return;
@@ -570,7 +589,8 @@
     });
 
     if (state.hint === 2) {
-      $('codline').innerHTML = codeOf(w).split('').map(function (L, i) {
+      markKeyboard(state.hint === 2 ? codeOf(w) : '');
+    $('codline').innerHTML = codeOf(w).split('').map(function (L, i) {
         return '<span style="color:' + PALETTE[i % 4] + '">' + L.toUpperCase() + '</span>';
       }).join('');
     } else {
