@@ -12,6 +12,13 @@
 <script>
 (async function () {
   const ch = new URLSearchParams(location.search).get('c') || '狗';
+
+  // 有静态完整页就直接跳过去（版式与单字页一致）
+  const staticTarget = 'char/' + encodeURIComponent(ch) + '.html';
+  try {
+    const head = await fetch(staticTarget, { method: 'HEAD' });
+    if (head.ok) { location.replace(staticTarget); return; }
+  } catch (e) {}
   document.title = ch + '字五笔怎么打？86/98/新世纪编码与拆分';
   const b = ch.charCodeAt(0) % 64;
   const load = (src) => new Promise((ok, bad) => {
