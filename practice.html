@@ -31,11 +31,10 @@
  #jumpInput { font-family:inherit; font-size:15px; padding:8px 12px; width:min(100%, 360px); border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); outline:none; }
  #jumpInput:focus { border-color:var(--accent); }
  #jumpInput::placeholder { color:#b9b2a7; }
- .wordbox { display:flex; justify-content:center; gap:18px; margin:18px 0 6px; flex-wrap:wrap; align-items:center; }
+ .wordbox { display:flex; justify-content:center; gap:var(--zgap,18px); margin:18px 0 6px; flex-wrap:nowrap; align-items:center; }
  .charcell { text-align:center; }
- .zislot { border:1px solid var(--line); border-radius:10px; background:#fff; padding:6px; }
- .zi-svg { width:150px; height:150px; display:block; }
- .zislot { display:inline-block; width:150px; height:150px; }
+ .zislot { display:inline-block; border:1px solid var(--line); border-radius:10px; background:#fff; padding:6px; width:var(--zi,150px); height:var(--zi,150px); flex:0 0 auto; }
+ .zi-svg { width:100%; height:100%; display:block; }
  .charcell .roots { margin-top:4px; font-size:20px; line-height:1.5; }
  .charcell .roots div { white-space:nowrap; }
  .codline { text-align:center; font-family:ui-monospace,Consolas,monospace; font-size:24px; letter-spacing:8px; min-height:30px; color:var(--muted); }
@@ -61,8 +60,8 @@
  @media (max-width:860px) {
    aside { position:fixed; left:0; top:0; bottom:0; z-index:60; background:var(--paper); box-shadow:6px 0 24px rgba(0,0,0,.12); overflow:auto; }
    main { margin:12px; padding:16px; }
-   .zi-svg { width:110px; height:110px; }
-   .zislot { width:110px; height:110px; }
+   .zi-svg { width:100%; height:100%; }
+   .wordbox { --zi:110px; --zgap:10px; }
  }
 </style>
 </head><body>
@@ -323,6 +322,26 @@
     });
   }
 
+  // 词组始终单行：按字数把每个字格缩到一行放得下，不折行
+  function fitWordbox() {
+    var box = $('wordbox');
+    var slots = box.querySelectorAll('.zislot').length || 1;
+    var avail = box.clientWidth || (window.innerWidth - 48);
+    var gap = slots <= 3 ? 14 : (slots <= 5 ? 8 : 6);
+    var size = Math.floor((avail - gap * (slots - 1)) / slots);
+    size = Math.max(40, Math.min(150, size));
+    box.style.setProperty('--zi', size + 'px');
+    box.style.setProperty('--zgap', gap + 'px');
+    box.style.flexWrap = 'nowrap';
+  }
+  var fitTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(fitTimer);
+    fitTimer = setTimeout(function () {
+      if (document.querySelectorAll('#wordbox .zislot').length) fitWordbox();
+    }, 120);
+  });
+
   function redraw() {
     if (!state.pool.length) return;
     var w = state.pool[state.idx];
@@ -331,20 +350,29 @@
     var ver = VER_FILE[state.ver] || '06';
 
     var n = chars.length;
-    var cntOf = function (i) { return n === 2 ? 2 : n === 3 ? (i === 2 ? 2 : 1) : 1; };
+    // 码位分配：2字 2+2；3字 1+1+2；4字 1+1+1+1；5字以上 前三字各 1 + 末字 1，中间字 0（只涂灰）
+    var cnt = [];
+    for (var a = 0; a < n; a++) {
+      if (n === 2) cnt.push(2);
+      else if (n === 3) cnt.push(a === 2 ? 2 : 1);
+      else if (n === 4) cnt.push(1);
+      else cnt.push((a < 3 || a === n - 1) ? 1 : 0);
+    }
+    var starts = [], acc = 0;
+    for (var b = 0; b < n; b++) { starts.push(acc); acc += cnt[b]; }
+    if (n >= 5) starts[n - 1] = 3;   // 末字固定第 4 码（蓝）
     var keysStr = w.keys || '';
     var html = '';
-    var startPos = 0;
     for (var i = 0; i < n; i++) {
-      var k = cntOf(i);
+      var k = cnt[i], startPos = starts[i];
       var isKeyName = keysStr.charAt(i) === '1' && k >= 2;
       html += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + startPos + '" data-k="' + k + '" data-key="' + (isKeyName ? '1' : '0') + '"></span>';
       if (isKeyName) {
         html += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + (startPos + 1) + '" data-k="0" data-key="dash"></span>';
       }
-      startPos += k;
     }
     $('wordbox').innerHTML = html;
+    fitWordbox();
     document.querySelectorAll('.zislot').forEach(function (slot) {
       fetch('svg/' + encodeURIComponent(slot.dataset.c) + '-' + slot.dataset.v + '.svg')
         .then(function (r) { return r.ok ? r.text() : ''; })
