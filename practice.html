@@ -244,7 +244,7 @@
     if (!t) return;
     var n = Array.from(t).length;
     if (n < 2) { msg.textContent = '至少输入两个字的词组'; msg.className = 'msg bad'; return; }
-    if (n > 6) { msg.textContent = '题库目前只到六字词'; msg.className = 'msg bad'; return; }
+    if (n > 6) { loadLongWord(t, n); return; }
     loadData(n, function (rows) {
       var row = null;
       for (var i = 0; i < rows.length; i++) { if (rows[i][0] === t) { row = rows[i]; break; } }
@@ -273,6 +273,43 @@
       $('jumpInput').blur();
     });
   }
+  // 7 字以上：题库没有，改从 data/word-<首字哈希>.js 取记录
+  function loadLongWord(t, n) {
+    var msg = $('msg');
+    var wb = t.charCodeAt(0) % 64;
+    var key = 'WORD_DATA_' + wb;
+    var go = function () {
+      var rec = (window[key] || {})[t];
+      if (!rec) { msg.textContent = '词库里没有「' + t + '」'; msg.className = 'msg bad'; return; }
+      var item = {
+        w: rec.w, c6: rec.c06 || rec.c6 || '', c86: rec.c86 || '', c98: rec.c98 || '',
+        r6: (rec.r06 || []).join(' '), r86: (rec.r86 || []).join(' '), r98: (rec.r98 || []).join(' '),
+        keys: '', len: n
+      };
+      state.len = n;
+      document.querySelectorAll('[data-len]').forEach(function (x) { x.classList.remove('on'); });
+      var at = -1;
+      for (var j = 0; j < state.pool.length; j++) { if (state.pool[j].w === t) { at = j; break; } }
+      if (at < 0) { state.pool.splice(state.idx, 0, item); at = state.idx; }
+      state.idx = at; state.locked = false; state.running = true;
+      $('result').classList.add('hidden');
+      $('play').classList.remove('hidden');
+      $('qTotal').textContent = state.pool.length;
+      $('qIndex').textContent = state.idx + 1;
+      msg.textContent = '已跳到「' + t + '」';
+      msg.className = 'msg';
+      redraw();
+      var ti = $('typeInput'); ti.value = ''; ti.className = ''; ti.disabled = false;
+      $('jumpInput').blur();
+    };
+    if (window[key]) { go(); return; }
+    var sc = document.createElement('script');
+    sc.src = 'data/word-' + wb + '.js';
+    sc.onload = go;
+    sc.onerror = function () { msg.textContent = '词库加载失败'; msg.className = 'msg bad'; };
+    document.head.appendChild(sc);
+  }
+
   var jumpInput = $('jumpInput');
   if (jumpInput) {
     jumpInput.addEventListener('keydown', function (e) {
