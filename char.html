@@ -32,8 +32,7 @@
       const r = await fetch('svg/' + encodeURIComponent(ch) + '-' + ver + '.svg');
       if (!r.ok) continue;
       const t = await r.text();
-      const inner0 = t.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
-      const inner = inner0.replace(/<path([^>]*?)d="([^"]*)"([^>]*?)stroke="#c0392b"([^>]*?)\/>/g, (m, pre, d, mid, post) => '<path d="' + d + '" fill="#00BCD4"/>');
+      const inner = t.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
       el.innerHTML = WubiRender.svgWrap(inner, 200);
     } catch (e) {}
   }
