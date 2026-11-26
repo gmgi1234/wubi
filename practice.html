@@ -362,14 +362,17 @@
   var GRAY = '#cfc8bd';
 
   function recolorSvg(svg, start, k) {
+    var MAP = { '#E74C3C': 0, '#FF9800': 1, '#27AE60': 2, '#2980B9': 3, '#3498DB': 3 };
     return svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, function (m, f) {
       var u = f.toUpperCase();
       if (u === '#FFF' || u === '#FFFFFF') return m;
-      var i = PALETTE.map(function (x) { return x.toUpperCase(); }).indexOf(u);
-      if (i >= 0 && i < k) return 'fill="' + PALETTE[(start + i) % 4] + '"';
+      if (u === '#555555' || u === '#555' || u === '#CFC8BD' || u === '#999999') return 'fill="' + GRAY + '"';
+      var i = MAP[u];
+      if (i !== undefined && i < k) return 'fill="' + PALETTE[(start + i) % 4] + '"';
       return 'fill="' + GRAY + '"';
     });
   }
+
   function colorWholeSvg(svg, color) {
     return svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, function (m, f) {
       var u = f.toUpperCase();
