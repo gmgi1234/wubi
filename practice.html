@@ -31,7 +31,20 @@
  #jumpInput { font-family:inherit; font-size:15px; padding:8px 12px; width:min(100%, 360px); border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); outline:none; }
  #jumpInput:focus { border-color:var(--accent); }
  #jumpInput::placeholder { color:#b9b2a7; }
- .wordbox { display:flex; justify-content:center; gap:var(--zgap,18px); margin:18px 0 6px; flex-wrap:nowrap; align-items:center; }
+ .wordbox { display:flex; justify-content:center; gap:var(--zgap,18px); margin:18px 0 6px; flex-wrap:nowrap; align-items:flex-start; }
+ .zicell { display:inline-flex; flex-direction:column; align-items:center; gap:4px; flex:0 0 auto; }
+ .zicap { font-size:13px; line-height:1.2; white-space:nowrap; color:var(--muted); }
+ .zicap .r { font-size:15px; }
+ .zicap .l { font-family:ui-monospace,Consolas,monospace; font-size:12px; }
+ .zicap .none { color:#b3a99a; font-size:15px; }
+ .rule { text-align:center; font-size:13px; color:var(--muted); margin:2px 0 0; }
+ .kbwrap { margin:10px 0 2px; }
+ .kb { display:flex; flex-direction:column; gap:4px; }
+ .kb-row { display:flex; justify-content:center; gap:4px; }
+ .kb-key { flex:1 1 0; min-width:0; background:#fff; border:1px solid var(--line); border-radius:7px; padding:3px 1px 2px; cursor:pointer; font-family:inherit; color:var(--ink); text-align:center; line-height:1.15; }
+ .kb-key:active { background:#f3ece0; }
+ .kb-key .kl { display:block; font-family:ui-monospace,Consolas,monospace; font-size:12px; color:var(--accent); }
+ .kb-key .kr { display:block; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; }
  .charcell { text-align:center; }
  .zislot { display:inline-block; border:1px solid var(--line); border-radius:10px; background:#fff; padding:6px; width:var(--zi,150px); height:var(--zi,150px); flex:0 0 auto; }
  .zi-svg { width:100%; height:100%; display:block; }
@@ -127,9 +140,11 @@
 
     <div class="wordbox" id="wordbox"></div>
     <div class="codline" id="codline"></div>
+    <div class="rule" id="ruleline"></div>
 
     <div class="inputwrap"><input id="typeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="在这里打出词组"></div>
     <div class="msg" id="msg">输入上面的词组</div>
+    <div class="kbwrap"><div class="kb" id="kb"></div></div>
 
     <div class="actions">
       <button id="skipBtn">跳过（看答案）</button>
@@ -322,10 +337,41 @@
     });
   }
 
+  function ruleText(n) {
+    if (n === 2) return '双字词：每字取前两码（2+2）';
+    if (n === 3) return '三字词：前两字各取首码，末字取前两码（1+1+2）';
+    if (n === 4) return '四字词：每字各取首码（1+1+1+1）';
+    return '五字及以上：前三字各取首码，末字取首码，中间字不参与编码';
+  }
+
+  // 复用首页的字根键盘：点键 = 输入该字母
+  var KB_ROWS = [
+    [['Q', '金儿'], ['W', '人八'], ['E', '月乃'], ['R', '白手'], ['T', '禾竹'], ['Y', '言文'], ['U', '立辛'], ['I', '水兴'], ['O', '火米'], ['P', '之宀']],
+    [['A', '工七'], ['S', '木西'], ['D', '大石'], ['F', '土雨'], ['G', '王五'], ['H', '目止'], ['J', '日虫'], ['K', '口川'], ['L', '田车']],
+    [['Z', '万能'], ['X', '弓匕'], ['C', '又马'], ['V', '女九'], ['B', '子了'], ['N', '已尸'], ['M', '山贝']]
+  ];
+  function buildKeyboard() {
+    var kb = $('kb');
+    if (!kb || kb.dataset.done) return;
+    kb.innerHTML = KB_ROWS.map(function (row) {
+      return '<div class="kb-row">' + row.map(function (it) {
+        return '<button class="kb-key" data-k="' + it[0] + '"><span class="kl">' + it[0] + '</span><span class="kr">' + it[1] + '</span></button>';
+      }).join('') + '</div>';
+    }).join('');
+    kb.dataset.done = '1';
+    kb.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.kb-key') : null;
+      if (!b || state.locked) return;
+      $('typeInput').value += b.dataset.k.toLowerCase();
+      judge();
+    });
+  }
+  buildKeyboard();
+
   // 词组始终单行：按字数把每个字格缩到一行放得下，不折行
   function fitWordbox() {
     var box = $('wordbox');
-    var slots = box.querySelectorAll('.zislot').length || 1;
+    var slots = box.querySelectorAll('.zicell').length || 1;
     var avail = box.clientWidth || (window.innerWidth - 48);
     var gap = slots <= 3 ? 14 : (slots <= 5 ? 8 : 6);
     var size = Math.floor((avail - gap * (slots - 1)) / slots);
@@ -362,16 +408,33 @@
     for (var b = 0; b < n; b++) { starts.push(acc); acc += cnt[b]; }
     if (n >= 5) starts[n - 1] = 3;   // 末字固定第 4 码（蓝）
     var keysStr = w.keys || '';
-    var html = '';
+    var roots = rootsOf(w);
+    var codeStr = codeOf(w).toUpperCase();
+    var html = '', ri = 0;
     for (var i = 0; i < n; i++) {
       var k = cnt[i], startPos = starts[i];
       var isKeyName = keysStr.charAt(i) === '1' && k >= 2;
-      html += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + startPos + '" data-k="' + k + '" data-key="' + (isKeyName ? '1' : '0') + '"></span>';
+      var cell = '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + startPos + '" data-k="' + k + '" data-key="' + (isKeyName ? '1' : '0') + '"></span>';
       if (isKeyName) {
-        html += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + (startPos + 1) + '" data-k="0" data-key="dash"></span>';
+        cell += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + (startPos + 1) + '" data-k="0" data-key="dash"></span>';
       }
+      var cap = '';
+      if (k === 0) {
+        cap = '<span class="none">—</span>';
+      } else {
+        for (var t = 0; t < k; t++) {
+          var li = startPos + t;
+          var col = PALETTE[li % 4];
+          cap += (t ? ' ' : '') +
+            '<span class="r" style="color:' + col + '">' + (roots[ri] || '') + '</span>' +
+            '<span class="l" style="color:' + col + '">' + (codeStr.charAt(li) || '') + '</span>';
+          ri += 1;
+        }
+      }
+      html += '<span class="zicell">' + cell + '<span class="zicap">' + cap + '</span></span>';
     }
     $('wordbox').innerHTML = html;
+    $('ruleline').textContent = ruleText(n);
     fitWordbox();
     document.querySelectorAll('.zislot').forEach(function (slot) {
       fetch('svg/' + encodeURIComponent(slot.dataset.c) + '-' + slot.dataset.v + '.svg')
@@ -422,7 +485,10 @@
     var inp = $('typeInput');
     var typed = inp.value.replace(/\s+/g, '');
     if (!typed) return;
-    if (typed === w.w) {
+    var code = codeOf(w).toUpperCase();
+    var ascii = /^[A-Za-z]+$/.test(typed);
+    var hit = (typed === w.w) || (ascii && typed.toUpperCase() === code);
+    if (hit) {
       state.locked = true;
       state.right += 1; state.streak += 1; state.best = Math.max(state.best, state.streak);
       inp.className = 'ok'; inp.disabled = true;
@@ -433,8 +499,9 @@
       setTimeout(function () { state.idx += 1; nextQuestion(); }, 450);
       return;
     }
-    // 只有长度达到词组长度仍然不对，才判错
-    if (typed.length >= w.w.length) {
+    // 只有长度达到词组长度仍然不对，才判错（打字母时到 4 码才判）
+    var wrongNow = ascii ? (typed.length >= 4) : (typed.length >= w.w.length);
+    if (wrongNow) {
       state.locked = true;
       inp.className = 'bad';
       state.streak = 0;
@@ -506,7 +573,8 @@
   $('openSide').onclick = function () { applySide(true); };
   var saved = null;
   try { saved = localStorage.getItem(LS_SIDE); } catch (e) {}
-  applySide(saved !== '0');
+  // 手机上默认收起设置（先看到题目），桌面默认展开；用户手动选择过后按记忆来
+  applySide(saved === null ? window.innerWidth > 860 : saved === '1');
 
   window.__redraw = redraw;
   window.__next = nextQuestion;
