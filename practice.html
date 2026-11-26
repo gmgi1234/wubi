@@ -44,11 +44,32 @@
  .hidden { display:none !important; }
  input.secret { position:absolute; opacity:0; pointer-events:none; }
  footer { text-align:center; color:var(--muted); font-size:13px; padding:16px; }
+
+ .layout { display:flex; align-items:flex-start; max-width:1180px; margin:0 auto; }
+ aside { width:252px; flex:0 0 252px; position:sticky; top:0; align-self:flex-start; padding:20px 16px 24px 20px; border-right:1px solid var(--line); min-height:calc(100vh - 52px); }
+ aside.hidden { display:none; }
+ .side-head { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:14px; margin-bottom:12px; }
+ .side-head button { border:1px solid var(--line); background:#fff; border-radius:7px; width:26px; height:26px; cursor:pointer; color:var(--muted); font-size:15px; line-height:1; }
+ .side-body .bar { display:flex; flex-direction:column; align-items:flex-start; gap:6px; margin:12px 0; }
+ .side-body .lab { width:auto; font-size:13px; margin-bottom:2px; }
+ .side-body .chips { display:flex; flex-wrap:wrap; gap:6px; }
+ .side-body .chip { font-size:13px; padding:4px 10px; }
+ .side-body hr { margin:14px 0; width:100%; }
+ .side-body .wrongbox { font-size:13px; color:var(--muted); }
+ #openSide { position:fixed; left:10px; top:64px; z-index:40; border:1px solid var(--line); background:#fffdf8; border-radius:8px; padding:6px 10px; cursor:pointer; font-family:inherit; font-size:14px; color:var(--accent); }
+ main { flex:1; min-width:0; max-width:820px; margin:20px auto; }
+ @media (max-width:860px) {
+   aside { position:fixed; left:0; top:0; bottom:0; z-index:60; background:var(--paper); box-shadow:6px 0 24px rgba(0,0,0,.12); overflow:auto; }
+   aside.hidden { display:none; }
+ }
 </style>
 </head><body>
 <header><a href="./">五笔字根 · 笔画着色</a><span><a href="char/">全部单字</a>　<a href="ci/">全部词组</a>　<a href="./">回首页</a></span></header>
-<main>
-  <h1>词组练习</h1>
+<div class="layout">
+<aside id="sidebar">
+  <div class="side-head"><span>练习设置</span><button id="collapseBtn" title="收起">×</button></div>
+  <div class="side-body">
+  <h1 style="font-size:20px;margin:0 0 2px">词组练习</h1>
   <div class="sub">看词打码，编码按位着色（红→橙→绿→蓝），打完 4 位自动判定</div>
 
   <!-- 选择区（练习中也能直接点） -->
@@ -74,10 +95,13 @@
     <button class="chip on" data-hint="2">字根 + 编码</button>
     <button class="chip" data-hint="1">只显示字根</button>
     <button class="chip" data-hint="0">不看提示</button>
-    <button class="chip on" id="statToggle" style="margin-left:auto">计时统计：开</button>
+    <button class="chip on" id="statToggle">计时统计：开</button>
   </div>
 
-  <hr>
+  </div>
+</aside>
+<button id="openSide" class="hidden" title="展开设置">设置</button>
+<main>
 
   <!-- 练习区 -->
   <div id="play">
@@ -116,6 +140,7 @@
     </div>
   </div>
 </main>
+</div>
 <footer>数据来源：Rime 五笔码表 · 五笔大一统方案</footer>
 
 <script>
@@ -324,6 +349,19 @@
 
   refreshWrongCount();
   restart();
+
+  // 侧边栏折叠
+  var LS_SIDE = 'wubi_practice_sidebar';
+  function applySide(open) {
+    document.getElementById('sidebar').classList.toggle('hidden', !open);
+    document.getElementById('openSide').classList.toggle('hidden', open);
+    try { localStorage.setItem(LS_SIDE, open ? '1' : '0'); } catch (e) {}
+  }
+  document.getElementById('collapseBtn').onclick = function () { applySide(false); };
+  document.getElementById('openSide').onclick = function () { applySide(true); };
+  var saved = null;
+  try { saved = localStorage.getItem(LS_SIDE); } catch (e) {}
+  applySide(saved !== '0');
 })();
 </script>
 </body></html>
