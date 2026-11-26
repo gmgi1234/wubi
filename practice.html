@@ -35,6 +35,7 @@
  #jumpInput::placeholder { color:#b9b2a7; }
  .wordbox { display:flex; justify-content:center; gap:var(--zgap,18px); margin:18px 0 6px; flex-wrap:nowrap; align-items:flex-start; }
  .zicell { display:inline-flex; flex-direction:column; align-items:center; gap:4px; flex:0 0 auto; }
+ .zirow { display:flex; gap:3px; align-items:flex-start; flex:0 0 auto; }
  .zicap { font-size:13px; line-height:1.2; white-space:nowrap; color:var(--muted); }
  .zicap .r { font-size:15px; }
  .zicap .l { font-family:ui-monospace,Consolas,monospace; font-size:12px; }
@@ -457,11 +458,11 @@
   // 词组始终单行：按字数把每个字格缩到一行放得下，不折行
   function fitWordbox() {
     var box = $('wordbox');
-    var slots = box.querySelectorAll('.zicell').length || 1;
+    var slots = box.querySelectorAll('.zislot').length || 1;
     var avail = box.clientWidth || (window.innerWidth - 48);
     var gap = slots <= 3 ? 14 : (slots <= 5 ? 8 : 6);
     var size = Math.floor((avail - gap * (slots - 1)) / slots);
-    size = Math.max(40, Math.min(200, size));
+    size = Math.max(34, Math.min(200, size));
     box.style.setProperty('--zi', size + 'px');
     box.style.setProperty('--zgap', gap + 'px');
     box.style.flexWrap = 'nowrap';
@@ -505,6 +506,7 @@
       if (isKeyName) {
         cell += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + (startPos + 1) + '" data-k="0" data-key="dash"></span>';
       }
+      cell = '<span class="zirow">' + cell + '</span>';
       var cap = '';
       if (k === 0) {
         cap = '<span class="none">—</span>';
