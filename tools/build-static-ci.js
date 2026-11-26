@@ -79,30 +79,25 @@ function glyph(ch, ver) {
   return s;
 }
 
-function recolor(svg, startPos, count) {
-  if (!svg) return '';
-  return svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, (m, fill) => {
-    const up = fill.toUpperCase();
-    if (up === '#FFF' || up === '#FFFFFF' || up === '#CFC8BD') return m;
-    const idx = PALETTE.indexOf(up);
-    if (idx >= 0 && idx < count) return `fill="${PALETTE[(startPos + idx) % 4]}"`;
+function recolor(svg, start, k) {
+  const order = [];
+  svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, (m, f) => {
+    const u = f.toUpperCase();
+    if (['#FFF', '#555', '#555555', '#CFC8BD', '#999999', '#CCC'].includes(u)) return m;
+    if (!order.includes(u)) order.push(u);
+    return m;
+  });
+  return svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, (m, f) => {
+    const u = f.toUpperCase();
+    if (u === '#FFF') return m;
+    if (['#555', '#555555', '#CFC8BD', '#999999', '#CCC'].includes(u)) return `fill="${GRAY}"`;
+    const idx = order.indexOf(u);
+    if (idx >= 0 && idx < k) return 'fill="' + PALETTE[(start + idx) % 4] + '"';
     return `fill="${GRAY}"`;
   });
 }
 
-function dashOnly(svg, color) {
-  if (!svg) return '';
-  return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
-    const f = fill.toUpperCase();
-    if (f === '#FFF' || f === '#FFFFFF') return '';
-    const dMatch = (pre + post).match(/d="([^"]*)"/);
-    if (!dMatch) return '';
-    return '<path d="' + dMatch[1] + '" fill="none" stroke="' + color + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
-  });
-}
-
-
-  function colorWholeDashed(svg, fillColor, dashColor) {
+function colorWholeDashed(svg, fillColor, dashColor) {
     return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, function (m, pre, fill, post) {
       var f = fill.toUpperCase();
       if (f === '#FFF' || f === '#FFFFFF') return m;
@@ -112,6 +107,16 @@ function dashOnly(svg, color) {
       return base
         + '<path d="' + d[1] + '" fill="none" stroke="#ffffff" stroke-width="30" stroke-linejoin="round" stroke-linecap="round"/>'
         + '<path d="' + d[1] + '" fill="none" stroke="' + dashColor + '" stroke-width="14" stroke-dasharray="30 18" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+  }
+
+function dashOnly(inner, color) {
+    return inner.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
+      const f = fill.toUpperCase();
+      if (f === '#FFF' || f === '#FFFFFF') return '';
+      const dMatch = (pre + post).match(/d="([^"]*)"/);
+      if (!dMatch) return '';
+      return '<path d="' + dMatch[1] + '" fill="none" stroke="' + color + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
     });
   }
 

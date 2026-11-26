@@ -463,13 +463,20 @@
   var GRAY = '#cfc8bd';
 
   function recolorSvg(svg, start, k) {
-    var MAP = { '#E74C3C': 0, '#FF9800': 1, '#27AE60': 2, '#3498DB': 3, '#3498DB': 3 };
+    var order = [];
+    svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, function (m, f) {
+      var u = f.toUpperCase();
+      if (u === '#FFF' || u === '#FFFFFF') return m;
+      if (u === '#555' || u === '#555555' || u === '#CFC8BD' || u === '#999999' || u === '#CCC') return m;
+      if (order.indexOf(u) < 0) order.push(u);
+      return m;
+    });
     return svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, function (m, f) {
       var u = f.toUpperCase();
       if (u === '#FFF' || u === '#FFFFFF') return m;
-      if (u === '#555555' || u === '#555' || u === '#CFC8BD' || u === '#999999') return 'fill="' + GRAY + '"';
-      var i = MAP[u];
-      if (i !== undefined && i < k) return 'fill="' + PALETTE[(start + i) % 4] + '"';
+      if (u === '#555' || u === '#555555' || u === '#CFC8BD' || u === '#999999' || u === '#CCC') return 'fill="' + GRAY + '"';
+      var idx = order.indexOf(u);
+      if (idx >= 0 && idx < k) return 'fill="' + PALETTE[(start + idx) % 4] + '"';
       return 'fill="' + GRAY + '"';
     });
   }
