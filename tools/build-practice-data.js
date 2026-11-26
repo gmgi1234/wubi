@@ -69,7 +69,11 @@ for (const [len, list] of [...buckets.entries()].sort((a, b) => a[0] - b[0])) {
     const r6 = wordRoots(chars, 'v06').join(' ');
     const r8 = wordRoots(chars, 'v86').join(' ');
     const r9 = wordRoots(chars, 'v98').join(' ');
-    rows.push([w, c6.toLowerCase(), c8.toLowerCase(), c9.toLowerCase(), r6, r8, r9]);
+    const keys = chars.map((c) => {
+      const arr = (tables.v06[c] || {}).r || [];
+      return arr.length === 1 && arr[0] === c ? '1' : '0';
+    }).join('');
+    rows.push([w, c6.toLowerCase(), c8.toLowerCase(), c9.toLowerCase(), r6, r8, r9, keys]);
   }
   const file = path.join(OUT, `practice-${len}.js`);
   fs.writeFileSync(file, `window.PRACTICE_${len}=` + JSON.stringify(rows) + ';', 'utf8');

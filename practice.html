@@ -150,6 +150,7 @@
 (function () {
   var PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
   var state = { len: 2, ver: '6', hint: 2, count: 10, stats: true, pool: [], idx: 0, right: 0, streak: 0, best: 0, startAt: 0, wrong: [], locked: false, running: false };
+  window.__pstate = state;
   var $ = function (id) { return document.getElementById(id); };
   var LS_WRONG = 'wubi_wrong_words_v1';
 
@@ -200,7 +201,7 @@
     document.head.appendChild(s);
   }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  function rowToWord(r, len) { return { w: r[0], c6: r[1], c86: r[2], c98: r[3], r6: r[4], r86: r[5], r98: r[6], len: len }; }
+  function rowToWord(r, len) { return { w: r[0], c6: r[1], c86: r[2], c98: r[3], r6: r[4], r86: r[5], r98: r[6], keys: r[7] || '', len: len }; }
 
   function restart() {
     loadData(state.len, function (rows) {
@@ -240,6 +241,33 @@
   }
 
   var VER_FILE = { '86': '86', '98': '98', '6': '06' };
+  var GRAY = '#cfc8bd';
+
+  function recolorSvg(svg, start, k) {
+    return svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, function (m, f) {
+      var u = f.toUpperCase();
+      if (u === '#FFF' || u === '#FFFFFF') return m;
+      var i = PALETTE.map(function (x) { return x.toUpperCase(); }).indexOf(u);
+      if (i >= 0 && i < k) return 'fill="' + PALETTE[(start + i) % 4] + '"';
+      return 'fill="' + GRAY + '"';
+    });
+  }
+  function colorWholeSvg(svg, color) {
+    return svg.replace(/fill="(#[0-9A-Fa-f]{3,6})"/g, function (m, f) {
+      var u = f.toUpperCase();
+      if (u === '#FFF' || u === '#FFFFFF') return m;
+      return 'fill="' + color + '"';
+    });
+  }
+  function dashOnlySvg(svg, color) {
+    return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, function (m, pre, fill, post) {
+      var f = fill.toUpperCase();
+      if (f === '#FFF' || f === '#FFFFFF') return '';
+      var d = (pre + post).match(/d="([^"]*)"/);
+      if (!d) return '';
+      return '<path d="' + d[1] + '" fill="none" stroke="' + color + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+  }
 
   function redraw() {
     if (!state.pool.length) return;
@@ -248,19 +276,38 @@
     var chars = [...w.w];
     var ver = VER_FILE[state.ver] || '06';
 
+    var n = chars.length;
+    var cntOf = function (i) { return n === 2 ? 2 : n === 3 ? (i === 2 ? 2 : 1) : 1; };
+    var keysStr = w.keys || '';
     var html = '';
-    for (var i = 0; i < chars.length; i++) {
-      html += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '"></span>';
+    var startPos = 0;
+    for (var i = 0; i < n; i++) {
+      var k = cntOf(i);
+      var isKeyName = keysStr.charAt(i) === '1' && k >= 2;
+      html += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + startPos + '" data-k="' + k + '" data-key="' + (isKeyName ? '1' : '0') + '"></span>';
+      if (isKeyName) {
+        html += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + (startPos + 1) + '" data-k="0" data-key="dash"></span>';
+      }
+      startPos += k;
     }
     $('wordbox').innerHTML = html;
-    // 逐个取 SVG 内联（去掉白底），颜色与站点一致
     document.querySelectorAll('.zislot').forEach(function (slot) {
       fetch('svg/' + encodeURIComponent(slot.dataset.c) + '-' + slot.dataset.v + '.svg')
         .then(function (r) { return r.ok ? r.text() : ''; })
         .then(function (svg) {
           if (!svg) return;
-          var inner = svg.replace(/<rect[^>]*>/g, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '');
-          slot.innerHTML = '<svg class="zi-svg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+          var inner = svg.replace(/<path[^>]*stroke="#c0392b"[^>]*\/>/g, '').replace(/<rect[^>]*>/g, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '');
+          var k = Number(slot.dataset.k);
+          var st = Number(slot.dataset.start);
+          var out;
+          if (slot.dataset.key === 'dash') {
+            out = dashOnlySvg(inner, PALETTE[st % 4]);
+          } else if (slot.dataset.key === '1') {
+            out = colorWholeSvg(inner, PALETTE[st % 4]);
+          } else {
+            out = recolorSvg(inner, st, k);
+          }
+          slot.innerHTML = '<svg class="zi-svg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">' + out + '</svg>';
         })
         .catch(function () {});
     });
@@ -379,6 +426,8 @@
   try { saved = localStorage.getItem(LS_SIDE); } catch (e) {}
   applySide(saved !== '0');
 
+  window.__redraw = redraw;
+  window.__next = nextQuestion;
   refreshWrongCount();
   restart();
 })();
