@@ -526,11 +526,12 @@
   var KB_LAYOUT = [['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], ['Z', 'X', 'C', 'V', 'B', 'N', 'M']];
   function kbData() {
     if (typeof WUBI_ROOT_TABLE_06 === 'undefined') return [{}, {}];
-    if (state.ver === '86') return [WUBI_ROOT_TABLE_86, KEY_NAMES];
-    if (state.ver === '98') return [WUBI_ROOT_TABLE_98, KEY_NAMES_98];
-    return [WUBI_ROOT_TABLE_06, KEY_NAMES_06];
+    var v = verOf();
+    if (v === '86') return [WUBI_ROOT_TABLE_86, (typeof KEY_NAMES !== 'undefined' ? KEY_NAMES : {})];
+    if (v === '98') return [WUBI_ROOT_TABLE_98, (typeof KEY_NAMES_98 !== 'undefined' ? KEY_NAMES_98 : {})];
+    return [WUBI_ROOT_TABLE_06, (typeof KEY_NAMES_06 !== 'undefined' ? KEY_NAMES_06 : {})];
   }
-  function rootHtml(tok) {
+    function rootHtml(tok) {
     var kb = (window.KB_ROOT_GLYPHS || {})[tok];
     if (kb) {
       return '<svg class="rg" viewBox="0 0 1024 1024" aria-hidden="true">' + kb + '</svg>';
