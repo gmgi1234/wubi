@@ -184,6 +184,7 @@
           if (isKeyName && cntOf(ci) >= 2) {
             return svgWrap(colorWhole(g, PALETTE[p % 4], null), 96) + svgWrap(dashOnly(g, PALETTE[(p + 1) % 4]), 96);
           }
+          if (isKey && cntOf(ci) >= 2) return svgWrap(colorWhole(g, PALETTE[p % 4], PALETTE[(p + 1) % 4]), 96);
           return svgWrap(isKey ? colorWhole(g, PALETTE[p % 4], null) : recolor(g, p, cntOf(ci)), 96);
         }).join('');
         const rootsHtml = roots.map((r, i) => `<span style="color:${PALETTE[i % 4]}">${rootHtml(r, PALETTE[i % 4], 20)}</span>`).join('<span class="plus">+</span>');

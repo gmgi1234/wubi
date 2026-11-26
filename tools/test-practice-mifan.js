@@ -27,7 +27,7 @@ server.listen(0, '127.0.0.1', async () => {
 
   await page.evaluate(() => {
     var st = window.__pstate;
-    st.pool = [{ w: '米饭', c6: 'oyqn', c86: 'oyqn', c98: 'oyqn', r6: '米 丶 饣 丿', keys: '00', len: 2 }];
+    st.pool = [{ w: '米饭', c6: 'oyqn', c86: 'oyqn', c98: 'oyqn', r6: '米 丶 饣 丿', keys: '00', cheng: '10', len: 2 }];
     st.idx = 0; st.locked = false;
     window.__next();
   });

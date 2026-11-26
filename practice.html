@@ -236,7 +236,7 @@
     document.head.appendChild(s);
   }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  function rowToWord(r, len) { return { w: r[0], c6: r[1], c86: r[2], c98: r[3], r6: r[4], r86: r[5], r98: r[6], keys: r[7] || '', len: len }; }
+  function rowToWord(r, len) { return { w: r[0], c6: r[1], c86: r[2], c98: r[3], r6: r[4], r86: r[5], r98: r[6], keys: r[7] || '', cheng: r[8] || '', len: len }; }
 
   // 搜索词组：回车直接跳到这一题（找不到就提示），方便核对某个词的着色
   function jumpToWord(raw) {
@@ -380,6 +380,18 @@
       return 'fill="' + color + '"';
     });
   }
+
+  function dashOnSecondRoot(svg, color) {
+    return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, function (m, pre, fill, post) {
+      var f = fill.toUpperCase();
+      if (f !== '#FF9800') return '';
+      var d = (pre + post).match(/d="([^"]*)"/);
+      if (!d) return '';
+      return '<path d="' + d[1] + '" fill="none" stroke="#ffffff" stroke-width="26" stroke-linejoin="round" stroke-linecap="round"/>' +
+             '<path d="' + d[1] + '" fill="none" stroke="' + color + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+  }
+
   function dashOnlySvg(svg, color) {
     return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, function (m, pre, fill, post) {
       var f = fill.toUpperCase();
@@ -498,6 +510,7 @@
     for (var b = 0; b < n; b++) { starts.push(acc); acc += cnt[b]; }
     if (n >= 5) starts[n - 1] = 3;   // 末字固定第 4 码（蓝）
     var keysStr = w.keys || '';
+    var chengStr = w.cheng || '';
     var roots = rootsOf(w);
     var codeStr = codeOf(w).toUpperCase();
     var html = '', ri = 0;
@@ -505,7 +518,7 @@
       var k = cnt[i], startPos = starts[i];
       var rA = roots[ri], rB = roots[ri + 1];
       var isKeyName = k >= 2 && (keysStr.charAt(i) === '1' || (!!rA && rA === rB));
-      var cell = '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + startPos + '" data-k="' + k + '" data-key="' + (isKeyName ? '1' : '0') + '"></span>';
+      var cell = '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + startPos + '" data-k="' + k + '" data-key="' + (isKeyName ? '1' : '0') + '" data-cheng="' + (chengStr.charAt(i) === '1' ? '1' : '0') + '"></span>';
       if (isKeyName) {
         cell += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + (startPos + 1) + '" data-k="0" data-key="dash"></span>';
       }
@@ -537,10 +550,12 @@
           var k = Number(slot.dataset.k);
           var st = Number(slot.dataset.start);
           var out;
-          if (slot.dataset.key === 'dash') {
+                    if (slot.dataset.key === 'dash') {
             out = dashOnlySvg(inner, PALETTE[st % 4]);
           } else if (slot.dataset.key === '1') {
             out = colorWholeSvg(inner, PALETTE[st % 4]);
+          } else if (slot.dataset.cheng === '1' && k >= 2) {
+            out = colorWholeSvg(inner, PALETTE[st % 4]) + dashOnSecondRoot(inner, PALETTE[(st + 1) % 4]);
           } else {
             out = recolorSvg(inner, st, k);
           }

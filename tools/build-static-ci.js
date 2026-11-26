@@ -196,6 +196,7 @@ for (let wi = 0; wi < keep.length; wi += 1) {
         if (isKeyName && cntOf(ci) >= 2) {
           return colorWhole(g, PALETTE[p % 4], null) + dashOnly(g, PALETTE[(p + 1) % 4]);
         }
+        if (isKey && cntOf(ci) >= 2) return colorWhole(g, PALETTE[p % 4], PALETTE[(p + 1) % 4]);
         return isKey ? colorWhole(g, PALETTE[p % 4], null) : recolor(g, p, cntOf(ci));
       }).join('');
       const rootHtml = roots.map((r, i) => `<span style="color:${PALETTE[i % 4]}">${fragIcon(r, PALETTE[i % 4], 20)}</span>`).join('<span class="plus">+</span>');
