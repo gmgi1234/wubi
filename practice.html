@@ -540,7 +540,7 @@
     if (!g || !g.paths) return tok;
     var ps = g.paths.map(function (d) { return '<path d="' + d + '" fill="currentColor"/>'; }).join('');
     var sc = g.scale || 1, cx = g.cx || 512, cy = g.cy || 512;
-    return '<svg class="rg" viewBox="0 0 1024 1024" aria-hidden="true"><g transform="translate(' + cx + ',' + cy + ') scale(' + sc + ') translate(' + (-cx) + ',' + (-cy) + ')">' + ps + '</g></svg>';
+    return '<svg class="rg" viewBox="0 0 1024 1024" aria-hidden="true"><g transform="translate(0,900) scale(1,-1)"><g transform="translate(' + cx + ',' + cy + ') scale(' + sc + ') translate(' + (-cx) + ',' + (-cy) + ')">' + ps + '</g></g></svg>';
   }
   function rootsHtml(str) {
     var out = '', i = 0, t = str || '';
