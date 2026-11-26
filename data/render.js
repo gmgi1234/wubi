@@ -202,6 +202,7 @@
        <h2>怎么拆</h2>
        <div class="rule"><p>${esc(rec.w)} = ${rec.ch.map((c) => esc(c)).join(' + ')}</p>
        <p>${rule}：${rec.r86.map((r, i) => rootHtml(r, PALETTE[i % 4], 18) + `（${esc(rec.c86[i] || '')}）`).join(' + ')} → <strong>${esc(rec.c86)}</strong></p></div>
+       <div id="mean-slot"></div>
        <h2>单字拆分</h2>
        <div class="chars">${rec.ch.map((c) => `<a class="ch" href="char.html?c=${encodeURIComponent(c)}">${esc(c)}</a>`).join('')}</div>
        <h2>相关词组</h2>

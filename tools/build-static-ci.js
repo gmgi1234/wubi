@@ -10,6 +10,7 @@ const words = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'words.json'),
 const keep = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'keep-words.json'), 'utf8'));
 const glyphLib = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'root-glyphs.json'), 'utf8'));
 const fragMap = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'frag-map.json'), 'utf8'));
+const wordMeanings = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'word-meanings.json'), 'utf8'));
 
 const PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
 const GRAY = '#cfc8bd';
@@ -224,6 +225,7 @@ for (let wi = 0; wi < keep.length; wi += 1) {
     <p>${esc(w)} = ${chars.map((c) => esc(c)).join(' + ')}</p>
     <p>${ruleText(len)}：${wordRootsOf(chars, 'v86').map((r, i) => `${fragIcon(r, PALETTE[i % 4], 18)}（${esc(rec.c86[i] || '')}）`).join(' + ')} → <strong>${esc(rec.c86)}</strong></p>
   </div>
+  ${wordMeanings[w] ? `<h2>释义</h2><div class="rule"><p>${esc(wordMeanings[w])}</p></div>` : ''}
   <h2>单字拆分</h2>
   <div class="chars">${chars.map((c) => `<a class="ch" href="../char.html?c=${encodeURIComponent(c)}">${esc(c)}</a>`).join('')}</div>
   <h2>相关词组</h2>

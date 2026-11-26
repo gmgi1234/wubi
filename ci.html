@@ -66,6 +66,21 @@
   }
   await Promise.all(jobs);
   WubiRender.renderWord(rec, glyphs, {});
+
+  // 释义（按首字分桶，按需加载）
+  (async function () {
+    const slot = document.getElementById('mean-slot');
+    if (!slot) return;
+    const mb = w.charCodeAt(0) % 64;
+    if (!window['WORD_MEAN_' + mb]) {
+      await load('data/word-mean-' + mb + '.js');
+    }
+    const table = window['WORD_MEAN_' + mb] || {};
+    const text = table[w];
+    if (text) {
+      slot.innerHTML = '<h2>释义</h2><div class="rule"><p>' + text.replace(/[&<>]/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) + '</p></div>';
+    }
+  })();
 })();
 </script>
 </body></html>
