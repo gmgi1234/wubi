@@ -98,6 +98,9 @@
  .kb-roots, .kb-roots * { font-family: 'ZiGen', 'KaiTi', '楷体', serif; }
  .kb-roots .rg { width: 20px; height: 20px; vertical-align: -4px; fill: currentColor; }
  .statbar { position:fixed; left:16px; bottom:16px; z-index:30; background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:6px 14px; box-shadow:0 2px 10px rgba(0,0,0,.06); margin:0; }
+ .wordblock { border:1px solid var(--line); border-radius:14px; padding:14px 16px 10px; margin:16px auto 6px; max-width:760px; background:var(--paper); }
+ .wordblock .wordbox { margin:0; }
+ .wordblock .codline { margin-top:6px; }
 </style>
 </head><body>
 <header><a href="./">五笔字根 · 笔画着色</a><span><a href="char/">全部单字</a>　<a href="ci/">全部词组</a>　<a href="./">回首页</a></span></header>
@@ -162,8 +165,7 @@
       <span>用时 <b id="qTime">0s</b></span>
     </div>
 
-    <div class="wordbox" id="wordbox"></div>
-    <div class="codline" id="codline"></div>
+    <div class="wordblock"><div class="wordbox" id="wordbox"></div><div class="codline" id="codline"></div></div>
     <div class="rule" id="ruleline"></div>
 
     <div class="inputwrap"><input id="typeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="在这里打出词组"></div>
