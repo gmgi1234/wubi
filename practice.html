@@ -384,6 +384,18 @@
     });
   }
 
+
+  function colorWholeDashed(svg, fillColor, dashColor) {
+    return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, function (m, pre, fill, post) {
+      var f = fill.toUpperCase();
+      if (f === '#FFF' || f === '#FFFFFF') return m;
+      var d = (pre + post).match(/d="([^"]*)"/);
+      var base = '<path' + pre + 'fill="' + fillColor + '"' + post + '/>';
+      if (!d) return base;
+      return base + '<path d="' + d[1] + '" fill="none" stroke="' + dashColor + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+  }
+
   function dashOnSecondRoot(svg, color) {
     return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, function (m, pre, fill, post) {
       var f = fill.toUpperCase();
@@ -556,9 +568,6 @@
       var rA = roots[ri], rB = roots[ri + 1];
       var isKeyName = k >= 2 && keysStr.charAt(i) === '1';
       var cell = '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + startPos + '" data-k="' + k + '" data-key="' + (isKeyName ? '1' : '0') + '" data-cheng="' + (chengStr.charAt(i) === '1' ? '1' : '0') + '"></span>';
-      if (isKeyName) {
-        cell += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + (startPos + 1) + '" data-k="0" data-key="dash"></span>';
-      }
       cell = '<span class="zirow">' + cell + '</span>';
       var cap = '';
       if (k === 0) {
@@ -590,7 +599,7 @@
                     if (slot.dataset.key === 'dash') {
             out = dashOnlySvg(inner, PALETTE[st % 4]);
           } else if (slot.dataset.key === '1') {
-            out = colorWholeSvg(inner, PALETTE[st % 4]);
+            out = colorWholeDashed(inner, PALETTE[st % 4], PALETTE[(st + 1) % 4]);
           } else if (slot.dataset.cheng === '1' && k >= 2) {
             out = colorWholeSvg(inner, PALETTE[st % 4]) + dashOnSecondRoot(inner, PALETTE[(st + 1) % 4]);
           } else {

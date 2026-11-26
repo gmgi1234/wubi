@@ -101,6 +101,18 @@ function dashOnly(svg, color) {
   });
 }
 
+
+  function colorWholeDashed(svg, fillColor, dashColor) {
+    return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, function (m, pre, fill, post) {
+      var f = fill.toUpperCase();
+      if (f === '#FFF' || f === '#FFFFFF') return m;
+      var d = (pre + post).match(/d="([^"]*)"/);
+      var base = '<path' + pre + 'fill="' + fillColor + '"' + post + '/>';
+      if (!d) return base;
+      return base + '<path d="' + d[1] + '" fill="none" stroke="' + dashColor + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+  }
+
 function colorWhole(svg, color, nextColor) {
   if (!svg) return '';
   let matchedSecondary = false;
@@ -194,7 +206,7 @@ for (let wi = 0; wi < keep.length; wi += 1) {
         const isKeyName = rArr.length === 1 && rArr[0] === c;
         const isKey = rArr[0] === c;
         if (isKeyName && cntOf(ci) >= 2) {
-          return colorWhole(g, PALETTE[p % 4], null) + dashOnly(g, PALETTE[(p + 1) % 4]);
+          return colorWholeDashed(g, PALETTE[p % 4], PALETTE[(p + 1) % 4]);
         }
         if (isKey && cntOf(ci) >= 2) return colorWhole(g, PALETTE[p % 4], PALETTE[(p + 1) % 4]);
         return isKey ? colorWhole(g, PALETTE[p % 4], null) : recolor(g, p, cntOf(ci));

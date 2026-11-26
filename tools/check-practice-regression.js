@@ -39,7 +39,6 @@ function expectFor(word) {
     if (k === 0) { slots.push({ c, k: 0, kind: 'none' }); return; }
     if (k >= 2 && isKeyNameChar(c)) {
       slots.push({ c, k, kind: 'key' });
-      slots.push({ c, k: 0, kind: 'keydash' });
     } else if (k >= 2 && isChengChar(c)) {
       slots.push({ c, k, kind: 'cheng' });
     } else {
@@ -150,10 +149,10 @@ server.listen(0, '127.0.0.1', async () => {
     exp.forEach((e, i) => {
       const d = dom[i];
       if (!d) return;
-      if (e.kind === 'keydash' && d.dashes === 0) problems.push(`第${i + 1}格应整字虚线`);
+      if (e.kind === 'key' && d.dashes === 0) problems.push(`第${i + 1}格（键名字）缺整字虚线`);
+      if (e.kind === 'key' && d.fills.length === 0) problems.push(`第${i + 1}格（键名字）没上色`);
       if (e.kind === 'cheng' && d.dashes === 0) problems.push(`第${i + 1}格缺第二根虚线`);
       if (e.kind === 'normal' && d.dashes > 0) problems.push(`第${i + 1}格不该有虚线`);
-      if (e.kind === 'keydash' && d.fills.length > 0 && d.dashes === 0) problems.push(`第${i + 1}格应无填充`);
     });
     results.push({ w, problems, slots: dom.length });
   }

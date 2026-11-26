@@ -125,6 +125,18 @@
     });
   }
 
+
+  function colorWholeDashed(svg, fillColor, dashColor) {
+    return svg.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, function (m, pre, fill, post) {
+      var f = fill.toUpperCase();
+      if (f === '#FFF' || f === '#FFFFFF') return m;
+      var d = (pre + post).match(/d="([^"]*)"/);
+      var base = '<path' + pre + 'fill="' + fillColor + '"' + post + '/>';
+      if (!d) return base;
+      return base + '<path d="' + d[1] + '" fill="none" stroke="' + dashColor + '" stroke-width="12" stroke-dasharray="26 16" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+  }
+
   function colorWhole(inner, color, nextColor) {
     let matchedSecondary = false;
     const out = inner.replace(/<path([^>]*?)fill="(#[0-9A-Fa-f]{3,6})"([^>]*?)\/>/g, (m, pre, fill, post) => {
@@ -182,7 +194,7 @@
           const isKey = (rec.keyIdx && rec.keyIdx[`${c}-${ver}`]);
           const isKeyName = (rec.keyName && rec.keyName[`${c}-${ver}`]);
           if (isKeyName && cntOf(ci) >= 2) {
-            return svgWrap(colorWhole(g, PALETTE[p % 4], null), 96) + svgWrap(dashOnly(g, PALETTE[(p + 1) % 4]), 96);
+            return svgWrap(colorWholeDashed(g, PALETTE[p % 4], PALETTE[(p + 1) % 4]), 96);
           }
           if (isKey && cntOf(ci) >= 2) return svgWrap(colorWhole(g, PALETTE[p % 4], PALETTE[(p + 1) % 4]), 96);
           return svgWrap(isKey ? colorWhole(g, PALETTE[p % 4], null) : recolor(g, p, cntOf(ci)), 96);
