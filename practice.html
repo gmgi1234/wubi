@@ -184,6 +184,7 @@
 
 <script src="data/wubi_roots_all.js"></script>
 <script src="data/root-glyphs.js"></script>
+<script src="data/char-flags.js"></script>
 <script>
 (function () {
   var PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
@@ -214,6 +215,67 @@
     this.textContent = '计时统计：' + (state.stats ? '开' : '关');
     this.classList.toggle('on', state.stats);
   };
+
+  var basicLoading = null;
+  function loadBasic(cb) {
+    if (window.CHAR_BASIC) { cb(window.CHAR_BASIC); return; }
+    if (basicLoading) { basicLoading.push(cb); return; }
+    basicLoading = [cb];
+    var s = document.createElement('script');
+    s.src = 'data/char-basic.js';
+    s.onload = function () { var list = basicLoading; basicLoading = null; list.forEach(function (f) { f(window.CHAR_BASIC || {}); }); };
+    s.onerror = function () { basicLoading = null; cb({}); };
+    document.head.appendChild(s);
+  }
+
+  function computeWord(word) {
+    // 用单字数据按五笔词组规则现算
+    var chars = [...word];
+    var n = chars.length;
+    var basic = window.CHAR_BASIC || {};
+    var codes = [], roots86 = [], roots98 = [], roots06 = [];
+    for (var i = 0; i < n; i++) {
+      var b = basic[chars[i]];
+      if (!b) return null;
+      codes.push({ c86: b[0], c98: b[1], c06: b[2] });
+      roots86.push(b[3].split(' ').filter(Boolean));
+      roots98.push(b[4].split(' ').filter(Boolean));
+      roots06.push(b[5].split(' ').filter(Boolean));
+    }
+    function pick(list, k) {
+      var out = [];
+      for (var i = 0; i < n; i++) out = out.concat(list[i].slice(0, k[i]));
+      return out;
+    }
+    var cnt = n === 2 ? [2, 2] : n === 3 ? [1, 1, 2] : n === 4 ? [1, 1, 1, 1] : (function () { var a = []; for (var i = 0; i < n; i++) a.push(i < 3 ? 1 : (i === n - 1 ? 1 : 0)); return a; })();
+    function code(ver) {
+      var cs = codes.map(function (x) { return x[ver]; });
+      if (cs.some(function (x) { return !x; })) return '';
+      if (n === 2) return cs[0].slice(0, 2) + cs[1].slice(0, 2);
+      if (n === 3) return cs[0][0] + cs[1][0] + cs[2].slice(0, 2);
+      if (n === 4) return cs.map(function (x) { return x[0]; }).join('');
+      return cs[0][0] + cs[1][0] + cs[2][0] + cs[n - 1][0];
+    }
+    var c86 = code('c86'), c98 = code('c98'), c06 = code('c06');
+    if (!c06) return null;
+    var fl = flagsOf(word);
+    return {
+      w: word, c6: c06, c86: c86 || c06, c98: c98 || c06,
+      r6: pick(roots06, cnt).join(' '), r86: pick(roots86, cnt).join(' '), r98: pick(roots98, cnt).join(' '),
+      keys: fl.keys, cheng: fl.cheng, len: n
+    };
+  }
+
+  function flagsOf(word) {
+    var keys = '', cheng = '';
+    var chars = [...word];
+    for (var i = 0; i < chars.length; i++) {
+      var f = (window.CHAR_FLAGS || {})[chars[i]] || '00';
+      keys += f.charAt(0);
+      cheng += f.charAt(1);
+    }
+    return { keys: keys, cheng: cheng };
+  }
 
   function codeOf(w) { return state.ver === '86' ? w.c86 : state.ver === '98' ? w.c98 : w.c6; }
   function rootsOf(w) { return (state.ver === '86' ? w.r86 : state.ver === '98' ? w.r98 : w.r6).split(' ').filter(Boolean); }
@@ -284,12 +346,34 @@
     var key = 'WORD_DATA_' + wb;
     var go = function () {
       var rec = (window[key] || {})[t];
-      if (!rec) { msg.textContent = '词库里没有「' + t + '」'; msg.className = 'msg bad'; return; }
+      if (!rec) {
+        loadBasic(function () {
+          var calc = computeWord(t);
+          if (!calc) { msg.textContent = '词库里没有「' + t + '」'; msg.className = 'msg bad'; return; }
+          calc.keysDone = true;
+          state.len = n;
+          var at2 = -1;
+          for (var jj = 0; jj < state.pool.length; jj++) { if (state.pool[jj].w === t) { at2 = jj; break; } }
+          if (at2 < 0) { state.pool.splice(state.idx, 0, calc); at2 = state.idx; }
+          state.idx = at2; state.locked = false; state.running = true;
+          $('result').classList.add('hidden');
+          $('play').classList.remove('hidden');
+          $('qTotal').textContent = state.pool.length;
+          $('qIndex').textContent = state.idx + 1;
+          msg.textContent = '已跳到「' + t + '」（现算）';
+          msg.className = 'msg';
+          redraw();
+          var ti2 = $('typeInput'); ti2.value = ''; ti2.className = ''; ti2.disabled = false;
+          $('jumpInput').blur();
+        });
+        return;
+      }
       var item = {
         w: rec.w, c6: rec.c06 || rec.c6 || '', c86: rec.c86 || '', c98: rec.c98 || '',
         r6: (rec.r06 || []).join(' '), r86: (rec.r86 || []).join(' '), r98: (rec.r98 || []).join(' '),
-        keys: '', len: n
+        keys: '', cheng: '', len: n
       };
+      var flL = flagsOf(item.w); item.keys = flL.keys; item.cheng = flL.cheng;
       state.len = n;
       document.querySelectorAll('[data-len]').forEach(function (x) { x.classList.remove('on'); });
       var at = -1;
