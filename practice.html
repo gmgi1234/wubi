@@ -27,8 +27,10 @@
  main { flex:1; min-width:0; max-width:820px; margin:20px auto; background:var(--paper); box-shadow:0 0 0 1px var(--line); border-radius:16px; padding:22px 24px 34px; }
  .statbar { display:flex; gap:18px; color:var(--muted); font-size:14px; padding:4px 0 10px; border-bottom:1px dashed var(--line); }
  .statbar b { color:var(--ink); font-weight:normal; }
- .jumpbar { display:flex; justify-content:center; padding:8px 0 4px; }
- #jumpInput { font-family:inherit; font-size:15px; padding:8px 12px; width:min(100%, 360px); border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); outline:none; }
+ .side-end { padding:6px 0; }
+ .side-end #endBtn { width:100%; }
+ .jumpbar { padding:4px 0 8px; }
+ #jumpInput { font-family:inherit; font-size:14px; padding:7px 10px; width:100%; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); outline:none; }
  #jumpInput:focus { border-color:var(--accent); }
  #jumpInput::placeholder { color:#b9b2a7; }
  .wordbox { display:flex; justify-content:center; gap:var(--zgap,18px); margin:18px 0 6px; flex-wrap:nowrap; align-items:flex-start; }
@@ -40,18 +42,19 @@
  .rule { text-align:center; font-size:13px; color:var(--muted); margin:2px 0 0; }
  .kbwrap { margin:10px 0 2px; }
  .kbbox { overflow-x:auto; padding-bottom:4px; }
- .kb { display:flex; flex-direction:column; gap:4px; min-width:632px; }
+ .kb { display:flex; flex-direction:column; gap:4px; min-width:790px; }
  .kb-title { text-align:center; font-size:12px; color:var(--muted); margin-bottom:2px; }
  .kb-row { display:flex; justify-content:center; gap:4px; }
- .kb-row.r2 { padding-left:31px; }
- .kb-row.r3 { padding-left:93px; }
- .kb-key { flex:0 0 auto; width:58px; background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px 2px 4px; cursor:pointer; font-family:inherit; color:var(--ink); text-align:center; }
+ .kb-row.r2 { padding-left:40px; }
+ .kb-row.r3 { padding-left:120px; }
+ .kb-key { flex:0 0 auto; width:74px; background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px 2px 4px; cursor:pointer; font-family:inherit; color:var(--ink); text-align:center; }
  .kb-key.on { border-color:var(--accent); box-shadow:0 0 0 2px rgba(163,60,47,.13); }
  .kb-pill { display:flex; align-items:center; justify-content:center; gap:1px; border:1px solid var(--line); border-radius:999px; background:#fdfbf6; padding:1px 2px; }
  .kb-pill .kj { font-size:10px; color:var(--muted); }
  .kb-pill .kl { font-size:13px; color:var(--accent); font-family:ui-monospace,Consolas,monospace; }
  .kb-pill .kn { font-size:10px; color:var(--muted); }
- .kb-roots { display:block; margin-top:2px; font-size:8px; line-height:1.15; color:#9b9184; word-break:break-all; }
+ .rg { width:11px; height:11px; vertical-align:-2px; display:inline-block; }
+ .kb-roots { display:block; margin-top:2px; font-size:9px; line-height:1.2; color:#9b9184; word-break:break-all; }
  .kbhint { text-align:center; font-size:11px; color:var(--muted); margin-top:2px; }
  .charcell { text-align:center; }
  .zislot { display:inline-block; border:1px solid var(--line); border-radius:10px; background:#fff; padding:6px; width:var(--zi,150px); height:var(--zi,150px); flex:0 0 auto; }
@@ -92,6 +95,10 @@
 <aside id="sidebar">
   <div class="side-head"><span>练习设置</span><button id="collapseBtn" title="收起">×</button></div>
   <div class="side-body">
+    <div class="jumpbar">
+      <input id="jumpInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="搜词组，回车跳题">
+    </div>
+
     <h1>词组练习</h1>
     <div class="sub">照着彩色字形直接打字，输入正确自动跳下一题</div>
 
@@ -129,16 +136,14 @@
       <button class="chip" id="practiceWrong">练错题</button>
       <button class="chip" id="clearWrong">清空</button>
     </div></div>
+    <hr>
+    <div class="side-end"><button id="endBtn">结束本轮</button></div>
   </div>
 </aside>
 <button id="openSide" class="hidden" title="展开设置">设置</button>
 
 <main>
   <div id="play">
-    <div class="jumpbar">
-      <input id="jumpInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="搜词组，回车跳到这一题（如：承包责任制）">
-    </div>
-
     <div class="statbar">
       <span>第 <b id="qIndex">1</b> / <b id="qTotal">10</b> 题</span>
       <span>正确 <b id="qRight">0</b></span>
@@ -154,10 +159,7 @@
     <div class="msg" id="msg">输入上面的词组</div>
     <div class="kbwrap"><div class="kbbox"><div class="kb" id="kb"></div></div><div class="kbhint">左右滑动看全键盘 · 点键输入该码</div></div>
 
-    <div class="actions">
-      <button id="skipBtn">跳过（看答案）</button>
-      <button id="endBtn">结束本轮</button>
-    </div>
+    
   </div>
 
   <div id="result" class="hidden">
@@ -177,6 +179,7 @@
 <footer>数据来源：Rime 五笔码表 · 五笔大一统方案</footer>
 
 <script src="data/wubi_roots_all.js"></script>
+<script src="data/root-glyphs.js"></script>
 <script>
 (function () {
   var PALETTE = ['#E74C3C', '#FF9800', '#27AE60', '#2980B9'];
@@ -362,6 +365,32 @@
     if (state.ver === '98') return [WUBI_ROOT_TABLE_98, KEY_NAMES_98];
     return [WUBI_ROOT_TABLE_06, KEY_NAMES_06];
   }
+  function rootHtml(tok) {
+    var g = (window.ROOT_GLYPHS || {})[tok];
+    if (!g || !g.paths) return tok;
+    var ps = g.paths.map(function (d) { return '<path d="' + d + '" fill="currentColor"/>'; }).join('');
+    var sc = g.scale || 1, cx = g.cx || 512, cy = g.cy || 512;
+    return '<svg class="rg" viewBox="0 0 1024 1024" aria-hidden="true"><g transform="translate(' + cx + ',' + cy + ') scale(' + sc + ') translate(' + (-cx) + ',' + (-cy) + ')">' + ps + '</g></svg>';
+  }
+  function rootsHtml(str) {
+    var out = '', i = 0, t = str || '';
+    while (i < t.length) {
+      if (t[i] === '[') {
+        var j = t.indexOf(']', i);
+        var name = t.slice(i + 1, j < 0 ? t.length : j);
+        out += rootHtml(name);
+        i = j < 0 ? t.length : j + 1;
+      } else if (t[i] === ']') { i += 1; }
+      else {
+        var ch = t[i];
+        out += (ch.charCodeAt(0) >= 0xE000 && ch.charCodeAt(0) <= 0xF8FF) || ROOT_GLYPHS_SAFE(ch) ? rootHtml(ch) : ch;
+        i += 1;
+      }
+    }
+    return out;
+  }
+  function ROOT_GLYPHS_SAFE(ch) { return !!(window.ROOT_GLYPHS && window.ROOT_GLYPHS[ch]); }
+
   function buildKeyboard() {
     var kb = $('kb');
     if (!kb) return;
@@ -371,7 +400,7 @@
     KB_LAYOUT.forEach(function (row, ri) {
       html += '<div class="kb-row' + (ri === 1 ? ' r2' : ri === 2 ? ' r3' : '') + '">';
       row.forEach(function (L) {
-        var roots = (table[L] || '').replace(/[\[\]]/g, '');
+        var roots = rootsHtml(table[L] || '');
         html += '<button class="kb-key" data-k="' + L + '">' +
           '<span class="kb-pill"><span class="kj">' + (JIANMA[L] || '') + '</span><span class="kl">' + L + '</span><span class="kn">' + (names[L] || (L === 'Z' ? '万能' : '')) + '</span></span>' +
           '<span class="kb-roots">' + roots + '</span></button>';
@@ -395,7 +424,7 @@
     var avail = box.clientWidth || (window.innerWidth - 48);
     var gap = slots <= 3 ? 14 : (slots <= 5 ? 8 : 6);
     var size = Math.floor((avail - gap * (slots - 1)) / slots);
-    size = Math.max(40, Math.min(150, size));
+    size = Math.max(40, Math.min(200, size));
     box.style.setProperty('--zi', size + 'px');
     box.style.setProperty('--zgap', gap + 'px');
     box.style.flexWrap = 'nowrap';
@@ -553,7 +582,6 @@
     if (state.stats && state.running) $('qTime').textContent = Math.round((Date.now() - state.startAt) / 1000) + 's';
   }, 500);
 
-  $('skipBtn').onclick = function () {
     if (!state.locked) {
       var w = state.pool[state.idx];
       state.locked = true; state.streak = 0;
