@@ -248,7 +248,7 @@
     loadData(n, function (rows) {
       var row = null;
       for (var i = 0; i < rows.length; i++) { if (rows[i][0] === t) { row = rows[i]; break; } }
-      if (!row) { msg.textContent = '题库里没有「' + t + '」'; msg.className = 'msg bad'; return; }
+      if (!row) { loadLongWord(t, n); return; }
       document.querySelectorAll('[data-len]').forEach(function (x) { x.classList.toggle('on', Number(x.dataset.len) === n); });
       state.len = n;
       var at = -1;
