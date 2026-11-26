@@ -554,7 +554,7 @@
     for (var i = 0; i < n; i++) {
       var k = cnt[i], startPos = starts[i];
       var rA = roots[ri], rB = roots[ri + 1];
-      var isKeyName = k >= 2 && (keysStr.charAt(i) === '1' || (!!rA && rA === rB));
+      var isKeyName = k >= 2 && keysStr.charAt(i) === '1';
       var cell = '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + startPos + '" data-k="' + k + '" data-key="' + (isKeyName ? '1' : '0') + '" data-cheng="' + (chengStr.charAt(i) === '1' ? '1' : '0') + '"></span>';
       if (isKeyName) {
         cell += '<span class="zislot" data-c="' + chars[i] + '" data-v="' + ver + '" data-start="' + (startPos + 1) + '" data-k="0" data-key="dash"></span>';
