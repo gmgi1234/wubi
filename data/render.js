@@ -32,6 +32,9 @@
         border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); text-decoration:none; }
   .words { display:flex; flex-wrap:wrap; gap:10px; }
   .word { border:1px solid var(--line); border-radius:8px; padding:7px 14px; font-size:18px; color:var(--accent); text-decoration:none; background:#fff; }
+  .wnav { display:flex; gap:14px; align-items:center; color:var(--accent); font-size:15px; margin-bottom:6px; }
+  .wnav a { color:var(--accent); text-decoration:none; }
+  .wnav .dim { color:#cfc8bd; }
   .cta { margin-top:30px; border:1px solid var(--line); border-radius:14px; padding:18px 22px; display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; background:#fff; }
   .cta a.primary { background:var(--accent); color:#fff; text-decoration:none; padding:10px 18px; border-radius:9px; }
   footer { text-align:center; color:var(--muted); font-size:13px; padding:18px; }
@@ -211,7 +214,8 @@
 
     shell(`${rec.w}五笔怎么打？86/98/新世纪编码与拆分 · 五笔字根`,
       `「${rec.w}」的五笔编码：86版 ${rec.c86}，98版 ${rec.c98}，新世纪 ${rec.c06}。${rule}。`,
-      `<h1>「${esc(rec.w)}」的五笔编码与拆分</h1>
+      `${(rec.prev || rec.next) ? `<div class="wnav">${rec.prev ? `<a href="ci.html?w=${encodeURIComponent(rec.prev)}">← ${esc(rec.prev)}</a>` : '<span class="dim">←</span>'}<a href="ci/">全部词组</a>${rec.next ? `<a href="ci.html?w=${encodeURIComponent(rec.next)}">${esc(rec.next)} →</a>` : '<span class="dim">→</span>'}</div>` : ''}
+       <h1>「${esc(rec.w)}」的五笔编码与拆分</h1>
        <div class="sub">${n} 字词 · 三版编码对照</div>
        <div class="bigbox" style="--gsize:96px">${rows}</div>
        <h2>怎么拆</h2>

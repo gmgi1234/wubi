@@ -42,6 +42,17 @@
       if (d && d.split && d.split.length === 1 && d.split[0] === c) keyNameIdx[c + '-' + ver] = true;
     }
   }));
+  // 同首字桶内的前后词
+  try {
+    await load('data/word-idx-' + wb + '.js');
+    const list = window['WORD_IDX_' + wb] || [];
+    const at = list.indexOf(w);
+    if (at >= 0) {
+      rec.prev = at > 0 ? list[at - 1] : '';
+      rec.next = at < list.length - 1 ? list[at + 1] : '';
+    }
+  } catch (e) {}
+
   rec.keyIdx = keyIdx;
   rec.keyName = keyNameIdx;
 
