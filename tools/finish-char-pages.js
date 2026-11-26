@@ -101,7 +101,7 @@ function fixLinks(html) {
 
 const need = fs.readdirSync(CHAR_DIR)
   .filter((f) => f.endsWith('.html') && f !== 'index.html')
-  .filter((f) => !fs.readFileSync(path.join(CHAR_DIR, f), 'utf8').includes('涉及的键位'));
+  .filter((f) => process.env.FORCE === '1' || !fs.readFileSync(path.join(CHAR_DIR, f), 'utf8').includes('涉及的键位'));
 
 console.log('需要补齐:', need.length);
 const hashes = need.map((f) => blobs.get(f)).filter(Boolean);
