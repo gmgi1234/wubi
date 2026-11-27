@@ -130,7 +130,14 @@
     t=setTimeout(function(){ if(!q){ showLen(curN); } else { search(q); } }, 180);
   });
 
+  // file:// 下目录链接不会自动进 index.html（http 部署不受影响）
+  if (location.protocol === 'file:') {
+    [].forEach.call(document.querySelectorAll('a[href="../"]'), function (a) { a.setAttribute('href', '../index.html'); });
+  }
+
   showLen(2);
 })();
 </script>
+
+<script src="../data/file-link-shim.js"></script>
 </body></html>

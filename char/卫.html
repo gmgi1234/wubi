@@ -23,6 +23,8 @@
   header a { color:var(--muted); text-decoration:none; }
   .navbar { display:flex; gap:18px; align-items:center; }
   .navbar .nav { color:var(--accent); }
+  .navbar .navsearch { width:118px; font-family:inherit; font-size:15px; padding:3px 8px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-align:center; }
+  .navbar .navsearch:focus { outline:none; border-color:var(--accent); }
   main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
   h1 { font-size:34px; margin:0 0 6px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
@@ -91,11 +93,15 @@
     .cta { flex-direction:column; align-items:flex-start; }
     .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
   }
+
+
+.art .supmini{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border-radius:3px;padding:1px;z-index:2;}
+.art .supmini svg{width:18px;height:18px;display:block;border-radius:2px;background:#fff;}
 </style>
 </head><body>
 <header>
   <a href="../">五笔字根 · 笔画着色</a>
-  <div class="navbar"><a class="nav" href="%E6%B5%AA.html">← 浪</a><a href="../">查其它字</a><a class="nav" href="%E4%BB%99.html">仙 →</a></div>
+  <div class="navbar"><a class="nav" href="%E6%B5%AA.html">← 浪</a><input class="navsearch" id="qsearch" type="text" placeholder="查其它字" autocomplete="off" onkeydown="if(event.isComposing||event.keyCode===229)return;if(event.key==='Enter'){var c=Array.from(this.value.trim())[0];if(c)location.href=encodeURIComponent(c)+'.html';}"><a class="nav" href="%E4%BB%99.html">仙 →</a></div>
 </header>
 <main>
   <h1>「卫」的五笔编码与拆分</h1>
@@ -103,7 +109,7 @@
 
   <div class="hero"><div class="vers"><div class="vcard">
       <div class="vhead"><span class="vtag">新世纪</span><span class="vcode">BG<span class="supcode">D</span></span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#E74C3C"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#E74C3C"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#FF9800"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#E74C3C"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#E74C3C"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#FF9800"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#00BCD4" stroke="#0097A7" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>卩</span><span class="chip"><i style="background:#FF9800"></i>一</span></div>
       <div class="vsup">补码 D（末笔横 · 杂合结构）</div>
       <div class="rule-ver">
@@ -113,7 +119,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">86 版</span><span class="vcode">BG<span class="supcode">D</span></span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#E74C3C"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#E74C3C"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#FF9800"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#E74C3C"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#E74C3C"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#FF9800"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#00BCD4" stroke="#0097A7" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>卩</span><span class="chip"><i style="background:#FF9800"></i>一</span></div>
       <div class="vsup">补码 D（末笔横 · 杂合结构）</div>
       <div class="rule-ver">
@@ -123,7 +129,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">98 版</span><span class="vcode">BG<span class="supcode">D</span></span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#E74C3C"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#E74C3C"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#FF9800"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#E74C3C"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#E74C3C"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#FF9800"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 514 639 Q 710 673 736 653 Q 745 647 743 633 Q 700 437 680 412 Q 673 400 658 406 Q 630 413 600 421 Q 572 427 590 407 Q 648 349 669 310 Q 679 294 694 302 Q 715 315 729 342 Q 747 369 780 531 Q 792 592 817 618 Q 833 640 827 649 Q 820 662 765 700 Q 746 716 728 710 Q 697 700 639 691 Q 434 669 357 649 Q 299 636 254 631 Q 229 628 224 617 Q 223 610 241 599 Q 277 575 312 589 Q 366 610 466 631 L 514 639 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 528 141 Q 541 613 542 614 Q 527 629 514 639 C 491 658 453 658 466 631 Q 487 592 488 542 Q 489 500 482 137 C 481 107 527 111 528 141 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 512 91 Q 561 92 608 96 Q 749 105 861 86 Q 886 82 892 92 Q 901 105 888 118 Q 858 148 814 169 Q 804 175 653 151 Q 632 151 528 141 L 482 137 Q 368 131 311 124 Q 248 117 154 118 Q 141 119 138 107 Q 137 94 156 79 Q 204 43 238 56 Q 277 68 410 83 Q 458 89 512 91 Z" fill="#00BCD4" stroke="#0097A7" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>卩</span><span class="chip"><i style="background:#FF9800"></i>一</span></div>
       <div class="vsup">补码 D（末笔横 · 杂合结构）</div>
       <div class="rule-ver">
@@ -169,13 +175,6 @@
   <h2>相关字</h2>
   <div class="rels"><a class="rel" href="%E5%8D%A9.html" title="查看「卩」的编码与拆分">卩</a><a class="rel" href="%E5%AD%90.html" title="查看「子」的编码与拆分">子</a><a class="rel" href="%E5%87%BA.html" title="查看「出」的编码与拆分">出</a><a class="rel" href="%E4%BA%86.html" title="查看「了」的编码与拆分">了</a><a class="rel" href="%E5%8F%96.html" title="查看「取」的编码与拆分">取</a><a class="rel" href="%E9%98%B3.html" title="查看「阳」的编码与拆分">阳</a></div>
 
-  <h2>相关</h2>
-  <p class="links">
-    <a href="../">查其它字</a>
-    <a href="../">三版编码对照</a>
-    <a href="../">字根速查表</a>
-  </p>
-
   <div class="cta">
     <div>
       <strong>想边看边学？</strong><br>
@@ -188,4 +187,7 @@
   </div>
 </main>
 <footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
+
+<script src="../data/frag-inline.js"></script>
+<script src="../data/file-link-shim.js"></script>
 </body></html>

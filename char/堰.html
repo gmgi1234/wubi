@@ -23,6 +23,8 @@
   header a { color:var(--muted); text-decoration:none; }
   .navbar { display:flex; gap:18px; align-items:center; }
   .navbar .nav { color:var(--accent); }
+  .navbar .navsearch { width:118px; font-family:inherit; font-size:15px; padding:3px 8px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-align:center; }
+  .navbar .navsearch:focus { outline:none; border-color:var(--accent); }
   main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
   h1 { font-size:34px; margin:0 0 6px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
@@ -91,11 +93,15 @@
     .cta { flex-direction:column; align-items:flex-start; }
     .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
   }
+
+
+.art .supmini{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border-radius:3px;padding:1px;z-index:2;}
+.art .supmini svg{width:18px;height:18px;display:block;border-radius:2px;background:#fff;}
 </style>
 </head><body>
 <header>
   <a href="../">五笔字根 · 笔画着色</a>
-  <div class="navbar"><a class="nav" href="%E9%9B%B3.html">← 雳</a><a href="../">查其它字</a><a class="nav" href="%E7%B0%B8.html">簸 →</a></div>
+  <div class="navbar"><a class="nav" href="%E9%9B%B3.html">← 雳</a><input class="navsearch" id="qsearch" type="text" placeholder="查其它字" autocomplete="off" onkeydown="if(event.isComposing||event.keyCode===229)return;if(event.key==='Enter'){var c=Array.from(this.value.trim())[0];if(c)location.href=encodeURIComponent(c)+'.html';}"><a class="nav" href="%E7%B0%B8.html">簸 →</a></div>
 </header>
 <main>
   <h1>「堰」的五笔编码与拆分</h1>
@@ -178,13 +184,6 @@
   <h2>相关字</h2>
   <div class="rels"><a class="rel" href="%E5%9C%B0.html" title="查看「地」的编码与拆分">地</a><a class="rel" href="%E5%8E%BB.html" title="查看「去」的编码与拆分">去</a><a class="rel" href="%E5%9C%9F.html" title="查看「土」的编码与拆分">土</a><a class="rel" href="%E5%9C%AD.html" title="查看「圭」的编码与拆分">圭</a><a class="rel" href="%E4%B8%A7.html" title="查看「丧」的编码与拆分">丧</a><a class="rel" href="%E5%9D%B4.html" title="查看「坴」的编码与拆分">坴</a><a class="rel" href="%E5%B9%B8.html" title="查看「幸」的编码与拆分">幸</a><a class="rel" href="%E8%A2%81.html" title="查看「袁」的编码与拆分">袁</a></div>
 
-  <h2>相关</h2>
-  <p class="links">
-    <a href="../">查其它字</a>
-    <a href="../">三版编码对照</a>
-    <a href="../">字根速查表</a>
-  </p>
-
   <div class="cta">
     <div>
       <strong>想边看边学？</strong><br>
@@ -197,4 +196,7 @@
   </div>
 </main>
 <footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
+
+<script src="../data/frag-inline.js"></script>
+<script src="../data/file-link-shim.js"></script>
 </body></html>

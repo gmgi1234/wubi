@@ -23,6 +23,8 @@
   header a { color:var(--muted); text-decoration:none; }
   .navbar { display:flex; gap:18px; align-items:center; }
   .navbar .nav { color:var(--accent); }
+  .navbar .navsearch { width:118px; font-family:inherit; font-size:15px; padding:3px 8px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-align:center; }
+  .navbar .navsearch:focus { outline:none; border-color:var(--accent); }
   main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
   h1 { font-size:34px; margin:0 0 6px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
@@ -91,11 +93,15 @@
     .cta { flex-direction:column; align-items:flex-start; }
     .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
   }
+
+
+.art .supmini{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border-radius:3px;padding:1px;z-index:2;}
+.art .supmini svg{width:18px;height:18px;display:block;border-radius:2px;background:#fff;}
 </style>
 </head><body>
 <header>
   <a href="../">五笔字根 · 笔画着色</a>
-  <div class="navbar"><a class="nav" href="%E5%9F%BA.html">← 基</a><a href="../">查其它字</a><a class="nav" href="%E8%BF%BD.html">追 →</a></div>
+  <div class="navbar"><a class="nav" href="%E5%9F%BA.html">← 基</a><input class="navsearch" id="qsearch" type="text" placeholder="查其它字" autocomplete="off" onkeydown="if(event.isComposing||event.keyCode===229)return;if(event.key==='Enter'){var c=Array.from(this.value.trim())[0];if(c)location.href=encodeURIComponent(c)+'.html';}"><a class="nav" href="%E8%BF%BD.html">追 →</a></div>
 </header>
 <main>
   <h1>「二」的五笔编码与拆分</h1>
@@ -103,7 +109,7 @@
 
   <div class="hero"><div class="vers"><div class="vcard">
       <div class="vhead"><span class="vtag">新世纪</span><span class="vcode">FGG</span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#FF9800"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#27AE60"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#FF9800"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#27AE60"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#FF9800"></i>一</span><span class="chip"><i style="background:#27AE60"></i>一</span><span class="chip"><i style="background:#555"></i>二</span></div>
       <div class="vsup">无补码</div>
       <div class="rule-ver">
@@ -113,7 +119,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">86 版</span><span class="vcode">FGG</span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#FF9800"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#27AE60"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#FF9800"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#27AE60"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#FF9800"></i>一</span><span class="chip"><i style="background:#27AE60"></i>一</span><span class="chip"><i style="background:#555"></i>二</span></div>
       <div class="vsup">无补码</div>
       <div class="rule-ver">
@@ -123,7 +129,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">98 版</span><span class="vcode">FGG</span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#FF9800"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#27AE60"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#FF9800"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#27AE60"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 308 603 Q 260 597 293 574 Q 339 544 436 558 Q 551 576 673 596 Q 731 608 741 615 Q 753 625 747 636 Q 738 652 702 663 Q 669 672 559 641 Q 424 610 308 603 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/><path d="M 517 212 Q 569 213 620 219 Q 756 229 896 214 Q 921 210 929 220 Q 938 235 924 248 Q 891 279 842 302 Q 826 309 797 301 Q 728 286 481 261 Q 172 236 155 234 Q 142 234 128 234 Q 113 234 111 221 Q 110 208 131 191 Q 150 176 185 163 Q 197 159 217 167 Q 233 173 306 183 Q 400 202 517 212 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#FF9800"></i>一</span><span class="chip"><i style="background:#27AE60"></i>一</span><span class="chip"><i style="background:#555"></i>二</span></div>
       <div class="vsup">无补码</div>
       <div class="rule-ver">
@@ -160,13 +166,6 @@
   <h2>相关字</h2>
   <div class="rels"><a class="rel" href="%E4%BA%96.html" title="查看「亖」的编码与拆分">亖</a><a class="rel" href="%E4%BA%8D.html" title="查看「亍」的编码与拆分">亍</a><a class="rel" href="%E4%BA%8F.html" title="查看「亏」的编码与拆分">亏</a><a class="rel" href="%E4%BA%93.html" title="查看「亓」的编码与拆分">亓</a><a class="rel" href="%E4%BA%95.html" title="查看「井」的编码与拆分">井</a><a class="rel" href="%E5%A4%AB.html" title="查看「夫」的编码与拆分">夫</a><a class="rel" href="%E7%A4%BA.html" title="查看「示」的编码与拆分">示</a><a class="rel" href="%E6%97%A0.html" title="查看「无」的编码与拆分">无</a></div>
 
-  <h2>相关</h2>
-  <p class="links">
-    <a href="../">查其它字</a>
-    <a href="../">三版编码对照</a>
-    <a href="../">字根速查表</a>
-  </p>
-
   <div class="cta">
     <div>
       <strong>想边看边学？</strong><br>
@@ -179,4 +178,7 @@
   </div>
 </main>
 <footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
+
+<script src="../data/frag-inline.js"></script>
+<script src="../data/file-link-shim.js"></script>
 </body></html>

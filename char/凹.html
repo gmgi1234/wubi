@@ -23,6 +23,8 @@
   header a { color:var(--muted); text-decoration:none; }
   .navbar { display:flex; gap:18px; align-items:center; }
   .navbar .nav { color:var(--accent); }
+  .navbar .navsearch { width:118px; font-family:inherit; font-size:15px; padding:3px 8px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-align:center; }
+  .navbar .navsearch:focus { outline:none; border-color:var(--accent); }
   main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
   h1 { font-size:34px; margin:0 0 6px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
@@ -91,11 +93,15 @@
     .cta { flex-direction:column; align-items:flex-start; }
     .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
   }
+
+
+.art .supmini{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border-radius:3px;padding:1px;z-index:2;}
+.art .supmini svg{width:18px;height:18px;display:block;border-radius:2px;background:#fff;}
 </style>
 </head><body>
 <header>
   <a href="../">五笔字根 · 笔画着色</a>
-  <div class="navbar"><a class="nav" href="%E7%B3%9F.html">← 糟</a><a href="../">查其它字</a><a class="nav" href="%E8%8D%B7.html">荷 →</a></div>
+  <div class="navbar"><a class="nav" href="%E7%B3%9F.html">← 糟</a><input class="navsearch" id="qsearch" type="text" placeholder="查其它字" autocomplete="off" onkeydown="if(event.isComposing||event.keyCode===229)return;if(event.key==='Enter'){var c=Array.from(this.value.trim())[0];if(c)location.href=encodeURIComponent(c)+'.html';}"><a class="nav" href="%E8%8D%B7.html">荷 →</a></div>
 </header>
 <main>
   <h1>「凹」的五笔编码与拆分</h1>
@@ -113,7 +119,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">86 版</span><span class="vcode">MMG<span class="supcode">D</span></span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 212 620 Q 185 639 157 647 Q 148 650 143 644 Q 133 637 144 624 Q 211 501 209 203 Q 210 128 253 96 L 255 95 Q 274 89 277 122 L 276 164 Q 275 185 269 207 Q 239 477 238 584 C 238 604 237 604 212 620 Z" fill="#E74C3C"/><path d="M 554 414 Q 517 410 479 401 Q 457 395 452 404 Q 439 420 446 568 Q 445 610 457 633 Q 472 655 451 665 Q 429 678 407 686 Q 385 696 371 682 Q 331 648 212 620 C 183 613 208 580 238 584 Q 251 583 264 589 Q 357 637 382 622 Q 391 618 391 590 Q 395 425 387 387 Q 386 369 402 346 Q 412 328 423 326 Q 433 325 446 339 Q 489 384 601 379 Q 622 378 622 382 Q 626 394 604 411 Q 601 414 599 415 C 594 419 584 418 554 414 Z" fill="#E74C3C"/><path d="M 630 675 Q 612 694 590 708 Q 577 715 565 712 Q 555 706 559 689 Q 572 650 573 610 Q 572 570 554 414 C 551 384 595 385 599 415 Q 627 607 643 636 C 651 654 651 654 630 675 Z" fill="#FF9800"/><path d="M 700 160 Q 712 132 738 78 Q 748 59 759 60 Q 777 63 787 92 Q 841 201 845 347 Q 855 438 862 544 Q 869 595 895 625 Q 914 646 902 660 Q 880 685 831 708 Q 812 720 777 709 Q 741 696 701 686 Q 670 680 630 675 C 600 671 613 632 643 636 Q 644 636 771 655 Q 781 656 788 651 Q 801 626 802 600 Q 798 407 758 220 Q 754 187 740 184 Q 737 183 733 184 C 708 167 699 161 700 160 Z" fill="#FF9800"/><path d="M 277 122 Q 289 121 303 122 Q 430 147 700 160 C 730 161 753 163 733 184 Q 726 194 702 211 Q 683 224 643 216 Q 439 177 276 164 C 246 162 247 123 277 122 Z" fill="#27AE60"/><path d="M 277 122 Q 289 121 303 122 Q 430 147 700 160 C 730 161 753 163 733 184 Q 726 194 702 211 Q 683 224 643 216 Q 439 177 276 164 C 246 162 247 123 277 122 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 212 620 Q 185 639 157 647 Q 148 650 143 644 Q 133 637 144 624 Q 211 501 209 203 Q 210 128 253 96 L 255 95 Q 274 89 277 122 L 276 164 Q 275 185 269 207 Q 239 477 238 584 C 238 604 237 604 212 620 Z" fill="#E74C3C"/><path d="M 554 414 Q 517 410 479 401 Q 457 395 452 404 Q 439 420 446 568 Q 445 610 457 633 Q 472 655 451 665 Q 429 678 407 686 Q 385 696 371 682 Q 331 648 212 620 C 183 613 208 580 238 584 Q 251 583 264 589 Q 357 637 382 622 Q 391 618 391 590 Q 395 425 387 387 Q 386 369 402 346 Q 412 328 423 326 Q 433 325 446 339 Q 489 384 601 379 Q 622 378 622 382 Q 626 394 604 411 Q 601 414 599 415 C 594 419 584 418 554 414 Z" fill="#E74C3C"/><path d="M 630 675 Q 612 694 590 708 Q 577 715 565 712 Q 555 706 559 689 Q 572 650 573 610 Q 572 570 554 414 C 551 384 595 385 599 415 Q 627 607 643 636 C 651 654 651 654 630 675 Z" fill="#FF9800"/><path d="M 700 160 Q 712 132 738 78 Q 748 59 759 60 Q 777 63 787 92 Q 841 201 845 347 Q 855 438 862 544 Q 869 595 895 625 Q 914 646 902 660 Q 880 685 831 708 Q 812 720 777 709 Q 741 696 701 686 Q 670 680 630 675 C 600 671 613 632 643 636 Q 644 636 771 655 Q 781 656 788 651 Q 801 626 802 600 Q 798 407 758 220 Q 754 187 740 184 Q 737 183 733 184 C 708 167 699 161 700 160 Z" fill="#FF9800"/><path d="M 277 122 Q 289 121 303 122 Q 430 147 700 160 C 730 161 753 163 733 184 Q 726 194 702 211 Q 683 224 643 216 Q 439 177 276 164 C 246 162 247 123 277 122 Z" fill="#27AE60"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 212 620 Q 185 639 157 647 Q 148 650 143 644 Q 133 637 144 624 Q 211 501 209 203 Q 210 128 253 96 L 255 95 Q 274 89 277 122 L 276 164 Q 275 185 269 207 Q 239 477 238 584 C 238 604 237 604 212 620 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 554 414 Q 517 410 479 401 Q 457 395 452 404 Q 439 420 446 568 Q 445 610 457 633 Q 472 655 451 665 Q 429 678 407 686 Q 385 696 371 682 Q 331 648 212 620 C 183 613 208 580 238 584 Q 251 583 264 589 Q 357 637 382 622 Q 391 618 391 590 Q 395 425 387 387 Q 386 369 402 346 Q 412 328 423 326 Q 433 325 446 339 Q 489 384 601 379 Q 622 378 622 382 Q 626 394 604 411 Q 601 414 599 415 C 594 419 584 418 554 414 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 630 675 Q 612 694 590 708 Q 577 715 565 712 Q 555 706 559 689 Q 572 650 573 610 Q 572 570 554 414 C 551 384 595 385 599 415 Q 627 607 643 636 C 651 654 651 654 630 675 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 700 160 Q 712 132 738 78 Q 748 59 759 60 Q 777 63 787 92 Q 841 201 845 347 Q 855 438 862 544 Q 869 595 895 625 Q 914 646 902 660 Q 880 685 831 708 Q 812 720 777 709 Q 741 696 701 686 Q 670 680 630 675 C 600 671 613 632 643 636 Q 644 636 771 655 Q 781 656 788 651 Q 801 626 802 600 Q 798 407 758 220 Q 754 187 740 184 Q 737 183 733 184 C 708 167 699 161 700 160 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 277 122 Q 289 121 303 122 Q 430 147 700 160 C 730 161 753 163 733 184 Q 726 194 702 211 Q 683 224 643 216 Q 439 177 276 164 C 246 162 247 123 277 122 Z" fill="#00BCD4" stroke="#0097A7" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>几</span><span class="chip"><i style="background:#FF9800"></i>几</span><span class="chip"><i style="background:#27AE60"></i>一</span></div>
       <div class="vsup">补码 D（末笔横 · 杂合结构）</div>
       <div class="rule-ver">
@@ -187,13 +193,6 @@
   <h2>相关字</h2>
   <div class="rels"><a class="rel" href="%E5%87%A1.html" title="查看「凡」的编码与拆分">凡</a><a class="rel" href="%E5%87%A0.html" title="查看「几」的编码与拆分">几</a><a class="rel" href="%E5%87%B0.html" title="查看「凰」的编码与拆分">凰</a><a class="rel" href="%E5%A4%99.html" title="查看「夙」的编码与拆分">夙</a><a class="rel" href="%E6%9C%B5.html" title="查看「朵」的编码与拆分">朵</a><a class="rel" href="%E9%A2%A8.html" title="查看「風」的编码与拆分">風</a></div>
 
-  <h2>相关</h2>
-  <p class="links">
-    <a href="../">查其它字</a>
-    <a href="../">三版编码对照</a>
-    <a href="../">字根速查表</a>
-  </p>
-
   <div class="cta">
     <div>
       <strong>想边看边学？</strong><br>
@@ -206,4 +205,7 @@
   </div>
 </main>
 <footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
+
+<script src="../data/frag-inline.js"></script>
+<script src="../data/file-link-shim.js"></script>
 </body></html>

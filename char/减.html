@@ -23,6 +23,8 @@
   header a { color:var(--muted); text-decoration:none; }
   .navbar { display:flex; gap:18px; align-items:center; }
   .navbar .nav { color:var(--accent); }
+  .navbar .navsearch { width:118px; font-family:inherit; font-size:15px; padding:3px 8px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-align:center; }
+  .navbar .navsearch:focus { outline:none; border-color:var(--accent); }
   main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
   h1 { font-size:34px; margin:0 0 6px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
@@ -91,11 +93,15 @@
     .cta { flex-direction:column; align-items:flex-start; }
     .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
   }
+
+
+.art .supmini{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border-radius:3px;padding:1px;z-index:2;}
+.art .supmini svg{width:18px;height:18px;display:block;border-radius:2px;background:#fff;}
 </style>
 </head><body>
 <header>
   <a href="../">五笔字根 · 笔画着色</a>
-  <div class="navbar"><a class="nav" href="%E9%A2%91.html">← 频</a><a href="../">查其它字</a><a class="nav" href="%E4%BB%A4.html">令 →</a></div>
+  <div class="navbar"><a class="nav" href="%E9%A2%91.html">← 频</a><input class="navsearch" id="qsearch" type="text" placeholder="查其它字" autocomplete="off" onkeydown="if(event.isComposing||event.keyCode===229)return;if(event.key==='Enter'){var c=Array.from(this.value.trim())[0];if(c)location.href=encodeURIComponent(c)+'.html';}"><a class="nav" href="%E4%BB%A4.html">令 →</a></div>
 </header>
 <main>
   <h1>「减」的五笔编码与拆分</h1>
@@ -123,7 +129,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">98 版</span><span class="vcode">UDGK</span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 198 650 Q 226 619 255 582 Q 268 566 285 564 Q 297 563 305 577 Q 312 593 307 626 Q 301 662 200 703 Q 184 709 176 707 Q 170 704 170 689 Q 171 676 198 650 Z" fill="#E74C3C"/><path d="M 120 158 Q 110 154 112 138 Q 130 65 163 50 Q 170 43 180 47 Q 187 48 187 73 Q 191 116 214 180 Q 286 405 287 406 Q 286 416 277 409 Q 265 402 160 205 Q 148 183 120 158 Z" fill="#E74C3C"/><path d="M 641 541 Q 728 568 733 573 Q 740 580 736 589 Q 729 599 699 605 Q 683 608 632 591 L 589 574 Q 463 538 411 529 Q 405 528 404 526 C 376 516 383 509 412 501 Q 454 488 497 502 Q 546 515 598 529 L 641 541 Z" fill="#FF9800"/><path d="M 404 526 Q 391 538 369 547 Q 353 557 341 552 Q 331 546 336 534 Q 366 486 328 281 Q 321 254 313 230 Q 285 149 230 64 Q 226 58 224 52 Q 221 43 231 45 Q 267 52 330 164 Q 333 171 337 179 Q 356 222 371 272 L 377 294 Q 386 333 405 469 Q 408 497 412 501 C 417 516 417 516 404 526 Z" fill="#FF9800"/><path d="M 422 401 Q 392 391 416 381 Q 455 366 501 386 Q 534 398 569 411 Q 585 417 587 420 Q 594 427 588 435 Q 581 444 555 445 Q 528 446 471 416 Q 447 409 422 401 Z" fill="#FF9800"/><path d="M 371 272 Q 392 224 401 146 Q 402 124 415 106 Q 428 87 434 100 Q 440 113 439 139 L 435 171 Q 429 246 428 264 C 427 278 427 278 406 286 Q 388 293 377 294 C 361 297 361 297 371 272 Z" fill="#FF9800"/><path d="M 558 196 Q 570 251 587 270 Q 606 294 585 305 Q 567 315 542 329 Q 526 336 509 326 Q 479 305 406 286 C 377 278 399 256 428 264 Q 432 265 439 267 Q 469 276 495 281 Q 513 285 517 279 Q 523 275 519 248 Q 516 224 512 197 C 508 167 551 167 558 196 Z" fill="#FF9800"/><path d="M 439 139 Q 445 139 453 141 Q 490 153 572 167 Q 582 168 582 177 Q 582 184 558 196 L 512 197 Q 509 197 508 196 Q 468 181 435 171 C 406 162 409 137 439 139 Z" fill="#27AE60"/><path d="M 710 184 Q 767 76 848 10 Q 914 -39 945 -38 Q 967 -32 958 -3 Q 948 42 934 173 Q 933 198 922 199 Q 901 145 878 89 Q 863 88 836 109 Q 784 158 743 227 L 715 284 Q 679 369 641 541 L 632 591 Q 617 678 625 760 Q 635 802 580 821 Q 544 836 525 827 Q 504 820 515 801 Q 563 761 564 727 Q 576 645 589 574 L 598 529 Q 629 367 687 233 L 710 184 Z" fill="#3498DB"/><path d="M 687 233 Q 624 151 570 94 Q 563 85 570 83 Q 603 77 710 184 L 743 227 Q 788 311 812 390 Q 821 415 832 440 Q 839 450 832 460 Q 825 470 792 484 Q 768 494 759 491 Q 746 485 749 470 Q 767 386 715 284 L 687 233 Z" fill="#3498DB"/><path d="M 712 703 Q 769 648 804 637 Q 819 636 827 648 Q 831 661 828 677 Q 815 717 722 741 Q 706 745 697 740 Q 691 739 694 727 Q 697 715 712 703 Z" fill="#3498DB"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 198 650 Q 226 619 255 582 Q 268 566 285 564 Q 297 563 305 577 Q 312 593 307 626 Q 301 662 200 703 Q 184 709 176 707 Q 170 704 170 689 Q 171 676 198 650 Z" fill="#E74C3C"/><path d="M 120 158 Q 110 154 112 138 Q 130 65 163 50 Q 170 43 180 47 Q 187 48 187 73 Q 191 116 214 180 Q 286 405 287 406 Q 286 416 277 409 Q 265 402 160 205 Q 148 183 120 158 Z" fill="#E74C3C"/><path d="M 641 541 Q 728 568 733 573 Q 740 580 736 589 Q 729 599 699 605 Q 683 608 632 591 L 589 574 Q 463 538 411 529 Q 405 528 404 526 C 376 516 383 509 412 501 Q 454 488 497 502 Q 546 515 598 529 L 641 541 Z" fill="#FF9800"/><path d="M 404 526 Q 391 538 369 547 Q 353 557 341 552 Q 331 546 336 534 Q 366 486 328 281 Q 321 254 313 230 Q 285 149 230 64 Q 226 58 224 52 Q 221 43 231 45 Q 267 52 330 164 Q 333 171 337 179 Q 356 222 371 272 L 377 294 Q 386 333 405 469 Q 408 497 412 501 C 417 516 417 516 404 526 Z" fill="#FF9800"/><path d="M 710 184 Q 767 76 848 10 Q 914 -39 945 -38 Q 967 -32 958 -3 Q 948 42 934 173 Q 933 198 922 199 Q 901 145 878 89 Q 863 88 836 109 Q 784 158 743 227 L 715 284 Q 679 369 641 541 L 632 591 Q 617 678 625 760 Q 635 802 580 821 Q 544 836 525 827 Q 504 820 515 801 Q 563 761 564 727 Q 576 645 589 574 L 598 529 Q 629 367 687 233 L 710 184 Z" fill="#FF9800"/><path d="M 687 233 Q 624 151 570 94 Q 563 85 570 83 Q 603 77 710 184 L 743 227 Q 788 311 812 390 Q 821 415 832 440 Q 839 450 832 460 Q 825 470 792 484 Q 768 494 759 491 Q 746 485 749 470 Q 767 386 715 284 L 687 233 Z" fill="#FF9800"/><path d="M 712 703 Q 769 648 804 637 Q 819 636 827 648 Q 831 661 828 677 Q 815 717 722 741 Q 706 745 697 740 Q 691 739 694 727 Q 697 715 712 703 Z" fill="#FF9800"/><path d="M 422 401 Q 392 391 416 381 Q 455 366 501 386 Q 534 398 569 411 Q 585 417 587 420 Q 594 427 588 435 Q 581 444 555 445 Q 528 446 471 416 Q 447 409 422 401 Z" fill="#27AE60"/><path d="M 371 272 Q 392 224 401 146 Q 402 124 415 106 Q 428 87 434 100 Q 440 113 439 139 L 435 171 Q 429 246 428 264 C 427 278 427 278 406 286 Q 388 293 377 294 C 361 297 361 297 371 272 Z" fill="#3498DB"/><path d="M 558 196 Q 570 251 587 270 Q 606 294 585 305 Q 567 315 542 329 Q 526 336 509 326 Q 479 305 406 286 C 377 278 399 256 428 264 Q 432 265 439 267 Q 469 276 495 281 Q 513 285 517 279 Q 523 275 519 248 Q 516 224 512 197 C 508 167 551 167 558 196 Z" fill="#3498DB"/><path d="M 439 139 Q 445 139 453 141 Q 490 153 572 167 Q 582 168 582 177 Q 582 184 558 196 L 512 197 Q 509 197 508 196 Q 468 181 435 171 C 406 162 409 137 439 139 Z" fill="#3498DB"/></g></svg></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>冫</span><span class="chip"><i style="background:#FF9800"></i>戊</span><span class="chip"><i style="background:#27AE60"></i>一</span><span class="chip"><i style="background:#3498DB"></i>口</span></div>
       <div class="vsup">无补码</div>
       <div class="rule-ver">
@@ -196,13 +202,6 @@
   <h2>相关字</h2>
   <div class="rels"><a class="rel" href="%E5%86%AB.html" title="查看「冫」的编码与拆分">冫</a><a class="rel" href="%E6%AC%A1.html" title="查看「次」的编码与拆分">次</a><a class="rel" href="%E5%86%AF.html" title="查看「冯」的编码与拆分">冯</a><a class="rel" href="%E5%86%B0.html" title="查看「冰」的编码与拆分">冰</a><a class="rel" href="%E5%86%B1.html" title="查看「冱」的编码与拆分">冱</a><a class="rel" href="%E5%86%B2.html" title="查看「冲」的编码与拆分">冲</a><a class="rel" href="%E5%86%B3.html" title="查看「决」的编码与拆分">决</a><a class="rel" href="%E5%86%B5.html" title="查看「况」的编码与拆分">况</a></div>
 
-  <h2>相关</h2>
-  <p class="links">
-    <a href="../">查其它字</a>
-    <a href="../">三版编码对照</a>
-    <a href="../">字根速查表</a>
-  </p>
-
   <div class="cta">
     <div>
       <strong>想边看边学？</strong><br>
@@ -215,4 +214,7 @@
   </div>
 </main>
 <footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
+
+<script src="../data/frag-inline.js"></script>
+<script src="../data/file-link-shim.js"></script>
 </body></html>

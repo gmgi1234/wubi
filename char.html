@@ -4,21 +4,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>汉字五笔编码查询 · 五笔字根</title>
 <meta name="description" content="输入任意汉字，查看 86/98/新世纪三版五笔编码、字根拆分与笔画着色。">
+<link rel="stylesheet" href="data/page-char.css">
 </head>
 <body>
 <div id="app"></div>
 <script src="data/render.js"></script>
 <script src="data/frag-map.js"></script>
+<script src="data/frag-sprite.js"></script>
 <script>
 (async function () {
   const ch = new URLSearchParams(location.search).get('c') || '狗';
 
   // 有静态完整页就直接跳过去（版式与单字页一致）
   const staticTarget = 'char/' + encodeURIComponent(ch) + '.html';
-  try {
-    const head = await fetch(staticTarget, { method: 'HEAD' });
-    if (head.ok) { location.replace(staticTarget); return; }
-  } catch (e) {}
+  if (location.protocol === 'file:') {
+    // 本地 file:// 无法 fetch 探测，改用静态页清单
+    try {
+      await new Promise((ok) => {
+        const s = document.createElement('script');
+        s.src = 'data/static-pages.js'; s.onload = ok; s.onerror = ok;
+        document.head.appendChild(s);
+      });
+      if ((window.STATIC_CHAR_PAGES || '').indexOf(ch) >= 0) { location.replace(staticTarget); return; }
+    } catch (e) {}
+  } else {
+    try {
+      const head = await fetch(staticTarget, { method: 'HEAD' });
+      if (head.ok) { location.replace(staticTarget); return; }
+    } catch (e) {}
+  }
   document.title = ch + '字五笔怎么打？86/98/新世纪编码与拆分';
   const b = ch.charCodeAt(0) % 64;
   const load = (src) => new Promise((ok, bad) => {
@@ -28,21 +42,54 @@
   try { await load('data/char-' + b + '.js'); } catch (e) {}
   const rec = (window['CHAR_DATA_' + b] || {})[ch];
   if (!rec) {
-    document.getElementById('app').innerHTML = '<div style="padding:60px;text-align:center;font-family:KaiTi,serif">没找到「' + ch + '」这个字<br><a href="/">回首页</a></div>';
+    document.getElementById('app').innerHTML = '<div style="padding:60px;text-align:center;font-family:KaiTi,serif">没找到「' + ch + '」这个字<br><a href="./">回首页</a></div>';
     return;
   }
-  WubiRender.renderChar(rec);
+  // 前置数据：静态页顺序（前后字）、键位字根表
+  try { await load('data/char-idx.js'); } catch (e) {}
+  try { await load('data/wubi_roots_all.js'); } catch (e) {}
+  let prev = '', next = '';
+  if (window.CHAR_IDX) {
+    const list = window.CHAR_IDX;
+    const at = list.findIndex((x) => x[0] === ch);
+    if (at > 0) prev = list[at - 1][0];
+    if (at >= 0 && at + 1 < list.length) next = list[at + 1][0];
+  }
+  // 复合部件展开说明（如 每 → 𠂉 + 母）
+  const comps = {};
+  ['86', '98', '06'].forEach((v) => {
+    const d = rec.v[v];
+    if (!d || !d.split) return;
+    d.split.forEach((r) => { if ([...r].length === 1 && r !== ch) comps[r] = 1; });
+  });
+  const compRec = {};
+  for (const c of Object.keys(comps)) {
+    const cb = c.charCodeAt(0) % 64;
+    if (!window['CHAR_DATA_' + cb]) { try { await load('data/char-' + cb + '.js'); } catch (e) {} }
+    const cr = (window['CHAR_DATA_' + cb] || {})[c];
+    if (cr) compRec[c] = cr;
+  }
+  const expand = {};
+  ['86', '98', '06'].forEach((v) => {
+    expand[v] = [];
+    const d = rec.v[v];
+    if (!d || !d.split) return;
+    d.split.forEach((r) => {
+      const cr = compRec[r];
+      const dv = cr && cr.v && cr.v[v];
+      const roots = dv ? ((dv.items && dv.items.length > 1) ? dv.items.map((it) => it.r) : (dv.roots || dv.split)) : null;
+      if (roots && roots.length > 1 && !expand[v].some((x) => x.name === r)) expand[v].push({ name: r, roots });
+    });
+  });
+  WubiRender.renderChar(rec, { prev, next, expand });
   for (const ver of ['86', '98', '06']) {
     const el = document.getElementById('glyph-' + ver);
     if (!el) continue;
-    try {
-      const r = await fetch('svg/' + encodeURIComponent(ch) + '-' + ver + '.svg');
-      if (!r.ok) continue;
-      const t = await r.text();
-      const inner = t.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
-      el.innerHTML = WubiRender.svgWrap(inner, 200);
-    } catch (e) {}
+    const inner = await WubiRender.glyphInner(ch, ver);
+    if (inner) el.innerHTML = '<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/>' + inner + '</svg>';
   }
 })();
 </script>
+
+<script src="data/file-link-shim.js"></script>
 </body></html>

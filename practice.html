@@ -37,8 +37,9 @@
  .zicell { display:inline-flex; flex-direction:column; align-items:center; gap:4px; flex:0 0 auto; }
  .zirow { display:flex; gap:3px; align-items:flex-start; flex:0 0 auto; }
  .zicap { font-size:13px; line-height:1.2; white-space:nowrap; color:var(--muted); }
- .zicap .r { font-size:15px; }
- .zicap .l { font-family:ui-monospace,Consolas,monospace; font-size:12px; }
+ .zicap .r { font-size:18px; }
+ .zicap .l { font-family:ui-monospace,Consolas,monospace; font-size:14px; }
+ .zicap .rg { width:22px; height:22px; vertical-align:-5px; fill:currentColor; }
  .zicap .none { color:#b3a99a; font-size:15px; }
  .rule { text-align:center; font-size:13px; color:var(--muted); margin:2px 0 0; }
  .kbwrap { margin:10px 0 2px; width:100%; }
@@ -62,14 +63,20 @@
  .zi-svg { width:100%; height:100%; display:block; }
  .charcell .roots { margin-top:4px; font-size:20px; line-height:1.5; }
  .charcell .roots div { white-space:nowrap; }
- .codline { text-align:center; font-family:ui-monospace,Consolas,monospace; font-size:24px; letter-spacing:8px; min-height:30px; color:var(--muted); }
+ .codline { display:none; text-align:center; font-family:ui-monospace,Consolas,monospace; font-size:24px; letter-spacing:8px; min-height:30px; color:var(--muted); }
  .inputwrap { display:flex; justify-content:center; margin:18px 0 6px; }
  #typeInput { font-family:'KaiTi','楷体',serif; font-size:28px; text-align:center; padding:8px 14px; width:min(100%, 420px); border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); outline:none; }
  #typeInput:focus { border-color:var(--accent); }
  #typeInput.ok { border-color:var(--ok); color:var(--ok); }
  #typeInput.bad { border-color:var(--bad); color:var(--bad); }
- .msg { text-align:center; font-size:17px; min-height:26px; }
+ .msg { text-align:center; font-size:17px; min-height:26px; margin-bottom:8px; }
  .msg.ok { color:var(--ok); }
+ .toast { position:fixed; left:50%; bottom:26px; transform:translate(-50%,10px) scale(.98); max-width:86vw; text-align:center;
+   background:rgba(42,35,32,.92); color:#fff; padding:10px 18px; border-radius:12px; font-size:18px; line-height:1.4;
+   opacity:0; pointer-events:none; transition:opacity .15s ease, transform .15s ease; z-index:99; }
+ .toast.show { opacity:1; transform:translate(-50%,0) scale(1); }
+ .toast.ok { background:#2f7d32; }
+ .toast.bad { background:#b3261e; }
  .msg.bad { color:var(--bad); }
  .actions { display:flex; justify-content:center; gap:10px; margin-top:16px; flex-wrap:wrap; }
  .actions button { font-family:inherit; font-size:15px; padding:7px 16px; border-radius:9px; border:1px solid var(--line); background:#fff; cursor:pointer; color:var(--ink); }
@@ -91,11 +98,6 @@
  .kb-key.hl { border-color: currentColor; box-shadow: 0 0 0 1px currentColor inset; }
  .kb-key.hl .kl, .kb-key.hl .kj { font-weight: 700; }
  .kb-key.multi .kb-pill { background: var(--split); }
- @font-face {
-   font-family: 'ZiGen';
-   src: url('fonts/zigen.ttf') format('truetype');
- }
- .kb-roots, .kb-roots * { font-family: 'ZiGen', 'KaiTi', '楷体', serif; }
  .kb-roots .rg { width: 20px; height: 20px; vertical-align: -4px; fill: currentColor; }
  .statbar { position:fixed; left:16px; bottom:16px; z-index:30; background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:6px 14px; box-shadow:0 2px 10px rgba(0,0,0,.06); margin:0; }
  .wordblock { border:1px solid var(--line); border-radius:14px; padding:14px 16px 10px; margin:16px auto 6px; max-width:760px; background:var(--paper); }
@@ -169,7 +171,6 @@
     <div class="rule" id="ruleline"></div>
 
     <div class="inputwrap"><input id="typeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="在这里打出词组"></div>
-    <div class="msg" id="msg">输入上面的词组</div>
     <div class="kbwrap"><div class="kbbox"><div class="kb" id="kb"></div></div><div class="kbhint">左右滑动看全键盘 · 点键输入该码</div></div>
 
     
@@ -201,6 +202,17 @@
   var state = { len: 2, ver: '6', hint: 2, count: 10, stats: true, pool: [], idx: 0, right: 0, streak: 0, best: 0, startAt: 0, wrong: [], locked: false, running: false };
   window.__pstate = state;
   var $ = function (id) { return document.getElementById(id); };
+  var toastTimer = null;
+  function toast(text, cls, ms) {
+    var t = $('toast');
+    if (!t) return;
+    t.textContent = text;
+    t.className = 'toast show' + (cls ? ' ' + cls : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      t.className = 'toast' + (cls ? ' ' + cls : '');
+    }, ms || 1200);
+  }
   var LS_WRONG = 'wubi_wrong_words_v1';
 
   function loadWrong() { try { return JSON.parse(localStorage.getItem(LS_WRONG) || '[]'); } catch (e) { return []; } }
@@ -320,10 +332,9 @@
   // 搜索词组：回车直接跳到这一题（找不到就提示），方便核对某个词的着色
   function jumpToWord(raw) {
     var t = (raw || '').replace(/\s+/g, '');
-    var msg = $('msg');
     if (!t) return;
     var n = Array.from(t).length;
-    if (n < 2) { msg.textContent = '至少输入两个字的词组'; msg.className = 'msg bad'; return; }
+    if (n < 2) { toast('至少输入两个字的词组', 'bad'); return; }
     if (n > 6) { loadLongWord(t, n); return; }
     loadData(n, function (rows) {
       var row = null;
@@ -345,8 +356,7 @@
       $('play').classList.remove('hidden');
       $('qTotal').textContent = state.pool.length;
       $('qIndex').textContent = state.idx + 1;
-      msg.textContent = '已跳到「' + t + '」';
-      msg.className = 'msg';
+      toast('已跳到「' + t + '」');
       redraw();
       var ti = $('typeInput');
       ti.value = ''; ti.className = ''; ti.disabled = false;
@@ -355,7 +365,6 @@
   }
   // 7 字以上：题库没有，改从 data/word-<首字哈希>.js 取记录
   function loadLongWord(t, n) {
-    var msg = $('msg');
     var wb = t.charCodeAt(0) % 64;
     var key = 'WORD_DATA_' + wb;
     var go = function () {
@@ -363,7 +372,7 @@
       if (!rec) {
         loadBasic(function () {
           var calc = computeWord(t);
-          if (!calc) { msg.textContent = '词库里没有「' + t + '」'; msg.className = 'msg bad'; return; }
+          if (!calc) { toast('词库里没有「' + t + '」', 'bad'); return; }
           calc.keysDone = true;
           state.len = n;
           var at2 = -1;
@@ -374,8 +383,7 @@
           $('play').classList.remove('hidden');
           $('qTotal').textContent = state.pool.length;
           $('qIndex').textContent = state.idx + 1;
-          msg.textContent = '已跳到「' + t + '」（现算）';
-          msg.className = 'msg';
+          toast('已跳到「' + t + '」（现算）');
           redraw();
           var ti2 = $('typeInput'); ti2.value = ''; ti2.className = ''; ti2.disabled = false;
           $('jumpInput').blur();
@@ -398,8 +406,7 @@
       $('play').classList.remove('hidden');
       $('qTotal').textContent = state.pool.length;
       $('qIndex').textContent = state.idx + 1;
-      msg.textContent = '已跳到「' + t + '」';
-      msg.className = 'msg';
+      toast('已跳到「' + t + '」');
       redraw();
       var ti = $('typeInput'); ti.value = ''; ti.className = ''; ti.disabled = false;
       $('jumpInput').blur();
@@ -408,7 +415,7 @@
     var sc = document.createElement('script');
     sc.src = 'data/word-' + wb + '.js';
     sc.onload = go;
-    sc.onerror = function () { msg.textContent = '词库加载失败'; msg.className = 'msg bad'; };
+    sc.onerror = function () { toast('词库加载失败', 'bad'); };
     document.head.appendChild(sc);
   }
 
@@ -531,6 +538,79 @@
     return '五字及以上：前三字各取首码，末字取首码，中间字不参与编码';
   }
 
+  // ===== 笔画着色数据 =====
+  // data/glyph-js/<字>.js -> 该字的逐笔路径 + 三版配色组码（平均 4KB，按需加载）
+  var CC_FILL = { '0': '#E74C3C', '1': '#FF9800', '2': '#27AE60', '3': '#3498DB', 'w': '#FFFFFF', 'g': '#CFC8BD', 'c': '#00BCD4' };
+  var ccCharP = {};
+
+  function ccEnsureChar(ch) {
+    var sd = window.STROKE_DATA;
+    if (sd && sd[ch] && sd[ch].strokes && sd[ch].strokes.length) return Promise.resolve();
+    if (!ccCharP[ch]) {
+      ccCharP[ch] = new Promise(function (res) {
+        var s = document.createElement('script');
+        s.src = 'data/glyph-js/' + encodeURIComponent(ch) + '.js';
+        s.onload = res;
+        s.onerror = res;
+        document.head.appendChild(s);
+      });
+    }
+    return ccCharP[ch];
+  }
+
+  function ccInner(ch, ver) {
+    var sd = window.STROKE_DATA;
+    if (!sd || !sd[ch]) return '';
+    var vd = sd[ch].v && sd[ch].v[ver];
+    var strokes = (vd && vd.strokes) || sd[ch].strokes || [];
+    if (!strokes.length) return '';
+    var codes = (vd && vd.codes != null) ? vd.codes : ((window.SVG_GROUPS && window.SVG_GROUPS[ch + '|' + ver]) || '');
+    var out = '';
+    for (var i = 0; i < strokes.length; i++) {
+      out += '<path d="' + strokes[i] + '" fill="' + (CC_FILL[codes.charAt(i)] || GRAY) + '"/>';
+    }
+    // 与 svg 文件一致：bundle 笔画同样是 Y 轴向上的坐标，需翻转成屏幕坐标
+    return out ? '<g transform="translate(0,900) scale(1,-1)">' + out + '</g>' : out;
+  }
+
+  function ccApply(slot, inner) {
+    if (!inner) return;
+    var k = Number(slot.dataset.k), st = Number(slot.dataset.start), out;
+    if (slot.dataset.key === 'dash') {
+      out = dashOnlySvg(inner, PALETTE[st % 4]);
+    } else if (slot.dataset.key === '1') {
+      out = colorWholeDashed(inner, PALETTE[st % 4], PALETTE[(st + 1) % 4]);
+    } else if (slot.dataset.cheng === '1' && k >= 2) {
+      out = colorWholeSvg(inner, PALETTE[st % 4]) + dashOnSecondRoot(inner, PALETTE[(st + 1) % 4]);
+    } else {
+      out = recolorSvg(inner, st, k);
+    }
+    slot.innerHTML = '<svg class="zi-svg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">' + out + '</svg>';
+  }
+
+  function paintSlot(slot) {
+    var ch = slot.dataset.c, ver = slot.dataset.v;
+    function fromBundle() {
+      ccEnsureChar(ch).then(function () {
+        if (!slot.parentNode) return;
+        ccApply(slot, ccInner(ch, ver));
+      });
+    }
+    if (location.protocol === 'file:' || !window.fetch) { fromBundle(); return; }
+    fetch('svg/' + encodeURIComponent(ch) + '-' + ver + '.svg')
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (svg) {
+        if (!svg) { fromBundle(); return; }
+        var inner = svg.replace(/<path[^>]*stroke="#c0392b"[^>]*\/>/g, '').replace(/<rect[^>]*>/g, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '');
+        ccApply(slot, inner);
+      })
+      .catch(fromBundle);
+  }
+
+  function ccPaintAll() {
+    document.querySelectorAll('.zislot').forEach(function (slot) { paintSlot(slot); });
+  }
+
   // 字根键盘：数据取自 data/wubi_roots_all.js，随版本切换
   var JIANMA = { G: '一', F: '地', D: '在', S: '要', A: '工', H: '上', J: '是', K: '中', L: '国', M: '同', T: '和', R: '的', E: '有', W: '人', Q: '我', Y: '主', U: '产', I: '不', O: '为', P: '这', N: '民', B: '了', V: '发', C: '以', X: '经' };
   var KB_LAYOUT = [['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], ['Z', 'X', 'C', 'V', 'B', 'N', 'M']];
@@ -571,6 +651,14 @@
   }
   function ROOT_GLYPHS_SAFE(ch) { return !!(window.ROOT_GLYPHS && window.ROOT_GLYPHS[ch]); }
 
+  // 标注行：单字根保持文字；复合字根（多字 / 扩展区）用字形图
+  function rootDisplay(name) {
+    if (!name) return '';
+    var chars = [...String(name)];
+    if (chars.length > 1 || chars[0].codePointAt(0) > 0xffff) return rootHtml(name);
+    return name;
+  }
+
   function markKeyboard(code) {
     var keys = document.querySelectorAll('.kb-key');
     [].forEach.call(keys, function (b) {
@@ -609,8 +697,7 @@
     var kb = $('kb');
     if (!kb) return;
     var d = kbData(), table = d[0] || {}, names = d[1] || {};
-    var verName = verOf() === '86' ? '86 版' : verOf() === '98' ? '98 版' : '新世纪';
-    var html = '<div class="kb-title">' + verName + '五笔键盘</div>';
+    var html = '';
     KB_LAYOUT.forEach(function (row, ri) {
       html += '<div class="kb-row' + (ri === 1 ? ' r2' : ri === 2 ? ' r3' : '') + '">';
       row.forEach(function (L) {
@@ -689,8 +776,8 @@
           var li = startPos + t;
           var col = PALETTE[li % 4];
           cap += (t ? ' ' : '') +
-            '<span class="r" style="color:' + col + '">' + (roots[ri] || '') + '</span>' +
-            '<span class="l" style="color:' + col + '">' + (codeStr.charAt(li) || '') + '</span>';
+            '<span class="l" style="color:' + col + '">' + (codeStr.charAt(li) || '') + '</span>' +
+            '<span class="r" style="color:' + col + '">（' + rootDisplay(roots[ri] || '') + '）</span>';
           ri += 1;
         }
       }
@@ -699,28 +786,7 @@
     $('wordbox').innerHTML = html;
     $('ruleline').textContent = ruleText(n);
     fitWordbox();
-    document.querySelectorAll('.zislot').forEach(function (slot) {
-      fetch('svg/' + encodeURIComponent(slot.dataset.c) + '-' + slot.dataset.v + '.svg')
-        .then(function (r) { return r.ok ? r.text() : ''; })
-        .then(function (svg) {
-          if (!svg) return;
-          var inner = svg.replace(/<path[^>]*stroke="#c0392b"[^>]*\/>/g, '').replace(/<rect[^>]*>/g, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '');
-          var k = Number(slot.dataset.k);
-          var st = Number(slot.dataset.start);
-          var out;
-                    if (slot.dataset.key === 'dash') {
-            out = dashOnlySvg(inner, PALETTE[st % 4]);
-          } else if (slot.dataset.key === '1') {
-            out = colorWholeDashed(inner, PALETTE[st % 4], PALETTE[(st + 1) % 4]);
-          } else if (slot.dataset.cheng === '1' && k >= 2) {
-            out = colorWholeSvg(inner, PALETTE[st % 4]) + dashOnSecondRoot(inner, PALETTE[(st + 1) % 4]);
-          } else {
-            out = recolorSvg(inner, st, k);
-          }
-          slot.innerHTML = '<svg class="zi-svg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">' + out + '</svg>';
-        })
-        .catch(function () {});
-    });
+    document.querySelectorAll('.zislot').forEach(function (slot) { paintSlot(slot); });
 
     var usedKeys = codeStr.split('');
     document.querySelectorAll('.kb-key').forEach(function (b) {
@@ -745,8 +811,6 @@
     $('qIndex').textContent = state.idx + 1;
     $('qRight').textContent = state.right;
     $('qStreak').textContent = state.streak;
-    $('msg').textContent = '输入上面的词组';
-    $('msg').className = 'msg';
     redraw();
     setTimeout(function () { inp.focus(); }, 30);
   }
@@ -763,8 +827,7 @@
       state.locked = true;
       state.right += 1; state.streak += 1; state.best = Math.max(state.best, state.streak);
       inp.className = 'ok'; inp.disabled = true;
-      $('msg').textContent = '✓ 正确';
-      $('msg').className = 'msg ok';
+      toast('✓ 正确', 'ok');
       $('qRight').textContent = state.right;
       $('qStreak').textContent = state.streak;
       setTimeout(function () { state.idx += 1; nextQuestion(); }, 450);
@@ -777,8 +840,7 @@
       inp.className = 'bad';
       state.streak = 0;
       $('qStreak').textContent = 0;
-      $('msg').textContent = '✗ 打错了，正确是「' + w.w + '」（按空格继续）';
-      $('msg').className = 'msg bad';
+      toast('✗ 打错了，正确是「' + w.w + '」（按空格继续）', 'bad', 2000);
       state.wrong.push({ w: w.w, code: codeOf(w), typed: typed, len: w.len });
       addWrong(w); refreshWrongCount();
     }
@@ -836,10 +898,18 @@
   // 手机上默认收起设置（先看到题目），桌面默认展开；用户手动选择过后按记忆来
   applySide(saved === null ? window.innerWidth > 860 : saved === '1');
 
+  // file:// 下目录链接不会自动进 index.html（http 部署不受影响）
+  if (location.protocol === 'file:') {
+    [['char/', 'char/index.html'], ['ci/', 'ci/index.html'], ['./', './index.html']].forEach(function (p) {
+      document.querySelectorAll('a[href="' + p[0] + '"]').forEach(function (a) { a.setAttribute('href', p[1]); });
+    });
+  }
+
   window.__redraw = redraw;
   window.__next = nextQuestion;
   refreshWrongCount();
   restart();
 })();
 </script>
+<div class="toast" id="toast"></div>
 </body></html>

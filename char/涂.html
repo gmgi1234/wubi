@@ -23,6 +23,8 @@
   header a { color:var(--muted); text-decoration:none; }
   .navbar { display:flex; gap:18px; align-items:center; }
   .navbar .nav { color:var(--accent); }
+  .navbar .navsearch { width:118px; font-family:inherit; font-size:15px; padding:3px 8px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-align:center; }
+  .navbar .navsearch:focus { outline:none; border-color:var(--accent); }
   main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
   h1 { font-size:34px; margin:0 0 6px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
@@ -91,11 +93,15 @@
     .cta { flex-direction:column; align-items:flex-start; }
     .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
   }
+
+
+.art .supmini{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border-radius:3px;padding:1px;z-index:2;}
+.art .supmini svg{width:18px;height:18px;display:block;border-radius:2px;background:#fff;}
 </style>
 </head><body>
 <header>
   <a href="../">五笔字根 · 笔画着色</a>
-  <div class="navbar"><a class="nav" href="%E5%AE%B4.html">← 宴</a><a href="../">查其它字</a><a class="nav" href="%E4%BD%86.html">但 →</a></div>
+  <div class="navbar"><a class="nav" href="%E5%AE%B4.html">← 宴</a><input class="navsearch" id="qsearch" type="text" placeholder="查其它字" autocomplete="off" onkeydown="if(event.isComposing||event.keyCode===229)return;if(event.key==='Enter'){var c=Array.from(this.value.trim())[0];if(c)location.href=encodeURIComponent(c)+'.html';}"><a class="nav" href="%E4%BD%86.html">但 →</a></div>
 </header>
 <main>
   <h1>「涂」的五笔编码与拆分</h1>
@@ -113,7 +119,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">86 版</span><span class="vcode">IWT<span class="supcode">Y</span></span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 245 690 Q 273 665 303 635 Q 318 622 335 621 Q 347 622 352 637 Q 358 653 348 685 Q 342 707 309 722 Q 233 749 216 743 Q 210 739 212 725 Q 216 712 245 690 Z" fill="#E74C3C"/><path d="M 136 508 Q 184 457 218 441 Q 234 440 243 453 Q 249 466 246 483 Q 234 523 148 548 Q 130 552 121 548 Q 115 547 118 534 Q 119 522 136 508 Z" fill="#E74C3C"/><path d="M 115 138 Q 103 134 105 117 Q 121 45 156 24 Q 163 17 173 21 Q 180 22 181 47 Q 184 86 269 324 Q 276 340 275 346 Q 274 356 265 349 Q 256 343 151 176 Q 139 157 115 138 Z" fill="#E74C3C"/><path d="M 561 689 Q 565 701 591 742 Q 598 748 596 758 Q 587 785 545 794 Q 524 798 513 796 Q 504 793 508 781 Q 526 697 416 539 Q 368 476 284 388 Q 277 382 287 380 Q 341 386 456 520 Q 510 599 549 666 L 561 689 Z" fill="#FF9800"/><path d="M 549 666 Q 646 554 753 450 Q 775 428 813 426 Q 880 422 952 434 Q 971 435 972 441 Q 975 447 960 453 Q 909 474 850 494 Q 727 540 575 677 Q 568 684 561 689 C 538 708 529 689 549 666 Z" fill="#FF9800"/><path d="M 544 419 Q 670 453 677 459 Q 686 468 680 476 Q 673 488 642 493 Q 611 497 581 483 Q 547 470 511 458 Q 471 446 423 439 Q 386 430 414 415 Q 453 394 513 410 L 544 419 Z" fill="#27AE60"/><path d="M 582 297 Q 642 304 729 307 Q 777 307 784 317 Q 788 327 773 339 Q 724 375 653 354 Q 622 348 583 337 L 529 325 Q 438 312 330 292 Q 311 289 326 275 Q 339 263 355 259 Q 374 255 389 260 Q 452 279 524 289 Q 525 290 530 289 L 582 297 Z" fill="#27AE60"/><path d="M 487 60 Q 466 66 440 72 Q 428 75 429 68 Q 430 61 439 53 Q 497 8 534 -30 Q 544 -37 556 -23 Q 586 19 587 106 Q 580 208 582 297 L 583 337 Q 583 347 585 357 Q 589 381 585 390 Q 576 403 544 419 C 518 433 500 437 513 410 Q 514 404 520 395 Q 529 377 529 325 L 530 289 Q 533 75 522 59 Q 512 52 487 60 Z" fill="#27AE60"/><path d="M 379 209 Q 354 163 322 124 Q 298 91 314 58 Q 320 39 342 50 Q 394 86 399 149 Q 406 182 402 207 Q 398 216 392 217 Q 383 217 379 209 Z" fill="#27AE60"/><path d="M 672 204 Q 721 153 781 81 Q 797 59 812 54 Q 821 53 829 63 Q 842 76 832 121 Q 820 175 675 235 Q 665 242 663 229 Q 662 216 672 204 Z" fill="#27AE60"/><path d="M 672 204 Q 721 153 781 81 Q 797 59 812 54 Q 821 53 829 63 Q 842 76 832 121 Q 820 175 675 235 Q 665 242 663 229 Q 662 216 672 204 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 245 690 Q 273 665 303 635 Q 318 622 335 621 Q 347 622 352 637 Q 358 653 348 685 Q 342 707 309 722 Q 233 749 216 743 Q 210 739 212 725 Q 216 712 245 690 Z" fill="#E74C3C"/><path d="M 136 508 Q 184 457 218 441 Q 234 440 243 453 Q 249 466 246 483 Q 234 523 148 548 Q 130 552 121 548 Q 115 547 118 534 Q 119 522 136 508 Z" fill="#E74C3C"/><path d="M 115 138 Q 103 134 105 117 Q 121 45 156 24 Q 163 17 173 21 Q 180 22 181 47 Q 184 86 269 324 Q 276 340 275 346 Q 274 356 265 349 Q 256 343 151 176 Q 139 157 115 138 Z" fill="#E74C3C"/><path d="M 561 689 Q 565 701 591 742 Q 598 748 596 758 Q 587 785 545 794 Q 524 798 513 796 Q 504 793 508 781 Q 526 697 416 539 Q 368 476 284 388 Q 277 382 287 380 Q 341 386 456 520 Q 510 599 549 666 L 561 689 Z" fill="#FF9800"/><path d="M 549 666 Q 646 554 753 450 Q 775 428 813 426 Q 880 422 952 434 Q 971 435 972 441 Q 975 447 960 453 Q 909 474 850 494 Q 727 540 575 677 Q 568 684 561 689 C 538 708 529 689 549 666 Z" fill="#FF9800"/><path d="M 544 419 Q 670 453 677 459 Q 686 468 680 476 Q 673 488 642 493 Q 611 497 581 483 Q 547 470 511 458 Q 471 446 423 439 Q 386 430 414 415 Q 453 394 513 410 L 544 419 Z" fill="#27AE60"/><path d="M 582 297 Q 642 304 729 307 Q 777 307 784 317 Q 788 327 773 339 Q 724 375 653 354 Q 622 348 583 337 L 529 325 Q 438 312 330 292 Q 311 289 326 275 Q 339 263 355 259 Q 374 255 389 260 Q 452 279 524 289 Q 525 290 530 289 L 582 297 Z" fill="#27AE60"/><path d="M 487 60 Q 466 66 440 72 Q 428 75 429 68 Q 430 61 439 53 Q 497 8 534 -30 Q 544 -37 556 -23 Q 586 19 587 106 Q 580 208 582 297 L 583 337 Q 583 347 585 357 Q 589 381 585 390 Q 576 403 544 419 C 518 433 500 437 513 410 Q 514 404 520 395 Q 529 377 529 325 L 530 289 Q 533 75 522 59 Q 512 52 487 60 Z" fill="#27AE60"/><path d="M 379 209 Q 354 163 322 124 Q 298 91 314 58 Q 320 39 342 50 Q 394 86 399 149 Q 406 182 402 207 Q 398 216 392 217 Q 383 217 379 209 Z" fill="#27AE60"/><path d="M 672 204 Q 721 153 781 81 Q 797 59 812 54 Q 821 53 829 63 Q 842 76 832 121 Q 820 175 675 235 Q 665 242 663 229 Q 662 216 672 204 Z" fill="#27AE60"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 245 690 Q 273 665 303 635 Q 318 622 335 621 Q 347 622 352 637 Q 358 653 348 685 Q 342 707 309 722 Q 233 749 216 743 Q 210 739 212 725 Q 216 712 245 690 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 136 508 Q 184 457 218 441 Q 234 440 243 453 Q 249 466 246 483 Q 234 523 148 548 Q 130 552 121 548 Q 115 547 118 534 Q 119 522 136 508 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 115 138 Q 103 134 105 117 Q 121 45 156 24 Q 163 17 173 21 Q 180 22 181 47 Q 184 86 269 324 Q 276 340 275 346 Q 274 356 265 349 Q 256 343 151 176 Q 139 157 115 138 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 561 689 Q 565 701 591 742 Q 598 748 596 758 Q 587 785 545 794 Q 524 798 513 796 Q 504 793 508 781 Q 526 697 416 539 Q 368 476 284 388 Q 277 382 287 380 Q 341 386 456 520 Q 510 599 549 666 L 561 689 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 549 666 Q 646 554 753 450 Q 775 428 813 426 Q 880 422 952 434 Q 971 435 972 441 Q 975 447 960 453 Q 909 474 850 494 Q 727 540 575 677 Q 568 684 561 689 C 538 708 529 689 549 666 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 544 419 Q 670 453 677 459 Q 686 468 680 476 Q 673 488 642 493 Q 611 497 581 483 Q 547 470 511 458 Q 471 446 423 439 Q 386 430 414 415 Q 453 394 513 410 L 544 419 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 582 297 Q 642 304 729 307 Q 777 307 784 317 Q 788 327 773 339 Q 724 375 653 354 Q 622 348 583 337 L 529 325 Q 438 312 330 292 Q 311 289 326 275 Q 339 263 355 259 Q 374 255 389 260 Q 452 279 524 289 Q 525 290 530 289 L 582 297 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 487 60 Q 466 66 440 72 Q 428 75 429 68 Q 430 61 439 53 Q 497 8 534 -30 Q 544 -37 556 -23 Q 586 19 587 106 Q 580 208 582 297 L 583 337 Q 583 347 585 357 Q 589 381 585 390 Q 576 403 544 419 C 518 433 500 437 513 410 Q 514 404 520 395 Q 529 377 529 325 L 530 289 Q 533 75 522 59 Q 512 52 487 60 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 379 209 Q 354 163 322 124 Q 298 91 314 58 Q 320 39 342 50 Q 394 86 399 149 Q 406 182 402 207 Q 398 216 392 217 Q 383 217 379 209 Z" fill="#ccc" stroke="#aaa" stroke-width="0.5"/><path d="M 672 204 Q 721 153 781 81 Q 797 59 812 54 Q 821 53 829 63 Q 842 76 832 121 Q 820 175 675 235 Q 665 242 663 229 Q 662 216 672 204 Z" fill="#00BCD4" stroke="#0097A7" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>氵</span><span class="chip"><i style="background:#FF9800"></i>人</span><span class="chip"><i style="background:#27AE60"></i>禾</span></div>
       <div class="vsup">补码 Y（末笔捺 · 左右结构）</div>
       <div class="rule-ver">
@@ -196,13 +202,6 @@
   <h2>相关字</h2>
   <div class="rels"><a class="rel" href="%E6%B2%A1.html" title="查看「没」的编码与拆分">没</a><a class="rel" href="%E6%B2%A4.html" title="查看「沤」的编码与拆分">沤</a><a class="rel" href="%E6%B7%AE.html" title="查看「淮」的编码与拆分">淮</a><a class="rel" href="%E6%B3%95.html" title="查看「法」的编码与拆分">法</a><a class="rel" href="%E6%B5%B7.html" title="查看「海」的编码与拆分">海</a><a class="rel" href="%E6%B4%8B.html" title="查看「洋」的编码与拆分">洋</a><a class="rel" href="%E6%9F%92.html" title="查看「柒」的编码与拆分">柒</a><a class="rel" href="%E6%A2%81.html" title="查看「梁」的编码与拆分">梁</a></div>
 
-  <h2>相关</h2>
-  <p class="links">
-    <a href="../">查其它字</a>
-    <a href="../">三版编码对照</a>
-    <a href="../">字根速查表</a>
-  </p>
-
   <div class="cta">
     <div>
       <strong>想边看边学？</strong><br>
@@ -215,4 +214,7 @@
   </div>
 </main>
 <footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
+
+<script src="../data/frag-inline.js"></script>
+<script src="../data/file-link-shim.js"></script>
 </body></html>

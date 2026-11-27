@@ -23,6 +23,8 @@
   header a { color:var(--muted); text-decoration:none; }
   .navbar { display:flex; gap:18px; align-items:center; }
   .navbar .nav { color:var(--accent); }
+  .navbar .navsearch { width:118px; font-family:inherit; font-size:15px; padding:3px 8px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-align:center; }
+  .navbar .navsearch:focus { outline:none; border-color:var(--accent); }
   main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
   h1 { font-size:34px; margin:0 0 6px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
@@ -91,11 +93,15 @@
     .cta { flex-direction:column; align-items:flex-start; }
     .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
   }
+
+
+.art .supmini{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border-radius:3px;padding:1px;z-index:2;}
+.art .supmini svg{width:18px;height:18px;display:block;border-radius:2px;background:#fff;}
 </style>
 </head><body>
 <header>
   <a href="../">五笔字根 · 笔画着色</a>
-  <div class="navbar"><a class="nav" href="%E5%A4%A9.html">← 天</a><a href="../">查其它字</a><a class="nav" href="%E5%87%BA.html">出 →</a></div>
+  <div class="navbar"><a class="nav" href="%E5%A4%A9.html">← 天</a><input class="navsearch" id="qsearch" type="text" placeholder="查其它字" autocomplete="off" onkeydown="if(event.isComposing||event.keyCode===229)return;if(event.key==='Enter'){var c=Array.from(this.value.trim())[0];if(c)location.href=encodeURIComponent(c)+'.html';}"><a class="nav" href="%E5%87%BA.html">出 →</a></div>
 </header>
 <main>
   <h1>「力」的五笔编码与拆分</h1>
@@ -103,7 +109,7 @@
 
   <div class="hero"><div class="vers"><div class="vcard">
       <div class="vhead"><span class="vtag">新世纪</span><span class="vcode">ENT</span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#FF9800"/><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#27AE60"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#FF9800"/><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#27AE60"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#FF9800"></i>㇆</span><span class="chip"><i style="background:#27AE60"></i>丿</span><span class="chip"><i style="background:#555"></i>力</span></div>
       <div class="vsup">无补码</div>
       <div class="rule-ver">
@@ -113,7 +119,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">86 版</span><span class="vcode">LTN</span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#FF9800"/><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#27AE60"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#FF9800"/><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#27AE60"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#FF9800"></i>丿</span><span class="chip"><i style="background:#27AE60"></i>㇆</span><span class="chip"><i style="background:#555"></i>力</span></div>
       <div class="vsup">无补码</div>
       <div class="rule-ver">
@@ -123,7 +129,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">98 版</span><span class="vcode">ENT</span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#FF9800"/><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#27AE60"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#FF9800"/><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#27AE60"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 521 525 Q 600 540 679 548 Q 704 549 709 537 Q 718 518 712 470 Q 693 293 656 200 Q 637 142 617 124 Q 604 111 576 120 Q 539 132 505 144 Q 480 151 497 129 Q 546 74 573 33 Q 583 9 606 16 Q 628 17 654 47 Q 732 122 767 421 Q 774 488 801 526 Q 820 551 810 563 Q 792 585 751 603 Q 723 619 691 605 Q 621 580 527 561 L 468 550 Q 303 531 241 532 Q 216 536 216 522 Q 215 510 240 492 Q 271 468 303 478 Q 382 499 461 514 L 521 525 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/><path d="M 461 514 Q 392 231 161 88 Q 142 75 123 60 Q 107 48 123 46 Q 139 45 182 62 Q 267 101 330 161 Q 402 224 449 318 Q 507 445 521 525 L 527 561 Q 558 717 573 745 Q 585 767 565 778 Q 507 820 474 810 Q 458 804 466 786 Q 496 723 468 550 L 461 514 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#FF9800"></i>㇆</span><span class="chip"><i style="background:#27AE60"></i>丿</span><span class="chip"><i style="background:#555"></i>力</span></div>
       <div class="vsup">无补码</div>
       <div class="rule-ver">
@@ -178,13 +184,6 @@
   <h2>相关字</h2>
   <div class="rels"><a class="rel" href="%E5%8A%A6.html" title="查看「劦」的编码与拆分">劦</a><a class="rel" href="%E5%8A%9E.html" title="查看「办」的编码与拆分">办</a><a class="rel" href="%E5%8A%A0.html" title="查看「加」的编码与拆分">加</a><a class="rel" href="%E8%BE%B9.html" title="查看「边」的编码与拆分">边</a><a class="rel" href="%E5%9B%BD.html" title="查看「国」的编码与拆分">国</a><a class="rel" href="%E8%BD%A6.html" title="查看「车」的编码与拆分">车</a></div>
 
-  <h2>相关</h2>
-  <p class="links">
-    <a href="../">查其它字</a>
-    <a href="../">三版编码对照</a>
-    <a href="../">字根速查表</a>
-  </p>
-
   <div class="cta">
     <div>
       <strong>想边看边学？</strong><br>
@@ -197,4 +196,7 @@
   </div>
 </main>
 <footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
+
+<script src="../data/frag-inline.js"></script>
+<script src="../data/file-link-shim.js"></script>
 </body></html>

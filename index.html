@@ -2,9 +2,9 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="app-version" content="V24.17">
+<meta name="app-version" content="V25">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-<title>汉字五笔字根·笔画着色 V24.17</title>
+<title>汉字五笔字根·笔画着色 V25</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Times New Roman', 'KaiTi', '楷体', 'STKaiti', '华文楷体', serif; }
 html { font-size: 16px; }
@@ -1303,13 +1303,6 @@ html.theme-light .wubi-version-btn.active {
     border-color: #4caf50 !important;
 }
 
-/* 无法直接打出的字根：用字根字体的私用区字形显示 */
-@font-face {
-    font-family: 'ZiGen';
-    src: url('fonts/zigen.ttf') format('truetype');
-    font-display: swap;
-}
-.zigen { font-family: 'ZiGen', 'KaiTi', '楷体', serif; font-size: 1.2em; line-height: 1; }
 /* 字根片段：用这个字自己的笔画现画 */
 .root-name svg.frag {
     width: 30px; height: 30px; vertical-align: -7px; margin-right: 6px;
@@ -2964,6 +2957,15 @@ document.addEventListener('fullscreenchange', function () {
     document.title = '汉字五笔字根·笔画着色 ' + version;
     var badge = document.getElementById('app-version');
     if (badge) badge.textContent = version;
+})();
+</script>
+<script>
+// file:// 下目录链接不会自动进 index.html（http 部署不受影响）
+(function () {
+  if (location.protocol !== 'file:') return;
+  [['char/', 'char/index.html'], ['ci/', 'ci/index.html'], ['./', './index.html']].forEach(function (p) {
+    document.querySelectorAll('a[href="' + p[0] + '"]').forEach(function (a) { a.setAttribute('href', p[1]); });
+  });
 })();
 </script>
 </body>

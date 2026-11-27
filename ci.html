@@ -4,11 +4,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>词组五笔编码查询 · 五笔字根</title>
 <meta name="description" content="输入任意词组，查看 86/98/新世纪三版五笔编码、字根拆分与彩色字形。">
+<link rel="stylesheet" href="data/page-word.css">
 </head>
 <body>
 <div id="app"></div>
 <script src="data/render.js"></script>
 <script src="data/frag-map.js"></script>
+<script src="data/frag-sprite.js"></script>
 <script>
 (async function () {
   const w = new URLSearchParams(location.search).get('w') || '中国';
@@ -18,11 +20,22 @@
     s.src = src; s.onload = ok; s.onerror = bad; document.head.appendChild(s);
   });
 
+  // 本地 file://：有静态完整页就跳过去（版式与静态页一致）
+  if (location.protocol === 'file:') {
+    try {
+      await load('data/static-pages.js');
+      if ((window.STATIC_CI_PAGES || []).indexOf(w) >= 0) {
+        location.replace('ci/' + encodeURIComponent(w) + '.html');
+        return;
+      }
+    } catch (e) {}
+  }
+
   const wb = w.charCodeAt(0) % 64;
   try { await load('data/word-' + wb + '.js'); } catch (e) {}
   const rec = (window['WORD_DATA_' + wb] || {})[w];
   if (!rec) {
-    document.getElementById('app').innerHTML = '<div style="padding:60px;text-align:center;font-family:KaiTi,serif">没找到「' + w + '」这个词<br><a href="/">回首页</a></div>';
+    document.getElementById('app').innerHTML = '<div style="padding:60px;text-align:center;font-family:KaiTi,serif">没找到「' + w + '」这个词<br><a href="./">回首页</a></div>';
     return;
   }
 
@@ -57,21 +70,14 @@
   rec.keyName = keyNameIdx;
 
   WubiRender.renderWord(rec, {}, {});
-  // 字形按需 fetch
+  // 字形按需加载（本地 file:// 下由 render.js 用 stroke-bundle 重建）
   const glyphs = {};
   const jobs = [];
   for (const c of rec.ch) {
     for (const ver of ['86', '98', '06']) {
       jobs.push((async () => {
-        try {
-          const r = await fetch('svg/' + encodeURIComponent(c) + '-' + ver + '.svg');
-          if (!r.ok) return;
-          const t = await r.text();
-          glyphs[c + '-' + ver] = t
-            .replace(/<path[^>]*stroke="#c0392b"[^>]*\/>/g, '') // 去掉单字页的补码虚线
-            .replace(/^[\s\S]*?<svg[^>]*>/, '')
-            .replace(/<\/svg>\s*$/, '');
-        } catch (e) {}
+        const inner = await WubiRender.glyphInner(c, ver);
+        if (inner) glyphs[c + '-' + ver] = inner;
       })());
     }
   }
@@ -94,4 +100,6 @@
   })();
 })();
 </script>
+
+<script src="data/file-link-shim.js"></script>
 </body></html>

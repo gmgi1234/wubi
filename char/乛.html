@@ -23,6 +23,8 @@
   header a { color:var(--muted); text-decoration:none; }
   .navbar { display:flex; gap:18px; align-items:center; }
   .navbar .nav { color:var(--accent); }
+  .navbar .navsearch { width:118px; font-family:inherit; font-size:15px; padding:3px 8px; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-align:center; }
+  .navbar .navsearch:focus { outline:none; border-color:var(--accent); }
   main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
   h1 { font-size:34px; margin:0 0 6px; }
   .sub { color:var(--muted); font-size:16px; margin-bottom:24px; }
@@ -91,11 +93,15 @@
     .cta { flex-direction:column; align-items:flex-start; }
     .cta a.primary, .cta a.secondary { width:100%; text-align:center; }
   }
+
+
+.art .supmini{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border-radius:3px;padding:1px;z-index:2;}
+.art .supmini svg{width:18px;height:18px;display:block;border-radius:2px;background:#fff;}
 </style>
 </head><body>
 <header>
   <a href="../">五笔字根 · 笔画着色</a>
-  <div class="navbar"><a href="../">查其它字</a></div>
+  <div class="navbar"><input class="navsearch" id="qsearch" type="text" placeholder="查其它字" autocomplete="off" onkeydown="if(event.isComposing||event.keyCode===229)return;if(event.key==='Enter'){var c=Array.from(this.value.trim())[0];if(c)location.href=encodeURIComponent(c)+'.html';}"></div>
 </header>
 <main>
   <h1>「乛」的五笔编码与拆分</h1>
@@ -103,7 +109,7 @@
 
   <div class="hero"><div class="vers"><div class="vcard">
       <div class="vhead"><span class="vtag">新世纪</span><span class="vcode">NNL<span class="supcode">L</span></span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C"/><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>乛</span></div>
       <div class="vsup">补码 L（末笔 · 结构）</div>
       <div class="rule-ver">
@@ -113,7 +119,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">86 版</span><span class="vcode">NNL<span class="supcode">L</span></span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C"/><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>乛</span></div>
       <div class="vsup">补码 L（末笔 · 结构）</div>
       <div class="rule-ver">
@@ -123,7 +129,7 @@
       </div>
     </div><div class="vcard">
       <div class="vhead"><span class="vtag">98 版</span><span class="vcode">NNL<span class="supcode">L</span></span></div>
-      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C"/><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="none" stroke="#c0392b" stroke-width="7" stroke-dasharray="16 10" stroke-linejoin="round"/></g></svg></div>
+      <div class="art"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C"/></g></svg><div class="supmini"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#fff"/><g transform="translate(0,900) scale(1,-1)"><path d="M 286 576 Q 267 580 257 568 L 257 564 Q 254 547 294 517 Q 325 496 337 496 Q 347 496 370 510 Q 423 547 642 592 Q 680 601 682 583 Q 682 563 641 484 Q 634 467 641 463 Q 648 459 663 472 Q 753 550 789 566 Q 819 574 815 592 Q 813 606 731 645 Q 706 654 644 638 L 508 598 Q 369 560 286 576 Z" fill="#E74C3C" stroke="#C62828" stroke-width="10"/></g></svg></div></div>
       <div class="chips"><span class="chip"><i style="background:#E74C3C"></i>乛</span></div>
       <div class="vsup">补码 L（末笔 · 结构）</div>
       <div class="rule-ver">
@@ -160,13 +166,6 @@
   <h2>相关字</h2>
   <div class="rels"><a class="rel" href="%E4%B9%B0.html" title="查看「买」的编码与拆分">买</a><a class="rel" href="%E6%95%A2.html" title="查看「敢」的编码与拆分">敢</a><a class="rel" href="%E7%96%8B.html" title="查看「疋」的编码与拆分">疋</a><a class="rel" href="%E7%96%8F.html" title="查看「疏」的编码与拆分">疏</a><a class="rel" href="%E5%BF%83.html" title="查看「心」的编码与拆分">心</a><a class="rel" href="%E5%8F%91.html" title="查看「发」的编码与拆分">发</a></div>
 
-  <h2>相关</h2>
-  <p class="links">
-    <a href="../">查其它字</a>
-    <a href="../">三版编码对照</a>
-    <a href="../">字根速查表</a>
-  </p>
-
   <div class="cta">
     <div>
       <strong>想边看边学？</strong><br>
@@ -179,4 +178,7 @@
   </div>
 </main>
 <footer>数据来源：Make Me a Hanzi（笔画）· Rime 五笔码表（编码）</footer>
+
+<script src="../data/frag-inline.js"></script>
+<script src="../data/file-link-shim.js"></script>
 </body></html>
